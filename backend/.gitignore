@@ -1,0 +1,9 @@
+# =========================
+# Node.js backend ignore
+# =========================
+
+# Thư mục node_modules 
+node_modules/
+
+# File môi trường (chứa API key, DB URL,...)
+.env
