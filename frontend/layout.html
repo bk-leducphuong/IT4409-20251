@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Cửa hàng điện tử hàng đầu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">T</span>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-800">TechStore</span>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Trang chủ</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Sản phẩm</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Khuyến mãi</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Liên hệ</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-700 hover:text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    <button class="p-2 text-gray-700 hover:text-blue-600 relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                        </svg>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold mb-6">Công nghệ tương lai trong tầm tay</h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Khám phá bộ sưu tập đồ điện tử cao cấp với giá tốt nhất thị trường</p>
+            <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+                Mua sắm ngay
+            </button>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Danh mục sản phẩm</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="category-card bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white text-center cursor-pointer">
+                    <div class="text-4xl mb-4">📱</div>
+                    <h3 class="font-semibold">Điện thoại</h3>
+                </div>
+                <div class="category-card bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl text-white text-center cursor-pointer">
+                    <div class="text-4xl mb-4">💻</div>
+                    <h3 class="font-semibold">Laptop</h3>
+                </div>
+                <div class="category-card bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white text-center cursor-pointer">
+                    <div class="text-4xl mb-4">🎧</div>
+                    <h3 class="font-semibold">Tai nghe</h3>
+                </div>
+                <div class="category-card bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white text-center cursor-pointer">
+                    <div class="text-4xl mb-4">⌚</div>
+                    <h3 class="font-semibold">Đồng hồ thông minh</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Sản phẩm nổi bật</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <div class="text-6xl">📱</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">iPhone 15 Pro Max</h3>
+                        <p class="text-gray-600 text-sm mb-4">Chip A17 Pro, Camera 48MP, Titanium</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">29.990.000₫</span>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <div class="text-6xl">💻</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">MacBook Air M3</h3>
+                        <p class="text-gray-600 text-sm mb-4">Chip M3, 8GB RAM, 256GB SSD</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">27.990.000₫</span>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <div class="text-6xl">🎧</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">AirPods Pro 2</h3>
+                        <p class="text-gray-600 text-sm mb-4">Chống ồn chủ động, USB-C</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">6.490.000₫</span>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <div class="text-6xl">⌚</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">Apple Watch Series 9</h3>
+                        <p class="text-gray-600 text-sm mb-4">GPS, 45mm, Dây Sport Loop</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">9.990.000₫</span>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-8 text-white text-center">
+                <h2 class="text-3xl font-bold mb-4">🔥 Khuyến mãi đặc biệt</h2>
+                <p class="text-xl mb-6">Giảm giá lên đến 30% cho tất cả sản phẩm điện thoại</p>
+                <div class="flex justify-center space-x-4 text-2xl font-bold">
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                        <div id="days">02</div>
+                        <div class="text-sm">Ngày</div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                        <div id="hours">15</div>
+                        <div class="text-sm">Giờ</div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                        <div id="minutes">30</div>
+                        <div class="text-sm">Phút</div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                        <div id="seconds">45</div>
+                        <div class="text-sm">Giây</div>
+                    </div>
+                </div>
+                <button class="mt-6 bg-white text-red-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+                    Mua ngay
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Miễn phí vận chuyển</h3>
+                    <p class="text-gray-600">Giao hàng miễn phí cho đơn hàng trên 1 triệu đồng</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Bảo hành chính hãng</h3>
+                    <p class="text-gray-600">Bảo hành 12-24 tháng cho tất cả sản phẩm</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Hỗ trợ 24/7</h3>
+                    <p class="text-gray-600">Đội ngũ tư vấn chuyên nghiệp luôn sẵn sàng hỗ trợ</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">T</span>
+                        </div>
+                        <span class="text-2xl font-bold">TechStore</span>
+                    </div>
+                    <p class="text-gray-400">Cửa hàng điện tử uy tín hàng đầu Việt Nam với hơn 10 năm kinh nghiệm.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Sản phẩm</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Điện thoại</a></li>
+                        <li><a href="#" class="hover:text-white">Laptop</a></li>
+                        <li><a href="#" class="hover:text-white">Tai nghe</a></li>
+                        <li><a href="#" class="hover:text-white">Phụ kiện</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Hỗ trợ</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Chính sách bảo hành</a></li>
+                        <li><a href="#" class="hover:text-white">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="hover:text-white">Chính sách đổi trả</a></li>
+                        <li><a href="#" class="hover:text-white">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Liên hệ</h4>
+                    <div class="space-y-2 text-gray-400">
+                        <p>📍 123 Đường ABC, Quận 1, TP.HCM</p>
+                        <p>📞 0123 456 789</p>
+                        <p>✉️ info@techstore.vn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 TechStore. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Countdown timer
+        function updateCountdown() {
+            const days = document.getElementById('days');
+            const hours = document.getElementById('hours');
+            const minutes = document.getElementById('minutes');
+            const seconds = document.getElementById('seconds');
+            
+            let d = parseInt(days.textContent);
+            let h = parseInt(hours.textContent);
+            let m = parseInt(minutes.textContent);
+            let s = parseInt(seconds.textContent);
+            
+            s--;
+            if (s < 0) {
+                s = 59;
+                m--;
+                if (m < 0) {
+                    m = 59;
+                    h--;
+                    if (h < 0) {
+                        h = 23;
+                        d--;
+                        if (d < 0) {
+                            d = 0;
+                            h = 0;
+                            m = 0;
+                            s = 0;
+                        }
+                    }
+                }
+            }
+            
+            days.textContent = d.toString().padStart(2, '0');
+            hours.textContent = h.toString().padStart(2, '0');
+            minutes.textContent = m.toString().padStart(2, '0');
+            seconds.textContent = s.toString().padStart(2, '0');
+        }
+        
+        setInterval(updateCountdown, 1000);
+        
+        // Add to cart functionality
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Mua ngay')) {
+                button.addEventListener('click', function() {
+                    alert('Sản phẩm đã được thêm vào giỏ hàng!');
+                });
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98cf066cf2a5a8af',t:'MTc2MDE5MjcwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
