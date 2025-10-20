@@ -4,9 +4,7 @@ function Login() {
     
 
     return (
-        <div>
-            <Navbar />
-        </div>
+        <Navbar />
     );
 }
 
