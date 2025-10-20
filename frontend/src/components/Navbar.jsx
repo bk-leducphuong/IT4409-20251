@@ -15,13 +15,13 @@ function Navbar() {
         }}>
             <nav style={{
                 display: "flex",
-                padding: "2rem 3rem 1rem",
+                padding: "2rem 0 1rem",
                 margin: "0",
                 gap:"1rem",
                 alignItems:"center",
                 fontFamily:'"Nunito Sans", sans-serif',
-                width:"80%",
-                maxWidth:"1200px"
+                width:"90%",
+                maxWidth:"1400px"
             }}>
                 <div style={{
                     fontSize:"1.5rem",
@@ -36,7 +36,7 @@ function Navbar() {
                     <ul style={{
                         display:"flex",
                         justifyContent:"space-between",
-                        width:"clamp(300px, 50%, 600px)"
+                        width:"clamp(300px, 35%, 450px)"
                     }}>
                         <li style={{listStyleType:"none"}}><a href="#" style={linkStyle}>Home</a></li>
                         <li style={{listStyleType:"none"}}><a href="#" style={linkStyle}>Contact</a></li>
