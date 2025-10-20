@@ -69,9 +69,9 @@ function Navbar() {
                     gap:"1rem",
                     fontSize:"1.5rem"
                 }}>
-                    <i class="fa-regular fa-heart"></i>
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <i class="fa-solid fa-circle-user" style={{ color:"red" }}></i>
+                    <i className="fa-regular fa-heart"></i>
+                    <i className="fa-solid fa-cart-shopping"></i>
+                    <i className="fa-solid fa-circle-user" style={{ color:"red" }}></i>
                 </div>
             </nav>
         </div>
