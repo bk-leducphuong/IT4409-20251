@@ -1,8 +1,5 @@
-# .github/workflows/ci.yml
-
 name: CI Pipeline
 
-# This workflow runs on pushes and pull requests to the master/main branch
 on:
   push:
     branches: [master]
@@ -12,36 +9,35 @@ on:
 jobs:
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x] # Define the Node.js version to use
+        node-version: [18.x]
 
     steps:
-      # 1. Check out the repository code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up the specified version of Node.js
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm' # Cache npm dependencies for faster runs
+          cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      # 3. Install dependencies and run checks for the backend
-      - name: Install backend dependencies and lint
+      - name: Run eslint check
+        run: |
+          npm ci
+          npm run lint
+
+      - name: Install backend dependencies
         run: |
           cd backend
           npm ci
-          npm run lint
 
-      # 4. Install dependencies and run checks for the frontend
-      - name: Install frontend dependencies, lint, and build
+      - name: Install frontend dependencies and build
         run: |
           cd frontend
           npm ci
-          npm run lint
           npm run build
