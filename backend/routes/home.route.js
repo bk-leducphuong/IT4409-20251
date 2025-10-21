@@ -4,5 +4,6 @@ const homeController = require('../controllers/home.controller.js');
 
 // GET / - Trang chủ
 router.get('/', homeController.getHome);
+router.get('/status', homeController.getStatus);
 
 module.exports = router;
