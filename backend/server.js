@@ -2,7 +2,11 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const connectDB = require('./configs/database');
 const app = express();
+
+// Kết nối Database
+connectDB();
 
 // Middleware
 app.use(cors());
@@ -14,6 +18,7 @@ const homeRoutes = require('./routes/home.route');
 // const authRoutes = require('./routes/auth.route');
 
 // Routes
+//API Home
 app.use('/api/home', homeRoutes);
 // app.use('/api/auth', authRoutes);
 
