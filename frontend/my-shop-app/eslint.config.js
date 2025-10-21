@@ -6,13 +6,13 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  // Spread the recommended configs directly into the array
+  { ...js.configs.recommended },
+  { ...reactHooks.configs['recommended-latest'] },
+  { ...reactRefresh.configs.vite },
+  // Add custom config, overriding or extending as needed
   {
     files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
