@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+
 export default defineConfig([
   globalIgnores(['dist']),
   {
@@ -12,6 +13,7 @@ export default defineConfig([
       js.configs.recommended,
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
+      'plugin:prettier/recommended', // ✅ Adds Prettier integration
     ],
     languageOptions: {
       ecmaVersion: 2020,
@@ -24,6 +26,8 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'prettier/prettier': ['error'],// ✅ Enforce Prettier formatting
+      'react/jsx-no-target-blank': ['error', { enforceDynamicLinks: 'always' }], // ✅ Warn about missing rel="noreferrer"
     },
   },
 ])
