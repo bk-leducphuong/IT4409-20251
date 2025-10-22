@@ -1,9 +1,9 @@
 import styles from "./SignUpForm.module.css";
 
-function LoginForm(){
+function SignUpForm(){
     
     return (
-        <div className={styles.loginFromContainer}>
+        <div className={styles.signUpFromContainer}>
             <h1>Create an account</h1>
             <p>Enter your details below</p>
             <form action="" className={styles.form}>
@@ -23,4 +23,4 @@ function LoginForm(){
     );
 }
 
-export default LoginForm;
+export default SignUpForm;

@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
-import LoginForm from "../components/SignUpForm/SignUpForm";
+import SignUpForm from "../components/SignUpForm/SignUpForm";
+import LoginForm from "../components/LoginForm/LoginForm";
 
 function Login() {
     
@@ -9,6 +10,7 @@ function Login() {
         <>
             <Navbar />
             <LoginForm />
+            <SignUpForm />
             <Footer />
         </>
     );

@@ -1,4 +1,4 @@
-.signUpFromContainer {
+.loginFromContainer {
     margin: 2rem;
     padding: 2rem;
     display: flex;
@@ -67,8 +67,21 @@
     margin-right: 0.5rem;
 }
 
-.formFooter {
+.formOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.checkBox {
+    margin-right: 1ch;
+}
+
+.formFooter {
+    margin-top: 0.75rem;
     text-align: center;
     color: grey;
 }
