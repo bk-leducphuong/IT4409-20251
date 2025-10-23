@@ -1,8 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const connectDB = require('./configs/database');
+import connectDB from './configs/database.js';
+import homeRoutes from './routes/home.route.js';
+import authRoutes from './routes/auth.route.js';
+
 const app = express();
 
 // Kết nối Database
@@ -13,14 +17,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import routes
-const homeRoutes = require('./routes/home.route');
-// const authRoutes = require('./routes/auth.route');
-
 // Routes
-//API Home
 app.use('/api/home', homeRoutes);
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
 // Port
 const PORT = process.env.PORT || 5000;
