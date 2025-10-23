@@ -31,7 +31,10 @@ export const register = async (userData) => {
   if (existingUser) {
     throw new Error('Email đã được sử dụng!');
   }
-
+  // Kiểm tra số điện thoại có 10 chữ số
+  if (!validator.isMobilePhone(phone, 'vi-VN')) {
+    throw new Error('Số điện thoại không hợp lệ!');
+  }
   // Hash mật khẩu **tại service**
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -70,18 +73,12 @@ export const login = async (email, password) => {
     deleted: false,
     status: 'active'
   }).select('+password');
-  console.log(user);
-  console.log("password từ DB: " + user?.password)
   if (!user) {
     throw new Error('Email hoặc mật khẩu không đúng!');
   }
-  const test = await bcrypt.compare('123456', user.password)
-  console.log("Kết quả so sánh mật khẩu test: " + test)
   
   // So sánh password **dùng bcrypt trực tiếp**
-  console.log("Password đang nhập:", password);
   const isPasswordMatch = await bcrypt.compare(password, user.password);
-  console.log("Kết quả so sánh với password thật:", isPasswordMatch);
   if (!isPasswordMatch) {
     throw new Error('Email hoặc mật khẩu không đúng!');
   }
