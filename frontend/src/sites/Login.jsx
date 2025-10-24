@@ -4,6 +4,7 @@ import SignUpForm from "../components/SignUpForm/SignUpForm";
 import LoginForm from "../components/LoginForm/LoginForm";
 import Card from "../components/Card/Card";
 import Shelf from "../components/Shelf/Shelf";
+import Services from "../components/Services/Services";
 
 function Login() {
     
@@ -40,6 +41,7 @@ function Login() {
                     rating="4"
                 />
             </Shelf>
+            <Services />
             <Footer />
         </>
     );
