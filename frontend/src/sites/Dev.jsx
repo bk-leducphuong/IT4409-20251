@@ -17,6 +17,7 @@ function Dev() {
     ];
 
     const exampleCard = <Card
+        image="https://th.bing.com/th/id/R.8d1e0199c5ebe4fab3e5fee28aa0dbda?rik=sQ7TrFvVmvzNzA&pid=ImgRaw&r=0"
         productName="HAVIT HV-G92 Gamepad"
         oldPrice="160"
         newPrice="120"
