@@ -1,3 +1,4 @@
+import Button from "../Button/Button";
 import styles from "./Shelf.module.css";
 
 function Shelf(props) {
@@ -15,7 +16,7 @@ function Shelf(props) {
                     {
                         props.buttonName
                         ?
-                        <button className={styles.customButton}>{props.buttonName || ""}</button>
+                        <Button backgroundColor="white">{props.buttonName}</Button>
                         :
                         <div className={styles.buttonContainer}>
                             <button className={styles.button}>

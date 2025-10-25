@@ -8,7 +8,7 @@ function Button(props) {
 
     return (
         <button className={style} onClick={props.onClick || (() => {console.log("button clicked")})}>
-            {props.text || "Button"}
+            {props.children}
         </button>
     );
 }

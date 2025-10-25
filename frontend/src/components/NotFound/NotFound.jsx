@@ -1,4 +1,5 @@
-import styles from "./NotFound.module.css"
+import Button from "../Button/Button";
+import styles from "./NotFound.module.css";
 
 function NotFound() {
     
@@ -6,7 +7,9 @@ function NotFound() {
         <div className={styles.container}>
             <div className={styles.main}>404 Not Found</div>
             <div className={styles.sub}>Your visited page not found. You may go to home page</div>
-            <button className={styles.button}>Back to home page</button>
+            <div className={styles.button}>
+                <Button >Back to home page</Button>
+            </div>
         </div>
     );
 }

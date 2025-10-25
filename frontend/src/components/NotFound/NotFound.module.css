@@ -18,15 +18,5 @@
 }
 
 .button {
-    color: white;
-    background-color: red;
-    padding: 1rem 4ch;
-    border: none;
-    border-radius: 5px;
     margin-top: 2rem;
-    transition: background-color 0.25s;
-}
-
-.button:hover {
-    background-color: hsl(0, 100%, 40%);
 }
