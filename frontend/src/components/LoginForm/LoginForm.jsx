@@ -1,6 +1,6 @@
 import styles from "./LoginForm.module.css";
 
-function LoginForm() {
+function LoginForm(props) {
     
     return (
         <div className={styles.loginFromContainer}>
@@ -20,7 +20,7 @@ function LoginForm() {
                 <a href="#" className={styles.a}>Forgot password?</a>
             </div>
             <div className={styles.formFooter}>
-                Don't have an account? <a href="#" className={styles.a}>Sign up</a>
+                Don't have an account? <a href="#" className={styles.a} onClick={(e) => {e.preventDefault(); props.toggleState();}}>Sign up</a>
             </div>
         </div>
     );

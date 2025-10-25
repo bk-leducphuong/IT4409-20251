@@ -6,7 +6,7 @@ import Card from "../components/Card/Card";
 import Shelf from "../components/Shelf/Shelf";
 import Services from "../components/Services/Services";
 
-function Login() {
+function Dev() {
     
 
     return (
@@ -47,4 +47,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Dev;
