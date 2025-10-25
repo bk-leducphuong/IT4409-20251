@@ -14,7 +14,7 @@ function Dev() {
             <Navbar />
             <Shelf
                 topic="Today's"
-                name="Flash Sales"
+                strong="Flash Sales"
             >
                 <Card
                     productName="HAVIT HV-G92 Gamepad"

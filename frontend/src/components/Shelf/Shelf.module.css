@@ -30,12 +30,19 @@
     border-radius: 5px;
 }
 
-.name {
+.info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 2rem;
+}
+
+.strong {
     font-weight: bold;
+    font-size: 2rem;
+}
+
+.name {
+    font-size: 1.2rem;
 }
 
 .buttonContainer {
@@ -53,6 +60,17 @@
     outline: none;
     border: none;
     font-size: 1.2rem;
+}
+
+.customButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 4ch;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 .cardsContainer {
