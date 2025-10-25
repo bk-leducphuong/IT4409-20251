@@ -6,6 +6,7 @@ import Card from "../components/Card/Card";
 import Shelf from "../components/Shelf/Shelf";
 import Services from "../components/Services/Services";
 import NotFound from "../components/NotFound/NotFound";
+import Button from "../components/Button/Button";
 
 function Dev() {
     
@@ -13,7 +14,8 @@ function Dev() {
     return (
         <>
             <Navbar />
-            <NotFound></NotFound>
+            <NotFound />
+            <Button backgroundColor="white"/>
             <Footer />
         </>
     );
