@@ -16,12 +16,24 @@ function Dev() {
         "Sinh vien nam tam"
     ];
 
+    const exampleCard = <Card
+        productName="HAVIT HV-G92 Gamepad"
+        oldPrice="160"
+        newPrice="120"
+        rating="4"
+    />;
+
     return (
         <>
             <Navbar />
 
-            <LoginForm />
-            <SignUpForm />
+            <div style={{
+                display:"flex",
+                justifyContent:"space-around"
+            }}>
+                <LoginForm />
+                <SignUpForm />
+            </div>
 
             <Button onClick={() => {
                 document.title = titles[Math.floor(Math.random() * titles.length)];
@@ -31,30 +43,14 @@ function Dev() {
                 name="Wistlist (4)"
                 buttonName="Move All To Bag"
             >
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
+                {[exampleCard, exampleCard, exampleCard, exampleCard]}
+            </Shelf>
+
+            <Shelf
+                topic="Today"
+                strong="Flash Sales"
+            >
+                {[exampleCard, exampleCard, exampleCard, exampleCard]}
             </Shelf>
 
             <NotFound />
