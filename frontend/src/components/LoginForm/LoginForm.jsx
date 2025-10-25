@@ -20,7 +20,10 @@ function LoginForm(props) {
                 <a href="#" className={styles.a}>Forgot password?</a>
             </div>
             <div className={styles.formFooter}>
-                Don't have an account? <a href="#" className={styles.a} onClick={(e) => {e.preventDefault(); props.toggleState();}}>Sign up</a>
+                Don't have an account? <a href="#" className={styles.a} onClick={(e) => {
+                    e.preventDefault();
+                    props.toggleState ? props.toggleState() : null;
+                }}>Sign up</a>
             </div>
         </div>
     );

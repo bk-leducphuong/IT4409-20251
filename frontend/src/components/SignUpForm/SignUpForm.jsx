@@ -17,7 +17,10 @@ function SignUpForm(props){
                 Sign up with Google
             </button>
             <div className={styles.formFooter}>
-                Already have account? <a href="#" className={styles.a} onClick={(e) => {e.preventDefault(); props.toggleState();}}>Log in</a>
+                Already have account? <a href="#" className={styles.a} onClick={(e) => {
+                    e.preventDefault();
+                    props.toggleState ? props.toggleState() : null;
+                }}>Log in</a>
             </div>
         </div>
     );
