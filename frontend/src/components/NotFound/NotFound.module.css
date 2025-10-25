@@ -1,0 +1,32 @@
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    font-size: 8rem;
+    font-weight: bold;
+    padding: 0;
+    text-align: center;
+}
+
+.sub {
+    font-size: 0.9rem;
+}
+
+.button {
+    color: white;
+    background-color: red;
+    padding: 1rem 4ch;
+    border: none;
+    border-radius: 5px;
+    margin-top: 2rem;
+    transition: background-color 0.25s;
+}
+
+.button:hover {
+    background-color: hsl(0, 100%, 40%);
+}

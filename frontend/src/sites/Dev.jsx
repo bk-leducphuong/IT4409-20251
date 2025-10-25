@@ -5,6 +5,7 @@ import LoginForm from "../components/LoginForm/LoginForm";
 import Card from "../components/Card/Card";
 import Shelf from "../components/Shelf/Shelf";
 import Services from "../components/Services/Services";
+import NotFound from "../components/NotFound/NotFound";
 
 function Dev() {
     
@@ -12,36 +13,7 @@ function Dev() {
     return (
         <>
             <Navbar />
-            <Shelf
-                topic="Today's"
-                strong="Flash Sales"
-            >
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-                <Card
-                    productName="HAVIT HV-G92 Gamepad"
-                    oldPrice="160"
-                    newPrice="120"
-                    rating="4"
-                />
-            </Shelf>
-            <Services />
+            <NotFound></NotFound>
             <Footer />
         </>
     );
