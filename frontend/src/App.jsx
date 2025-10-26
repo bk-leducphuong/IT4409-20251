@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import Login from './sites/Login/Login';
 import WistList from './sites/WistList/WistList';
+import Cart from './sites/Cart/Cart';
 import Dev from './sites/Dev';
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
 
   return (
     <>
-      <Dev />
+      <Cart />
     </>
   );
 }
