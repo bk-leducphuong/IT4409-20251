@@ -1,0 +1,46 @@
+.cardContainer {
+    display: flex;
+    flex-direction: column;
+    width: 32%;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.cardIconContainer {
+    margin-bottom: 1rem;
+}
+
+.cardIcon {
+    background-color: black;
+    color: white;
+    padding: 1rem;
+    border-radius: 50%;
+    border: 8px solid grey;
+    width: fit-content;
+    aspect-ratio: 1 / 1;
+    font-size: 1.5rem;
+    align-self: center;
+    transition: transform 0.25s;
+}
+
+.cardIcon:hover {
+    transform: scale(1.25);
+}
+
+.cardTitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.cardDescription {
+    font-size: 1rem;
+}
+
+.servicesContainer {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    max-width: 1400px;
+    justify-self: center;
+}

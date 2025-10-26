@@ -1,0 +1,111 @@
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: black;
+    color: white;
+}
+
+.listsWarpper {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 1400px;
+    padding: 3rem 0;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 15%;
+}
+
+.listHeader {
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+}
+
+.subcribe {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.emailContainer {
+    position: relative;
+}
+
+.emailInput {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: black;
+}
+
+.sendIcon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.subText {
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.imagesContainer {
+    display: flex;
+    height: 5rem;
+}
+
+.qrContainer {
+    height: 100%;
+    padding-right: 0.5rem;
+}
+
+.qr {
+    height: 100%;
+    width: auto;
+}
+
+.ggPlayAndAppStoreContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.ggPlayContainer {
+    height: 45%;
+}
+
+.ggPlay {
+    height: 100%;
+    width: auto;
+}
+
+.appStoreContainer {
+    height: 50%;
+}
+
+.appStore {
+    height: auto;
+    width: 100%;
+}
+
+.iconsContainer {
+    display: flex;
+    gap: 1rem;
+}
+
+.tail {
+    text-align: center;
+    color: hsl(0,0%,25%);
+    padding: 1rem;
+    border-top: 1px solid hsl(0,0%,10%);
+    width: 100%;
+}
