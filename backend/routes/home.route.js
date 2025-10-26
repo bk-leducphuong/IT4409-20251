@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const homeController = require('../controllers/home.controller.js');
+import homeController from '../controllers/home.controller.js';
 
 // GET / - Trang chủ
 router.get('/', homeController.getHome);
 
-module.exports = router;
+export default router;

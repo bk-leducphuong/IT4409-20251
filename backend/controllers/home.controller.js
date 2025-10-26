@@ -1,9 +1,15 @@
-const getHome = (req, res) => {
+import e from 'express';
+import { getHomeService } from '../services/home.service.js';
+
+export const getHome = (req, res) => {
+  const message = getHomeService();
+
   res.status(200).json({
     success: true,
-    message: 'Chào mừng bạn đến với trang chủ của chúng tôi!'
+    message: message,
   });
-}
-module.exports = {
-    getHome
-}
+};
+
+export default {
+  getHome,
+};
