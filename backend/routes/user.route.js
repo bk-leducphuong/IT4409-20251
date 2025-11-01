@@ -9,10 +9,11 @@ router.patch('/profile', requireLogin, userController.updateProfile);
 router.patch('/profile/change-password', requireLogin, userController.changePassword);
 
 // User management routes (require admin role)
-// router.get('/', requireLogin, requireRole('admin'), userController.getAllUsers);
-// router.post('users', requireLogin, requireRole('admin'), userController.createUser);
-// router.get('/:id', requireLogin, requireRole('admin'), userController.getUserById);
-// router.put('/:id', requireLogin, requireRole('admin'), userController.updateUserById);
-// router.delete('/:id', requireLogin, requireRole('admin'), userController.deleteUserById);
+router.get('/', requireLogin, requireRole('admin'), userController.getAllUsers);
+router.get('/admin', requireLogin, requireRole('admin'), userController.getAdmins);
+router.post('/', requireLogin, requireRole('admin'), userController.createUser);
+router.get('/:id', requireLogin, requireRole('admin'), userController.getUserById);
+router.patch('/:id', requireLogin, requireRole('admin'), userController.updateUserById);
+router.delete('/:id', requireLogin, requireRole('admin'), userController.deleteUserById);
 
 export default router;

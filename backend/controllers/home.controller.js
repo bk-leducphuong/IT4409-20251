@@ -1,5 +1,6 @@
 import homeService from '../services/home.service.js';
 
+// GET / - Trang chủ
 export const getHome = (req, res) => {
   const message = homeService.getHome();
 
@@ -8,6 +9,8 @@ export const getHome = (req, res) => {
     message: message,
   });
 };
+
+// GET /dashboard - Trang dashboard admin
 export const getDashboard = (req, res) => {
   const message = homeService.getDashboard();
   res.status(200).json({
