@@ -1,6 +1,5 @@
 import userService from '../services/user.service.js';
 import {errorHandler} from '../middlewares/error.middleware.js';
-import e from 'express';
 
 // GET /api/user/profile - Lấy thông tin profile người dùng
 export const getProfile = async (req, res) => {
