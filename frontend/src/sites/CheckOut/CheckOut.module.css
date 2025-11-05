@@ -1,0 +1,112 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.item > div:first-child {
+  display: flex;
+  align-items: center;
+}
+
+.item img {
+  aspect-ratio: 1 / 1;
+  height: 2rem;
+  margin-right: 1rem;
+}
+
+.checkOutContainer {
+  width: 90%;
+  max-width: 1400px;
+  justify-self: center;
+}
+
+.sectionWarpper {
+  display: flex;
+}
+
+.sectionWarpper > section {
+  flex: 1;
+}
+
+.input {
+  margin-top: 1.5rem;
+}
+
+.input > div {
+  color: grey;
+  font-size: 0.85rem;
+}
+
+.input > input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: hsl(0, 0%, 95%);
+  outline: none;
+  border: none;
+  border-radius: 5px;
+}
+
+.checkbox {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.checkbox input {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.checkbox > input:checked {
+  background-color: red;
+}
+
+.right {
+  margin-top: 3rem;
+}
+
+.width08 {
+  width: 80%;
+}
+
+.detail {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.underline {
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.payment > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment input {
+  margin-right: 0.5rem;
+}
+
+.payment i {
+  font-size: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.buttons input {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
