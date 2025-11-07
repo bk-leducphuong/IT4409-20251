@@ -1,4 +1,3 @@
-import e from 'express';
 import { getHomeService } from '../services/home.service.js';
 
 export const getHome = (req, res) => {

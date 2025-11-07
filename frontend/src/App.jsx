@@ -6,7 +6,7 @@ import Cart from './sites/Cart/Cart';
 import Dev from './sites/Dev';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
