@@ -1,0 +1,94 @@
+.loginFromContainer {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    width: 380px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid grey;
+    transition: border-bottom 0.25s;
+}
+
+.input:focus {
+    border-bottom: 1px solid red;
+}
+
+.submitButton, .googleButton {
+    border-radius: 5px;
+}
+
+.submitButton {
+    background-color: hsl(2, 64%, 58%);
+    border: none;
+    margin-top: 2rem;
+    padding: 1rem;
+    color: white;
+    transition: background-color 0.25s ease;
+}
+
+.submitButton:hover {
+    background-color: hsl(2, 64%, 48%);
+}
+
+.googleButton {
+    background-color: white;
+    border: 1px solid grey;
+    margin-top: 0.75rem;
+    padding: 1rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.25s ease;
+}
+
+.googleButton:hover {
+    background-color: hsl(0, 0%, 90%);
+}
+
+.googleImage {
+    height: 100%;
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+.formOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: grey;
+}
+
+.checkBox {
+    margin-right: 1ch;
+}
+
+.formFooter {
+    margin-top: 0.75rem;
+    text-align: center;
+    color: grey;
+}
+
+.a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.a:hover {
+    color: hsl(2, 64%, 58%);
+}
