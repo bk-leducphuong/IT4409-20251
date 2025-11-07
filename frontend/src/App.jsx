@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Login from './sites/login';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>

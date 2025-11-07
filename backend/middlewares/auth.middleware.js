@@ -15,7 +15,7 @@ export const requireLogin = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Vui lòng đăng nhập để tiếp tục!'
+        message: 'Vui lòng đăng nhập để tiếp tục!',
       });
     }
 
@@ -27,24 +27,23 @@ export const requireLogin = async (req, res, next) => {
       _id: decoded.id,
       token,
       deleted: false,
-      status: 'active'
+      status: 'active',
     });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Token không hợp lệ hoặc user không tồn tại!'
+        message: 'Token không hợp lệ hoặc user không tồn tại!',
       });
     }
 
     // Gắn user vào request
     req.user = user;
     next();
-
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Token không hợp lệ hoặc đã hết hạn!'
+      message: 'Token không hợp lệ hoặc đã hết hạn!',
     });
   }
 };
@@ -56,7 +55,7 @@ export const requireRole = (...roles) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Vui lòng đăng nhập trước!'
+        message: 'Vui lòng đăng nhập trước!',
       });
     }
 
@@ -64,7 +63,7 @@ export const requireRole = (...roles) => {
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `Chỉ ${roles.join(', ')} mới có quyền truy cập!`
+        message: `Chỉ ${roles.join(', ')} mới có quyền truy cập!`,
       });
     }
 

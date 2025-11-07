@@ -1,15 +1,13 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function Login() {
-    
-
-    return (
-        <>
-            <Navbar />
-            <Footer />
-        </>
-    );
+  return (
+    <>
+      <Navbar />
+      <Footer />
+    </>
+  );
 }
 
 export default Login;

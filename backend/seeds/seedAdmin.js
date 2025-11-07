@@ -27,7 +27,6 @@ const seedAdmin = async () => {
     await admin.save();
     console.log('🎉 Seed tài khoản admin thành công!');
     process.exit();
-
   } catch (error) {
     console.error('❌ Lỗi seed dữ liệu:', error);
     process.exit(1);

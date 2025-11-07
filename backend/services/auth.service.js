@@ -5,11 +5,9 @@ import User from '../models/user.js';
 
 // Tạo JWT Token
 const generateToken = (userId) => {
-  return jwt.sign(
-    { id: userId },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || '7d' }
-  );
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '7d',
+  });
 };
 
 // Đăng ký
@@ -45,7 +43,7 @@ export const register = async (userData) => {
     password: hashedPassword,
     phone,
     role: 'customer',
-    status: 'active'
+    status: 'active',
   });
 
   // Tạo token
@@ -57,7 +55,7 @@ export const register = async (userData) => {
 
   return {
     user: user.toJSON(),
-    token
+    token,
   };
 };
 
@@ -68,15 +66,15 @@ export const login = async (email, password) => {
     throw new Error('Vui lòng nhập email và mật khẩu!');
   }
   // Tìm user
-  const user = await User.findOne({ 
-    email, 
+  const user = await User.findOne({
+    email,
     deleted: false,
-    status: 'active'
+    status: 'active',
   }).select('+password');
   if (!user) {
     throw new Error('Email hoặc mật khẩu không đúng!');
   }
-  
+
   // So sánh password **dùng bcrypt trực tiếp**
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
@@ -92,7 +90,7 @@ export const login = async (email, password) => {
 
   return {
     user: user.toJSON(),
-    token
+    token,
   };
 };
 
@@ -104,7 +102,7 @@ export const getUserByToken = async (token) => {
       _id: decoded.id,
       token,
       deleted: false,
-      status: 'active'
+      status: 'active',
     });
 
     if (!user) {
@@ -134,5 +132,5 @@ export default {
   register,
   login,
   getUserByToken,
-  logout
+  logout,
 };

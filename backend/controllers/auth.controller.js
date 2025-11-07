@@ -9,7 +9,7 @@ export const register = async (req, res, next) => {
     if (!fullName || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng điền đầy đủ thông tin bắt buộc!'
+        message: 'Vui lòng điền đầy đủ thông tin bắt buộc!',
       });
     }
 
@@ -18,19 +18,18 @@ export const register = async (req, res, next) => {
       fullName,
       email,
       password,
-      phone
+      phone,
     });
 
     res.status(201).json({
       success: true,
       message: 'Đăng ký thành công!',
-      data: result
+      data: result,
     });
-
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -44,7 +43,7 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập email và mật khẩu!'
+        message: 'Vui lòng nhập email và mật khẩu!',
       });
     }
 
@@ -54,13 +53,12 @@ export const login = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Đăng nhập thành công!',
-      data: result
+      data: result,
     });
-
   } catch (error) {
     res.status(401).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -91,13 +89,12 @@ export const logout = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Đăng xuất thành công!'
+      message: 'Đăng xuất thành công!',
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -106,5 +103,5 @@ export default {
   register,
   login,
   // getProfile,
-  logout
+  logout,
 };
