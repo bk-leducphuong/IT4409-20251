@@ -1,11 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
 
-function Navbar({
-  currentPage = 'home',
-  numberWishListItems = 0,
-  numberCartItems = 0,
-  isLoggedin = false,
-}) {
+function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = false }) {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.container}>
       <nav className={styles.nav}>
@@ -13,20 +11,28 @@ function Navbar({
 
         <div className={styles.ulContainer}>
           <ul className={styles.ul}>
-            <li className={`${styles.li} ${currentPage === 'home' ? styles.underline : ''}`}>
-              <button className={styles.a}>Home</button>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/')}>Home</button>
             </li>
 
-            <li className={`${styles.li} ${currentPage === 'contact' ? styles.underline : ''}`}>
-              <button className={styles.a}>Contact</button>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/contact' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/contact')}>Contact</button>
             </li>
 
-            <li className={`${styles.li} ${currentPage === 'about' ? styles.underline : ''}`}>
-              <button className={styles.a}>About</button>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/about' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/about')}>About</button>
             </li>
 
-            <li className={`${styles.li} ${currentPage === 'sign up' ? styles.underline : ''}`}>
-              <button className={styles.a}>Sign Up</button>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/login')}>Sign Up</button>
             </li>
           </ul>
         </div>
@@ -37,12 +43,16 @@ function Navbar({
         </div>
 
         <div className={styles.iconContainer}>
-          <i className="fa-regular fa-heart">
-            {numberWishListItems ? <span>{numberWishListItems}</span> : null}
-          </i>
-          <i className="fa-solid fa-cart-shopping">
-            {numberCartItems ? <span>{numberCartItems}</span> : null}
-          </i>
+          <button onClick={() => navigate('/wistlist')}>
+            <i className="fa-regular fa-heart">
+              {numberWishListItems ? <span>{numberWishListItems}</span> : null}
+            </i>
+          </button>
+          <button onClick={() => navigate('/cart')}>
+            <i className="fa-solid fa-cart-shopping">
+              {numberCartItems ? <span>{numberCartItems}</span> : null}
+            </i>
+          </button>
           {isLoggedin ? (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
