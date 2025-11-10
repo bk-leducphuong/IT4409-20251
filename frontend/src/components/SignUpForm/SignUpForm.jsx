@@ -110,7 +110,7 @@ function SignUpForm({
           Create Account
         </button>
       </form>
-      <button className={styles.googleButton} onClick={signUp}>
+      <button className={styles.googleButton}>
         <img
           src="https://www.svgrepo.com/show/355037/google.svg"
           alt="Google logo"
