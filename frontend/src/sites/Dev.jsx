@@ -7,11 +7,14 @@ import Shelf from '../components/Shelf/Shelf';
 import Services from '../components/Services/Services';
 import NotFound from '../components/NotFound/NotFound';
 import Button from '../components/Button/Button';
-import useToken from '../utils/useToken';
+import Loading from '../components/Loading/Loading';
+import { useState } from 'react';
 
 function Dev() {
-  const [token, setToken] = useToken();
-  console.log(token);
+  const [isLoading, setLoading] = useState(true);
+  setTimeout(() => {
+    setLoading(false);
+  }, 10000);
 
   const titles = [
     'Sinh vien Bach Khoa',
@@ -40,8 +43,8 @@ function Dev() {
           justifyContent: 'space-around',
         }}
       >
-        <LoginForm setToken={setToken} />
-        <SignUpForm setToken={setToken} />
+        <LoginForm />
+        <SignUpForm />
       </div>
 
       <Button
@@ -64,6 +67,8 @@ function Dev() {
       <Services />
 
       <Footer />
+
+      <Loading isLoading={isLoading} />
     </>
   );
 }
