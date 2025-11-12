@@ -3,7 +3,7 @@ import validator from 'validator';
 
 export const getProfile = async (userId) => {
   try {
-    const user = await User.findById(userId).select('-password'); 
+    const user = await User.findById(userId).select('-password');
     return user;
   } catch (error) {
     throw new Error('Không thể lấy thông tin người dùng');

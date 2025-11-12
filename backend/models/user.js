@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
@@ -14,20 +14,11 @@ const userSchema = new mongoose.Schema({
     enum: ["active", "inactive", "suspended"],
     default: "active",
   },
-  role: {
-    type: String,
-    enum: ["customer", "admin"],
-    default: "customer",
+  {
+    timestamps: true,
   },
-  deleted: {
-    type: Boolean,
-    default: false,
-  },
-  deletedAt: Date,
-}, {
-  timestamps: true,
-});
+);
 
-const User = mongoose.model("User", userSchema, "users");
+const User = mongoose.model('User', userSchema, 'users');
 
 export default User;
