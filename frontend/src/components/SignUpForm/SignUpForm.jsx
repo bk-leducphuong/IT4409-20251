@@ -1,69 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
 import styles from './SignUpForm.module.css';
 
-function SignUpForm({
-  toggleState = () => console.log('button clicked'),
-  setToken = () => console.log('button clicked'),
-}) {
+function SignUpForm({ toggleState = () => console.log('button clicked') }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const signUp = useAuthStore((state) => state.signUp);
 
-  const signUp = async () => {
+  const componentSignUp = async () => {
     try {
-      if (!phoneNumber || !email || !password) {
-        alert('Hãy nhập các mục yêu cầu!');
-        return;
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Hãy nhập Email hợp lệ!');
-        setPassword('');
-        return;
-      }
-
-      if (!/^[0-9]{10,}$/.test(phoneNumber)) {
-        alert('Hãy nhập số điện thoại hợp lệ! Gồm 10 chữ số!');
-        setPassword('');
-        return;
-      }
-
-      if (!/^[a-zA-Z0-9]{8,}$/.test(password)) {
-        alert('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
-        setPassword('');
-        return;
-      }
-
-      const token = await fetch('http://localhost:5001/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName: name,
-          email,
-          password,
-          phone: phoneNumber,
-        }),
-      }).then((res) => res.json());
-
-      if (token.success) {
-        setToken(token.data.token);
-        setName('');
-        setEmail('');
-        setPhoneNumber('');
-        setPassword('');
-        navigate('/');
-      } else {
-        alert(token.message);
-        setName('');
-        setEmail('');
-        setPhoneNumber('');
-        setPassword('');
-      }
+      signUp(name, email, password, phoneNumber);
+      navigate('/');
     } catch (err) {
-      alert('Có lỗi xảy ra trong quá trình đăng nhập! Vui lòng thử lại.');
+      alert(err);
       console.error(err);
       setPassword('');
     }
@@ -106,7 +59,7 @@ function SignUpForm({
           className={styles.input}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className={styles.submitButton} onClick={signUp}>
+        <button className={styles.submitButton} onClick={componentSignUp}>
           Create Account
         </button>
       </form>

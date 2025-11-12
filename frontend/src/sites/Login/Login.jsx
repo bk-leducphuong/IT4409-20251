@@ -5,7 +5,7 @@ import LoginForm from '../../components/LoginForm/LoginForm';
 import styles from './Login.module.css';
 import { useState } from 'react';
 
-function Login({ setToken = () => console.log('button clicked') }) {
+function Login() {
   const [state, setState] = useState('sign up');
 
   function toggleState() {
@@ -26,9 +26,9 @@ function Login({ setToken = () => console.log('button clicked') }) {
         </div>
         <div className={styles.formContainer}>
           {state === 'login' ? (
-            <LoginForm toggleState={toggleState} setToken={setToken} />
+            <LoginForm toggleState={toggleState} />
           ) : (
-            <SignUpForm toggleState={toggleState} setToken={setToken} />
+            <SignUpForm toggleState={toggleState} />
           )}
         </div>
       </div>

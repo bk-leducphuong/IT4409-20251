@@ -1,50 +1,18 @@
-import styles from './LoginForm.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
+import styles from './LoginForm.module.css';
 
-function LoginForm({
-  toggleState = () => console.log('button clicked'),
-  setToken = () => console.log('button clicked'),
-}) {
+function LoginForm({ toggleState = () => console.log('button clicked') }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const login = useAuthStore((store) => store.login);
 
-  const login = async () => {
+  const componentLogin = async () => {
     try {
-      if (!email || !password) {
-        alert('Hãy nhập các mục yêu cầu!');
-        return;
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Hãy nhập Email hợp lệ!');
-        setPassword('');
-        return;
-      }
-
-      if (!/^[a-zA-Z0-9]{8,}$/.test(password)) {
-        alert('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
-        setPassword('');
-        return;
-      }
-
-      const token = await fetch('http://localhost:5001/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      }).then((res) => res.json());
-
-      if (token.success) {
-        setToken(token.data.token);
-        setEmail('');
-        setPassword('');
-        navigate('/');
-      } else {
-        alert(token.message);
-        setEmail('');
-        setPassword('');
-      }
+      login(email, password);
+      navigate('/');
     } catch (err) {
       alert('Có lỗi xảy ra trong quá trình đăng nhập! Vui lòng thử lại.');
       console.error(err);
@@ -73,7 +41,7 @@ function LoginForm({
           className={styles.input}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className={styles.submitButton} onClick={login}>
+        <button className={styles.submitButton} onClick={componentLogin}>
           Login
         </button>
       </form>
