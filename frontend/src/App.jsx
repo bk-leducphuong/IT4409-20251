@@ -1,3 +1,4 @@
+import About from './sites/About/About';
 import Login from './sites/Login/Login';
 import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
@@ -16,11 +17,11 @@ import { useUserStore } from './stores/userStore';
 import { useEffect } from 'react';
 
 function App() {
-  // return (
-  //   <BrowserRouter>
-  //     <Dev></Dev>
-  //   </BrowserRouter>
-  // );
+  //   return (
+  //     <BrowserRouter>
+  //       <Dev></Dev>
+  //     </BrowserRouter>
+  //   );
 
   useEffect(() => {
     try {
@@ -35,7 +36,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<NotImplement />}></Route>
-          <Route path="/about" element={<NotImplement />}></Route>
+          <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route element={<UserProtectedRoute />}>

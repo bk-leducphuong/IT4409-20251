@@ -8,6 +8,9 @@ import Services from '../components/Services/Services';
 import NotFound from '../components/NotFound/NotFound';
 import Button from '../components/Button/Button';
 import Loading from '../components/Loading/Loading';
+import Story from '../components/Story/Story';
+import Statistic from '../components/Statistic/Statistic';
+import Founder from '../components/Founder/Founder';
 import { useState } from 'react';
 
 function Dev() {
@@ -64,6 +67,10 @@ function Dev() {
       </Shelf>
 
       <NotFound />
+
+      <Story />
+      <Statistic />
+      <Founder />
       <Services />
 
       <Footer />
