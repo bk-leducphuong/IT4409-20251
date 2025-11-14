@@ -15,6 +15,7 @@ import { useUserStore } from './stores/userStore';
 // import { useAuthStore } from './stores/authStore';
 // import Dev from "./sites/Dev";
 import { useEffect } from 'react';
+import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
 
 function App() {
   //   return (
@@ -43,6 +44,9 @@ function App() {
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>
             <Route path="/wistlist" element={<WistList />}></Route>
+          </Route>
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin" element={<NotImplement />}></Route>
           </Route>
           <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>
