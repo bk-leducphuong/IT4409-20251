@@ -1,0 +1,35 @@
+.founderCard {
+  border-radius: 5px;
+  width: clamp(150px, 32%, 300px);
+  height: 100%;
+  overflow: hidden;
+}
+
+.imageContainer img {
+  object-fit: cover;
+  aspect-ratio: 5 / 6;
+  width: 100%;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.position {
+  font-size: 0.75rem;
+}
+
+.iconsContainer {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1ch;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  max-width: var(--max-content-width);
+  justify-self: center;
+}
