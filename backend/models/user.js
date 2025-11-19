@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     enum: ["active", "inactive", "suspended"],
     default: "active",
   },
+},
   {
     timestamps: true,
   },
