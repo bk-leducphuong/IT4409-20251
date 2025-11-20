@@ -9,28 +9,32 @@ import NotFoundPage from './sites/NotFound/NotFound';
 import WistList from './sites/WistList/WistList';
 
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
 
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useUserStore } from './stores/userStore';
 // import { useAuthStore } from './stores/authStore';
-// import Dev from "./sites/Dev";
-import { useEffect } from 'react';
-import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
+import Dev from './sites/Dev';
 
 function App() {
-  //   return (
-  //     <BrowserRouter>
-  //       <Dev></Dev>
-  //     </BrowserRouter>
-  //   );
+  const [dev] = useState(false);
 
   useEffect(() => {
-    try {
-      useUserStore.getState().loadUserData();
-    } catch (err) {
-      console.error(err);
-    }
+    if (!dev)
+      try {
+        useUserStore.getState().loadUserData();
+      } catch (err) {
+        console.error(err);
+      }
   }, []);
+
+  if (dev)
+    return (
+      <BrowserRouter>
+        <Dev></Dev>
+      </BrowserRouter>
+    );
 
   return (
     <>

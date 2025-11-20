@@ -11,6 +11,7 @@ import Loading from '../components/Loading/Loading';
 import Story from '../components/Story/Story';
 import Statistic from '../components/Statistic/Statistic';
 import Founder from '../components/Founder/Founder';
+import Admin from './Admin/Admin';
 import { useState } from 'react';
 
 function Dev() {
@@ -38,6 +39,7 @@ function Dev() {
 
   return (
     <>
+      <Admin />
       <Navbar />
 
       <div
