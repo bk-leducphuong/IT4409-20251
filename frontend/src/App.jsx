@@ -18,7 +18,7 @@ import { useUserStore } from './stores/userStore';
 import Dev from './sites/Dev';
 
 function App() {
-  const [dev] = useState(false);
+  const [dev] = useState(true);
 
   useEffect(() => {
     if (!dev)

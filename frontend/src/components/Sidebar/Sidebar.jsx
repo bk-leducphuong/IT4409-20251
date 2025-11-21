@@ -8,12 +8,12 @@ function Sidebar() {
         <ul>
           <li>
             <button>
-              <i className="fa-solid fa-chart-pie w-5"></i> Dashboard
+              <i className="fa-solid fa-chart-pie w-5"></i> Bảng điều khiển
             </button>
           </li>
           <li>
             <button>
-              <i className="fa-solid fa-user"></i> Users
+              <i className="fa-solid fa-user"></i> Người dùng
             </button>
           </li>
         </ul>
@@ -21,8 +21,8 @@ function Sidebar() {
       <footer>
         <div>AD</div>
         <div>
-          <div>Admin User</div>
-          <div>Hello Admin</div>
+          <div>Quản trị viên</div>
+          <div>Xin chào Admin</div>
         </div>
         <button>
           <i className="fa-solid fa-arrow-right-from-bracket"></i>

@@ -1,0 +1,140 @@
+.usersReport {
+  padding: 1rem;
+}
+
+.usersReport button {
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 2ch;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.usersReport button:hover {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.blackBtn {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.blueBtn {
+  background-color: hsl(195, 79%, 53%);
+  color: white;
+}
+
+.greenBtn {
+  background-color: hsl(127, 86%, 51%);
+  color: white;
+}
+
+.redBtn {
+  background-color: red;
+  color: white;
+}
+
+.redBtn:hover {
+  background-color: hsl(0, 100%, 40%) !important;
+}
+
+.usersReport i {
+  font-size: 1rem;
+  margin-right: 1ch;
+}
+
+.usersReport header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.usersReport header p {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+.usersReport main > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.usersReport main input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+  width: clamp(250px, 50%, 500px);
+}
+
+.usersReport main table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.usersReport main table thead {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.usersReport main table thead * {
+  padding: 0.5rem 0;
+}
+
+.usersReport main table tbody {
+  text-align: center;
+}
+
+.usersReport main table tbody tr {
+  border: 1px solid #edf2f7;
+}
+
+.usersReport main table tbody tr td {
+  padding: 0.5rem 0;
+}
+
+.usersReport main table tbody tr:nth-child(even) {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.avatar {
+  width: fit-content;
+  display: flex;
+  margin-left: 3ch;
+  gap: 3ch;
+  align-items: center;
+}
+
+.avatar img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.name,
+.email {
+  text-align: start;
+}
+
+.name {
+  font-size: 1.1rem;
+}
+
+.email {
+  font-size: 0.7rem;
+  color: grey;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+}
