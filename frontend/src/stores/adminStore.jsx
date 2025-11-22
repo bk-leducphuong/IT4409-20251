@@ -26,7 +26,7 @@ export const useAdminStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  getAdmin: async () => {
+  getAdmins: async () => {
     set({ isLoading: true });
     try {
       return await getAdmins();

@@ -19,6 +19,12 @@ export const getUserById = async (id) => {
 };
 
 export const updateUser = async (id, user) => {
+  if (!user.fullName || !user.email || !user.phone || !user.status) {
+    throw new Error('Hãy nhập đầy đủ thông tin!');
+  }
+  if (user.status !== 'active' && user.status !== 'inactive') {
+    throw new Error('Trường trạng thái không hợp lệ! Hãy nhập "active" hoặc "inactive"');
+  }
   return await apiFetch(`/users/${id}.json`, { method: 'PATCH', body: JSON.stringify(user) });
 };
 
