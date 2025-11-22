@@ -37,6 +37,7 @@ export default [
       'prettier/prettier': 'warn',
       'react/react-in-jsx-scope': 'off', // React 17+ JSX transform
       'no-console': 'off',
+      'no-unused-vars': 'warn',
     },
     settings: {
       react: { version: 'detect' },

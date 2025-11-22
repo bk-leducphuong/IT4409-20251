@@ -3,19 +3,201 @@ const router = express.Router();
 import cartController from '../controllers/cart.controller.js';
 import { requireLogin } from '../middlewares/auth.middleware.js';
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CartItem:
+ *       type: object
+ *       properties:
+ *         product_variant_id:
+ *           type: string
+ *           description: Product variant ID
+ *         quantity:
+ *           type: integer
+ *           minimum: 1
+ *           description: Quantity of the item
+ *     Cart:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Cart ID
+ *         user_id:
+ *           type: string
+ *           description: User ID
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CartItem'
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+
 // All cart routes require authentication
 router.use(requireLogin);
 
-// GET /api/cart - Get user's current cart
+/**
+ * @swagger
+ * /api/cart:
+ *   get:
+ *     summary: Get user's current cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User's cart
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Cart'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart not found
+ */
 router.get('/', cartController.getCart);
 
-// POST /api/cart/items - Add item to cart
+/**
+ * @swagger
+ * /api/cart/items:
+ *   post:
+ *     summary: Add item to cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - product_variant_id
+ *               - quantity
+ *             properties:
+ *               product_variant_id:
+ *                 type: string
+ *                 description: Product variant ID to add
+ *                 example: 507f1f77bcf86cd799439011
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Quantity to add
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Item added to cart successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Cart'
+ *       400:
+ *         description: Invalid input or insufficient stock
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product variant not found
+ */
 router.post('/items', cartController.addItem);
 
-// PUT /api/cart/items/:productVariantId - Update item quantity
+/**
+ * @swagger
+ * /api/cart/items/{productVariantId}:
+ *   put:
+ *     summary: Update item quantity in cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productVariantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product variant ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - quantity
+ *             properties:
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: New quantity
+ *                 example: 3
+ *     responses:
+ *       200:
+ *         description: Item quantity updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Cart'
+ *       400:
+ *         description: Invalid input or insufficient stock
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart or item not found
+ */
 router.put('/items/:productVariantId', cartController.updateItemQuantity);
 
-// DELETE /api/cart/items/:productVariantId - Remove item from cart
+/**
+ * @swagger
+ * /api/cart/items/{productVariantId}:
+ *   delete:
+ *     summary: Remove item from cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productVariantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product variant ID to remove
+ *     responses:
+ *       200:
+ *         description: Item removed from cart successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Cart'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart or item not found
+ */
 router.delete('/items/:productVariantId', cartController.removeItem);
 
 export default router;
