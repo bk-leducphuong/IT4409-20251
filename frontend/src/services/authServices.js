@@ -1,3 +1,5 @@
+import apiFetch from '../libs/apiFetch';
+
 const TOKEN_NAME = 'token';
 const setToken = (token) => localStorage.setItem(TOKEN_NAME, token);
 export const getToken = () => localStorage.getItem(TOKEN_NAME);
@@ -20,22 +22,34 @@ export const signUp = async (fullName, email, password, phone) => {
     throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
   }
 
-  const res = await fetch('http://localhost:5001/api/auth/register', {
+  // const res = await fetch('http://localhost:5001/api/auth/register', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     fullName,
+  //     email,
+  //     password,
+  //     phone,
+  //   }),
+  // }).then((res) => res.json());
+
+  // if (res.success) {
+  //   setToken(res.data.token);
+  // } else {
+  //   throw new Error(res.message);
+  // }
+
+  const res = await apiFetch('http://localhost:5001/api/auth/register', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       fullName,
       email,
       password,
       phone,
     }),
-  }).then((res) => res.json());
+  });
 
-  if (res.success) {
-    setToken(res.data.token);
-  } else {
-    throw new Error(res.message);
-  }
+  setToken(res.data.token);
 };
 
 export const login = async (email, password) => {
@@ -51,15 +65,22 @@ export const login = async (email, password) => {
     throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
   }
 
-  const res = await fetch('http://localhost:5001/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  }).then((res) => res.json());
+  // const res = await fetch('http://localhost:5001/api/auth/login', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ email, password }),
+  // }).then((res) => res.json());
 
-  if (res.success) {
-    setToken(res.data.token);
-  } else {
-    throw new Error(res.message);
-  }
+  // if (res.success) {
+  //   setToken(res.data.token);
+  // } else {
+  //   throw new Error(res.message);
+  // }
+
+  const res = await apiFetch('http://localhost:5001/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+
+  setToken(res.data.token);
 };

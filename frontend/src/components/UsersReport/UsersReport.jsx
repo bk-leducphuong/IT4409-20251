@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useAdminStore } from '../../stores/adminStore';
 import styles from './UsersReport.module.css';
 
 function UsersReport() {
   const [name, setName] = useState('');
   const [users, setUsers] = useState(null);
+  const getUsers = useAdminStore((state) => state.getUsers);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const res = await fetch('users.json');
-        const data = await res.json();
-        setUsers(data.data.users);
-        console.log('Fetched users sucessfully!');
+        const res = await getUsers();
+        // const res = await fetch('/users.json').then((res) => res.json());
+        console.log(res.data.users);
+        setUsers(res.data.users);
       } catch (error) {
         console.log(error);
       }
