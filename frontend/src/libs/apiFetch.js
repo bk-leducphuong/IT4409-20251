@@ -1,4 +1,4 @@
-import { useAuthStore } from '../stores/authStore';
+import { getToken } from '../services/authServices';
 
 const BASE_URL = 'http://localhost:5001/api';
 
@@ -11,7 +11,7 @@ async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
     'Content-Type': 'application/json',
   };
 
-  const token = useAuthStore.getState().token;
+  const token = getToken();
   if (token) {
     options.headers.Authorization = `Bearer ${token}`;
   }

@@ -1,10 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
+import { useAuthStore } from '../../stores/authStore';
 import styles from './Navbar.module.css';
 
 function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+  const resetToken = useAuthStore((state) => state.resetToken);
   const userData = useUserStore((state) => state.data);
+  const resetUser = useUserStore((state) => state.resetUser);
+
+  async function componentLogout() {
+    try {
+      await logout();
+      resetToken();
+      resetUser();
+      navigate('/');
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -64,22 +80,27 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
           {userData ? (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
-                <div>
+                <button>
                   <i className="fa-solid fa-circle-user"></i>
                   Manage my account
-                </div>
-                <div>
+                </button>
+                <button>
                   <i className="fa-solid fa-basket-shopping"></i>
                   My order
-                </div>
-                <div>
+                </button>
+                <button>
                   <i className="fa-solid fa-xmark"></i>
                   My cancellations
-                </div>
-                <div>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    componentLogout();
+                  }}
+                >
                   <i className="fa-solid fa-arrow-right-from-bracket"></i>
                   Logout
-                </div>
+                </button>
               </div>
             </i>
           ) : (

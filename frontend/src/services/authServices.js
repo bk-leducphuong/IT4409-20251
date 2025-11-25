@@ -57,3 +57,11 @@ export const login = async (email, password) => {
   setToken(res.data.token);
   return res;
 };
+
+export const logout = async () => {
+  if (!getToken()) throw new Error('Bạn chưa đăng nhập!');
+
+  const res = await apiFetch('/auth/logout', { method: 'POST' });
+
+  return res;
+};

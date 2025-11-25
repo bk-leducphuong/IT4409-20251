@@ -13,4 +13,5 @@ export const useUserStore = create((set) => ({
       set({ isLoading: false });
     }
   },
+  resetUser: () => set({ data: null }),
 }));
