@@ -1,45 +1,86 @@
-import styles from "./Navbar.module.css";
+import { useNavigate } from 'react-router-dom';
+import styles from './Navbar.module.css';
 
-function Navbar() {
+function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = false }) {
+  const navigate = useNavigate();
 
-    return (
-        <div className={styles.container}>
-            <nav className={styles.nav}>
-                <div className={styles.logo}>Exclusive</div>
+  return (
+    <div className={styles.container}>
+      <nav className={styles.nav}>
+        <div className={styles.logo}>Exclusive</div>
 
-                <div className={styles.ulContainer}>
-                    <ul className={styles.ul}>
-                        <li className={styles.li}>
-                            <a href="#" className={styles.a}>Home</a>
-                        </li>
+        <div className={styles.ulContainer}>
+          <ul className={styles.ul}>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/')}>Home</button>
+            </li>
 
-                        <li className={styles.li}>
-                            <a href="#" className={styles.a}>Contact</a>
-                        </li>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/contact' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/contact')}>Contact</button>
+            </li>
 
-                        <li className={styles.li}>
-                            <a href="#" className={styles.a}>About</a>
-                        </li>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/about' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/about')}>About</button>
+            </li>
 
-                        <li className={styles.li}>
-                            <a href="#" className={styles.a}>Sign Up</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div className={styles.inputContainer}>
-                    <input type="text" placeholder="What are you looking for?" className={styles.input}/>
-                    <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
-                </div>
-
-                <div className={styles.iconContainer}>
-                    <i className="fa-regular fa-heart"></i>
-                    <i className="fa-solid fa-cart-shopping"></i>
-                    <i className="fa-solid fa-circle-user"></i>
-                </div>
-            </nav>
+            <li
+              className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
+            >
+              <button onClick={() => navigate('/login')}>Sign Up</button>
+            </li>
+          </ul>
         </div>
-    );
+
+        <div className={styles.inputContainer}>
+          <input type="text" placeholder="What are you looking for?" className={styles.input} />
+          <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
+        </div>
+
+        <div className={styles.iconContainer}>
+          <button onClick={() => navigate('/wistlist')}>
+            <i className="fa-regular fa-heart">
+              {numberWishListItems ? <span>{numberWishListItems}</span> : null}
+            </i>
+          </button>
+          <button onClick={() => navigate('/cart')}>
+            <i className="fa-solid fa-cart-shopping">
+              {numberCartItems ? <span>{numberCartItems}</span> : null}
+            </i>
+          </button>
+          {isLoggedin ? (
+            <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
+              <div>
+                <div>
+                  <i className="fa-solid fa-circle-user"></i>
+                  Manage my account
+                </div>
+                <div>
+                  <i className="fa-solid fa-basket-shopping"></i>
+                  My order
+                </div>
+                <div>
+                  <i className="fa-solid fa-xmark"></i>
+                  My cancellations
+                </div>
+                <div>
+                  <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                  Logout
+                </div>
+              </div>
+            </i>
+          ) : (
+            <i className={`fa-solid fa-circle-user ${styles.hidden}`}></i>
+          )}
+        </div>
+      </nav>
+    </div>
+  );
 }
 
 export default Navbar;
