@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { addItem, deleteItem, getCart, updateQuantity } from '../services/cartServices';
 
 export const useCartStore = create((set) => ({
+  data: null,
   isLoading: false,
   getCart: async () => {
     set({ isLoading: true });
     try {
-      return await getCart();
+      const cart = await getCart();
+      set({ data: cart.data.items });
+      return cart;
     } finally {
       set({ isLoading: false });
     }
@@ -14,7 +17,10 @@ export const useCartStore = create((set) => ({
   addItemToCart: async (itemId, quantity = 1) => {
     set({ isLoading: true });
     try {
-      return await addItem(itemId, quantity);
+      await addItem(itemId, quantity);
+      const newCard = await getCart();
+      set({ data: newCard.data.items });
+      return newCard;
     } finally {
       set({ isLoading: false });
     }
@@ -22,7 +28,10 @@ export const useCartStore = create((set) => ({
   updateItemQuantity: async (itemId, quantity) => {
     set({ isLoading: true });
     try {
-      return await updateQuantity(itemId, quantity);
+      await updateQuantity(itemId, quantity);
+      const newCard = await getCart();
+      set({ data: newCard.data.items });
+      return newCard;
     } finally {
       set({ isLoading: false });
     }
@@ -30,7 +39,10 @@ export const useCartStore = create((set) => ({
   removeItemFromCart: async (itemId) => {
     set({ isLoading: true });
     try {
-      return await deleteItem(itemId);
+      await deleteItem(itemId);
+      const newCard = await getCart();
+      set({ data: newCard.data.items });
+      return newCard;
     } finally {
       set({ isLoading: false });
     }
