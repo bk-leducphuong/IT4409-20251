@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../stores/userStore';
 import styles from './Navbar.module.css';
 
-function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = false }) {
+function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
   const navigate = useNavigate();
+  const userData = useUserStore((state) => state.data);
 
   return (
     <div className={styles.container}>
@@ -32,7 +34,13 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = fal
             <li
               className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
             >
-              <button onClick={() => navigate('/login')}>Sign Up</button>
+              <button
+                onClick={() =>
+                  userData ? alert('You have already logged in') : navigate('/login')
+                }
+              >
+                Sign Up
+              </button>
             </li>
           </ul>
         </div>
@@ -53,7 +61,7 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = fal
               {numberCartItems ? <span>{numberCartItems}</span> : null}
             </i>
           </button>
-          {isLoggedin ? (
+          {userData ? (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
                 <div>

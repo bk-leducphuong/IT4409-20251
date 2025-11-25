@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useUserStore } from '../../stores/userStore';
 import styles from './SignUpForm.module.css';
 
 function SignUpForm({ toggleState = () => console.log('button clicked') }) {
@@ -10,10 +11,12 @@ function SignUpForm({ toggleState = () => console.log('button clicked') }) {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const signUp = useAuthStore((state) => state.signUp);
+  const loadUserData = useUserStore((state) => state.loadUserData);
 
   const componentSignUp = async () => {
     try {
-      signUp(name, email, password, phoneNumber);
+      await signUp(name, email, password, phoneNumber);
+      await loadUserData();
       navigate('/');
     } catch (err) {
       alert(err);
@@ -59,7 +62,13 @@ function SignUpForm({ toggleState = () => console.log('button clicked') }) {
           className={styles.input}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className={styles.submitButton} onClick={componentSignUp}>
+        <button
+          className={styles.submitButton}
+          onClick={(e) => {
+            e.preventDefault();
+            componentSignUp();
+          }}
+        >
           Create Account
         </button>
       </form>
