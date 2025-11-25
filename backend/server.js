@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import pinoHttp from 'pino-http';
+import logger from './logger.js';
 
 const options = {
   definition: {
@@ -56,6 +58,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Logger
+app.use(pinoHttp({ logger }));
 
 // Routes
 
