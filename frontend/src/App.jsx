@@ -6,6 +6,7 @@ import Contact from './sites/Contact/Contact';
 import Loading from './components/Loading/Loading';
 import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
+import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
 
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
@@ -22,11 +23,13 @@ function App() {
 
   useEffect(() => {
     if (!dev)
-      try {
-        useUserStore.getState().loadUserData();
-      } catch (err) {
-        console.error(err);
-      }
+      (async () => {
+        try {
+          await useUserStore.getState().loadUserData();
+        } catch (err) {
+          console.error(err);
+        }
+      })();
   }, []);
 
   if (dev)
@@ -47,6 +50,7 @@ function App() {
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>
+            <Route path="/user" element={<User />}></Route>
             <Route path="/wistlist" element={<WistList />}></Route>
           </Route>
           <Route element={<AdminProtectedRoute />}>

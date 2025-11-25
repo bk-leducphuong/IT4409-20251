@@ -80,7 +80,12 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
           {userData ? (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
-                <button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/user');
+                  }}
+                >
                   <i className="fa-solid fa-circle-user"></i>
                   Manage my account
                 </button>
