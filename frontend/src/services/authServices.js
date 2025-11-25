@@ -22,24 +22,7 @@ export const signUp = async (fullName, email, password, phone) => {
     throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
   }
 
-  // const res = await fetch('http://localhost:5001/api/auth/register', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({
-  //     fullName,
-  //     email,
-  //     password,
-  //     phone,
-  //   }),
-  // }).then((res) => res.json());
-
-  // if (res.success) {
-  //   setToken(res.data.token);
-  // } else {
-  //   throw new Error(res.message);
-  // }
-
-  const res = await apiFetch('http://localhost:5001/api/auth/register', {
+  const res = await apiFetch('/auth/register', {
     method: 'POST',
     body: JSON.stringify({
       fullName,
@@ -50,6 +33,7 @@ export const signUp = async (fullName, email, password, phone) => {
   });
 
   setToken(res.data.token);
+  return res;
 };
 
 export const login = async (email, password) => {
@@ -65,22 +49,11 @@ export const login = async (email, password) => {
     throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
   }
 
-  // const res = await fetch('http://localhost:5001/api/auth/login', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ email, password }),
-  // }).then((res) => res.json());
-
-  // if (res.success) {
-  //   setToken(res.data.token);
-  // } else {
-  //   throw new Error(res.message);
-  // }
-
-  const res = await apiFetch('http://localhost:5001/api/auth/login', {
+  const res = await apiFetch('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
 
   setToken(res.data.token);
+  return res;
 };

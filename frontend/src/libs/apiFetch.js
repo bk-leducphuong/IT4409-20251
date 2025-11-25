@@ -1,6 +1,6 @@
 import { useAuthStore } from '../stores/authStore';
 
-const BASE_URL = '';
+const BASE_URL = 'http://localhost:5001/api';
 
 async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
   /* REQUEST INTERCEPTOR */
@@ -25,7 +25,13 @@ async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
       ]);
 
       /* RESPONSE INTERCEPTOR */
-      const res = await response.json();
+      let res;
+      try {
+        res = await response.json();
+      } catch {
+        return null;
+      }
+
       if (!res.success) {
         throw new Error(res.message || 'Lỗi không xác định!');
       }

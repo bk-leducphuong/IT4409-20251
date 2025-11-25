@@ -8,7 +8,7 @@ export const useUserStore = create((set) => ({
     set({ isLoading: true });
     try {
       const data = await getProfile();
-      set({ data: data });
+      set({ data: data.data });
     } finally {
       set({ isLoading: false });
     }
