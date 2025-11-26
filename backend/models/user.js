@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,22 +12,21 @@ const userSchema = new mongoose.Schema(
     avatar: String,
     status: {
       type: String,
-      enum: ['active', 'inactive', 'suspended'],
-      default: 'active',
+      enum: ["active", "inactive", "suspended"],
+      default: "active",
     },
+    role: {
+      type: String,
+      enum: ["admin", "customer"],
+      default: "customer",
+    },
+    deleted: { type: Boolean, default: false },
   },
-  role: {
-    type: String,
-    enum: ["admin", "customer"],
-    default: "customer",
-  },
-  deleted: { type: Boolean, default: false },
-},
   {
     timestamps: true,
-  },
+  }
 );
 
-const User = mongoose.model('User', userSchema, 'users');
+const User = mongoose.model("User", userSchema, "users");
 
 export default User;
