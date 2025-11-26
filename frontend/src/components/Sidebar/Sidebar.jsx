@@ -8,12 +8,27 @@ function Sidebar() {
         <ul>
           <li>
             <button>
-              <i className="fa-solid fa-chart-pie w-5"></i> Bảng điều khiển
+              <i className="fa-solid fa-chart-pie w-5"></i> Dashborad
             </button>
           </li>
           <li>
             <button>
-              <i className="fa-solid fa-user"></i> Người dùng
+              <i className="fa-solid fa-user"></i> Users
+            </button>
+          </li>
+          <li>
+            <button>
+              <i className="fa-solid fa-user"></i> Products
+            </button>
+          </li>
+          <li>
+            <button>
+              <i className="fa-solid fa-user"></i> Brands
+            </button>
+          </li>
+          <li>
+            <button>
+              <i className="fa-solid fa-user"></i> Catagory
             </button>
           </li>
         </ul>
@@ -21,8 +36,8 @@ function Sidebar() {
       <footer>
         <div>AD</div>
         <div>
-          <div>Quản trị viên</div>
-          <div>Xin chào Admin</div>
+          <div>Admin</div>
+          <div>Hello Admin</div>
         </div>
         <button>
           <i className="fa-solid fa-arrow-right-from-bracket"></i>

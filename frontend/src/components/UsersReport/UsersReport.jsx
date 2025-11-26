@@ -70,27 +70,27 @@ function UsersReport() {
     <div className={styles.usersReport}>
       <header>
         <div>
-          <h1>Quản lý người dùng</h1>
-          <p>Quản lý truy cập, vai trò và trạng thái tài khoản người dùng.</p>
+          <h1>Users management</h1>
+          <p>Manage access, roles and users status.</p>
         </div>
-        <button className={styles.blackBtn}>+ Thêm người dùng mới</button>
+        <button className={styles.blackBtn}>+ Add new user</button>
       </header>
 
       <main>
         <section>
           <div>
             <input
-              placeholder="Tìm kiếm người dùng"
+              placeholder="Find user"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <div className={styles.buttonsContainer}>
               <button>
-                <i className="fa-solid fa-magnifying-glass"></i>Tìm kiếm
+                <i className="fa-solid fa-magnifying-glass"></i>Find
               </button>
               <button onClick={fetchUsers}>
-                <i className="fa-solid fa-arrows-rotate"></i>Làm mới
+                <i className="fa-solid fa-arrows-rotate"></i>Refresh
               </button>
             </div>
           </div>
@@ -98,11 +98,11 @@ function UsersReport() {
           <table>
             <thead>
               <tr>
-                <th>Tên</th>
-                <th>Sđt</th>
-                <th>Trạng thái</th>
-                <th>Vai trò</th>
-                <th>Thao tác</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>State</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -119,13 +119,13 @@ function UsersReport() {
                       </div>
                     </td>
                     <td>{user.phone}</td>
-                    <td>{user.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</td>
+                    <td>{user.status}</td>
                     <td>Người dùng</td>
                     <td>
                       <div className={styles.buttonsContainer}>
-                        <button onClick={() => setEditingUser({ ...user })}>Sửa</button>
+                        <button onClick={() => setEditingUser({ ...user })}>Edit</button>
                         <button className={styles.redBtn} onClick={() => setDeletingUser(user)}>
-                          Xóa
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -138,17 +138,17 @@ function UsersReport() {
         <section>
           <div>
             <input
-              placeholder="Tìm kiếm người quản trị"
+              placeholder="Find admin"
               type="text"
               value={adminName}
               onChange={(e) => setAdminName(e.target.value)}
             />
             <div className={styles.buttonsContainer}>
               <button>
-                <i className="fa-solid fa-magnifying-glass"></i>Tìm kiếm
+                <i className="fa-solid fa-magnifying-glass"></i>Find
               </button>
               <button onClick={fetchAdmins}>
-                <i className="fa-solid fa-arrows-rotate"></i>Làm mới
+                <i className="fa-solid fa-arrows-rotate"></i>Refresh
               </button>
             </div>
           </div>
@@ -156,11 +156,11 @@ function UsersReport() {
           <table>
             <thead>
               <tr>
-                <th>Tên</th>
-                <th>Sđt</th>
-                <th>Trạng thái</th>
-                <th>Vai trò</th>
-                <th>Thao tác</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>State</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -177,13 +177,13 @@ function UsersReport() {
                       </div>
                     </td>
                     <td>{user.phone}</td>
-                    <td>{user.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}</td>
-                    <td>Quản trị viên</td>
+                    <td>{user.status}</td>
+                    <td>Admin</td>
                     <td>
                       <div className={styles.buttonsContainer}>
-                        <button onClick={() => setEditingUser({ ...user })}>Sửa</button>
+                        <button onClick={() => setEditingUser({ ...user })}>Edit</button>
                         <button className={styles.redBtn} onClick={() => setDeletingUser(user)}>
-                          Xóa
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -197,12 +197,12 @@ function UsersReport() {
       {deletingUser && (
         <div className={styles.confirmOverlay}>
           <div>
-            <h2>{`Xác nhận xóa người dùng ${deletingUser.fullName}?`}</h2>
+            <h2>{`Are you sure you want to delete user ${deletingUser.fullName}?`}</h2>
             <div className={styles.buttonsContainer}>
               <button className={styles.redBtn} onClick={handleDeleteUser}>
-                Xóa
+                Delete
               </button>
-              <button onClick={() => setDeletingUser(null)}>Hủy</button>
+              <button onClick={() => setDeletingUser(null)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -211,13 +211,13 @@ function UsersReport() {
       {editingUser && (
         <div className={styles.confirmOverlay}>
           <div className={styles.form}>
-            <h2>Cập nhật thông tin</h2>
+            <h2>Update infomations</h2>
 
             <div>
               <div>Tên:</div>
               <input
                 type="text"
-                placeholder="Nhập tên người dùng"
+                placeholder="Enter username"
                 value={editingUser.fullName}
                 onChange={(e) => setEditingUser({ ...editingUser, fullName: e.target.value })}
               />
@@ -227,45 +227,45 @@ function UsersReport() {
               <div>Gmail:</div>
               <input
                 type="email"
-                placeholder="Nhập email người dùng"
+                placeholder="Enter user's email"
                 value={editingUser.email}
                 onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
               />
             </div>
 
             <div>
-              <div>Sđt:</div>
+              <div>Phone Number:</div>
               <input
                 type="text"
-                placeholder="Nhập sđt người dùng"
+                placeholder="Enter user's phone number"
                 value={editingUser.phone}
                 onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
               />
             </div>
 
             <div>
-              <div>Địa chỉ:</div>
+              <div>Address:</div>
               <input
                 type="text"
-                placeholder="Nhập địa chỉ người dùng"
+                placeholder="Enter user's address"
                 value={editingUser.address}
                 onChange={(e) => setEditingUser({ ...editingUser, address: e.target.value })}
               />
             </div>
 
             <div>
-              <div>Trạng thái:</div>
+              <div>State:</div>
               <input
                 type="text"
-                placeholder="Nhập tên người dùng"
+                placeholder="Enter user's state active or inactive"
                 value={editingUser.status}
                 onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
               />
             </div>
 
             <div className={styles.buttonsContainer}>
-              <button onClick={handleUpdateUser}>Lưu thay đổi</button>
-              <button onClick={() => setEditingUser(null)}>Hủy</button>
+              <button onClick={handleUpdateUser}>Save changes</button>
+              <button onClick={() => setEditingUser(null)}>Cancel</button>
             </div>
           </div>
         </div>
