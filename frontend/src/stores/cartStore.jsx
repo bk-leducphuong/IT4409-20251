@@ -8,7 +8,7 @@ export const useCartStore = create((set) => ({
     set({ isLoading: true });
     try {
       const cart = await getCart();
-      set({ data: cart.data.items });
+      set({ data: cart.data.cart.items });
       return cart;
     } finally {
       set({ isLoading: false });
@@ -19,7 +19,7 @@ export const useCartStore = create((set) => ({
     try {
       await addItem(itemId, quantity);
       const newCard = await getCart();
-      set({ data: newCard.data.items });
+      set({ data: newCard.data.cart.items });
       return newCard;
     } finally {
       set({ isLoading: false });
@@ -30,7 +30,7 @@ export const useCartStore = create((set) => ({
     try {
       await updateQuantity(itemId, quantity);
       const newCard = await getCart();
-      set({ data: newCard.data.items });
+      set({ data: newCard.data.cart.items });
       return newCard;
     } finally {
       set({ isLoading: false });
@@ -41,7 +41,7 @@ export const useCartStore = create((set) => ({
     try {
       await deleteItem(itemId);
       const newCard = await getCart();
-      set({ data: newCard.data.items });
+      set({ data: newCard.data.cart.items });
       return newCard;
     } finally {
       set({ isLoading: false });

@@ -83,12 +83,12 @@
   font-size: 1.5rem;
 }
 
-.iconContainer > i {
+.iconContainer i {
   position: relative;
   cursor: pointer;
 }
 
-.iconContainer > i > span {
+.iconContainer i > span {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,10 +106,6 @@
 
 .hidden {
   visibility: hidden;
-}
-
-.dropbar {
-  position: relative;
 }
 
 .dropbar > div {

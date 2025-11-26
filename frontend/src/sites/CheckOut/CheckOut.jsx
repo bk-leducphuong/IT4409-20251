@@ -1,6 +1,8 @@
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button/Button';
+import { useEffect } from 'react';
+import { useCartStore } from '../../stores/cartStore';
 import styles from './CheckOut.module.css';
 
 function CheckOutItem({ image, productName, totalPrice }) {
@@ -16,21 +18,13 @@ function CheckOutItem({ image, productName, totalPrice }) {
 }
 
 function CheckOut() {
-  const exampleData = [
-    {
-      image: 'https://sc04.alicdn.com/kf/Hcb90256847954da7a90b3ce53d76d9c3r.jpg',
-      productName: 'LCD Monitor',
-      newPrice: 650,
-    },
-    {
-      image:
-        'https://th.bing.com/th/id/R.8d1e0199c5ebe4fab3e5fee28aa0dbda?rik=sQ7TrFvVmvzNzA&pid=ImgRaw&r=0',
-      productName: 'H1 GamePad',
-      newPrice: 550,
-    },
-  ];
+  const cart = useCartStore((state) => state.data);
+  const loadCart = useCartStore((state) => state.getCart);
+  const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
 
-  const total = exampleData.reduce((sum, item) => sum + item.newPrice, 0);
+  useEffect(() => {
+    loadCart();
+  }, []);
 
   return (
     <>
@@ -77,13 +71,13 @@ function CheckOut() {
 
           <section className={styles.right}>
             <div className={`${styles.details} ${styles.width08}`}>
-              {exampleData.map((data, i) => {
+              {cart.map((item) => {
                 return (
                   <CheckOutItem
-                    key={i}
-                    image={data.image}
-                    productName={data.productName}
-                    totalPrice={data.newPrice}
+                    key={item.product_variant_id._id}
+                    image={item.product_variant_id.main_image_url}
+                    productName={item.product_variant_id.product_id.name}
+                    totalPrice={item.product_variant_id.price * item.quantity}
                   />
                 );
               })}
