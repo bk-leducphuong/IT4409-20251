@@ -8,6 +8,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       await login(email, password);
+      set({ token: getToken() });
     } finally {
       set({ isLoading: false });
     }
@@ -21,14 +22,12 @@ export const useAuthStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  resetToken: () => {
-    resetToken();
-    set({ token: null });
-  },
   logout: async () => {
     set({ isLoading: true });
     try {
       await logout();
+      resetToken();
+      set({ token: null });
     } finally {
       set({ isLoading: false });
     }

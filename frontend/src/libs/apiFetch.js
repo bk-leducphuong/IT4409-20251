@@ -1,4 +1,4 @@
-import { getToken } from '../services/authServices';
+import { getToken } from './storage';
 
 const BASE_URL = 'http://localhost:5001/api';
 

@@ -7,8 +7,9 @@ export const useUserStore = create((set) => ({
   loadUserData: async () => {
     set({ isLoading: true });
     try {
-      const data = await getProfile();
-      set({ data: data.data.user });
+      const res = await getProfile();
+      set({ data: res.data.user });
+      return res;
     } finally {
       set({ isLoading: false });
     }
@@ -17,7 +18,10 @@ export const useUserStore = create((set) => ({
   updateUser: async (user) => {
     set({ isLoading: true });
     try {
-      return await updateUser(user);
+      await updateUser(user);
+      const res = await getProfile();
+      set({ data: res.data.user });
+      return res;
     } finally {
       set({ isLoading: false });
     }

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { addItem, deleteItem, getCart, updateQuantity } from '../services/cartServices';
 
 export const useCartStore = create((set) => ({
-  data: null,
+  data: [],
   isLoading: false,
   getCart: async () => {
     set({ isLoading: true });
@@ -47,4 +47,5 @@ export const useCartStore = create((set) => ({
       set({ isLoading: false });
     }
   },
+  resetCart: () => set({ data: [] }),
 }));

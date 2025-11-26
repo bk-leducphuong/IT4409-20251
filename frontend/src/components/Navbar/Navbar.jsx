@@ -1,19 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
+import { useCartStore } from '../../stores/cartStore';
 import styles from './Navbar.module.css';
 
-function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
+function Navbar({ numberWishListItems = 0 }) {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
-  const resetToken = useAuthStore((state) => state.resetToken);
   const userData = useUserStore((state) => state.data);
   const resetUser = useUserStore((state) => state.resetUser);
+  const cartData = useCartStore((state) => state.data);
 
   async function componentLogout() {
     try {
       await logout();
-      resetToken();
       resetUser();
       navigate('/');
     } catch (err) {
@@ -74,7 +74,7 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0 }) {
           </button>
           <button onClick={() => navigate('/cart')}>
             <i className="fa-solid fa-cart-shopping">
-              {numberCartItems ? <span>{numberCartItems}</span> : null}
+              {cartData.length > 0 ? <span>{cartData.length}</span> : null}
             </i>
           </button>
           {userData ? (
