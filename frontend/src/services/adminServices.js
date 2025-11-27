@@ -150,5 +150,5 @@ export const updateCategory = async (id, name, slug, parent_category_id = null) 
 export const deleteCategory = async (id) => {
   if (!id) throw new Error('All feilds are required!');
 
-  return await apiFetch(`/admin/catogories/${id}`, { method: 'DELETE' });
+  return await apiFetch(`/admin/categories/${id}`, { method: 'DELETE' });
 };
