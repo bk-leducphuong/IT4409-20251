@@ -7,8 +7,11 @@ export const getUsers = async (page = 1, limit = 20) => {
 };
 
 export const createUser = async (fullName, email, password, phone, address, status = 'active') => {
-  if (!fullName || !email || !password || !phone || !address)
+  console.log({ fullName, email, password, phone, address, status });
+  if (!fullName || !email || !password || !phone || !address || !status)
     throw new Error('All feilds are required!');
+  if (status !== 'active' && status !== 'inactive')
+    throw new Error('Incorrect status feild! Please enter "active" or "inactive"');
 
   return await apiFetch('/user', {
     method: 'POST',

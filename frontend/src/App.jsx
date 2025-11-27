@@ -1,4 +1,5 @@
 import About from './sites/About/About';
+import Admin from './sites/Admin/Admin';
 import Login from './sites/Login/Login';
 import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
@@ -15,7 +16,7 @@ import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtected
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useUserStore } from './stores/userStore';
-// import { useAuthStore } from './stores/authStore';
+
 import Dev from './sites/Dev';
 
 function App() {
@@ -26,8 +27,8 @@ function App() {
       (async () => {
         try {
           await useUserStore.getState().loadUserData();
-        } catch (err) {
-          console.error(err);
+        } catch {
+          // intentionally ignored
         }
       })();
   }, []);
@@ -54,7 +55,7 @@ function App() {
             <Route path="/wistlist" element={<WistList />}></Route>
           </Route>
           <Route element={<AdminProtectedRoute />}>
-            <Route path="/admin" element={<NotImplement />}></Route>
+            <Route path="/admin" element={<Admin />}></Route>
           </Route>
           <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>

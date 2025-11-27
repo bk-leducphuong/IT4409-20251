@@ -97,6 +97,17 @@ function Navbar({ numberWishListItems = 0 }) {
                   <i className="fa-solid fa-xmark"></i>
                   My cancellations
                 </button>
+                {userData?.role == 'admin' && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/admin');
+                    }}
+                  >
+                    <i className="fa-solid fa-lock"></i>
+                    Admin
+                  </button>
+                )}
                 <button
                   onClick={(e) => {
                     e.preventDefault();
