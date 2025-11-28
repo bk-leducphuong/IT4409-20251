@@ -48,6 +48,8 @@ import wishlistRoutes from './routes/wishlist.route.js';
 import adminProductRoutes from './routes/admin.product.route.js';
 import adminCategoryRoutes from './routes/admin.category.route.js';
 import adminBrandRoutes from './routes/admin.brand.route.js';
+import orderRoutes from './routes/order.route.js';
+import adminOrderRoutes from './routes/admin.order.route.js';
 
 const app = express();
 
@@ -73,11 +75,13 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Admin routes
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminCategoryRoutes);
 app.use('/api/admin', adminBrandRoutes);
+app.use('/api/admin', adminOrderRoutes);
 
 const PORT = process.env.PORT || 5001;
 
