@@ -5,6 +5,7 @@ import { useCartStore } from '../../stores/cartStore';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { useProductStore } from '../../stores/productStore';
 import { useUserStore } from '../../stores/userStore';
+import { useWishlistStore } from '../../stores/wishlistStore';
 import styles from './Loading.module.css';
 
 function Loading() {
@@ -14,6 +15,7 @@ function Loading() {
   const cartLoading = useCartStore((state) => state.isLoading);
   const categoryLoading = useCategoryStore((state) => state.isLoading);
   const productLoading = useProductStore((state) => state.isLoading);
+  const wishlistLoading = useWishlistStore((state) => state.isLoading);
   const userLoading = useUserStore((state) => state.isLoading);
 
   const loading =
@@ -23,6 +25,7 @@ function Loading() {
     userLoading ||
     cartLoading ||
     categoryLoading ||
+    wishlistLoading ||
     productLoading;
 
   return loading ? (

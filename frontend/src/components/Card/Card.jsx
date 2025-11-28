@@ -1,10 +1,8 @@
 import styles from './Card.module.css';
 
-function Card(props) {
-  const { image, oldPrice, newPrice, rating, productName } = props;
-
+function Card({ image, oldPrice, newPrice, productName, rating, iconButtons }) {
   // Calculate discount only if both prices exist
-  const hasDiscount = oldPrice != null && newPrice != null;
+  const hasDiscount = oldPrice != null && newPrice != null && oldPrice > newPrice;
   const discount = hasDiscount ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : null;
 
   // Clamp rating between 0 and 5
@@ -21,9 +19,14 @@ function Card(props) {
           {hasDiscount && <div className={styles.discount}>{`${discount}%`}</div>}
 
           {/* ICONS */}
-          <div className={styles.iconContainer}>
-            <i className={`fa-regular fa-heart ${styles.icon}`}></i>
-            <i className={`fa-regular fa-eye ${styles.icon}`}></i>
+          <div className={styles.buttonContainer}>
+            {iconButtons}
+            {/* <button>
+              <i className={`fa-regular fa-heart`}></i>
+            </button>
+            <button>  
+              <i className={`fa-regular fa-eye`}></i>
+            </button> */}
           </div>
         </div>
       )}

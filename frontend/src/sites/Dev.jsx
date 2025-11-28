@@ -39,7 +39,7 @@ function Dev() {
 
   return (
     <>
-      <Admin />
+      {/* <Admin /> */}
       <Navbar />
 
       <div
