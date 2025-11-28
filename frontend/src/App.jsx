@@ -1,4 +1,5 @@
 import About from './sites/About/About';
+import Admin from './sites/Admin/Admin';
 import Login from './sites/Login/Login';
 import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
@@ -6,31 +7,38 @@ import Contact from './sites/Contact/Contact';
 import Loading from './components/Loading/Loading';
 import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
+import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
 
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useUserStore } from './stores/userStore';
-// import { useAuthStore } from './stores/authStore';
-// import Dev from "./sites/Dev";
-import { useEffect } from 'react';
 import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
 
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useUserStore } from './stores/userStore';
+
+import Dev from './sites/Dev';
+
 function App() {
-  //   return (
-  //     <BrowserRouter>
-  //       <Dev></Dev>
-  //     </BrowserRouter>
-  //   );
+  const [dev] = useState(false);
 
   useEffect(() => {
-    try {
-      useUserStore.getState().loadUserData();
-    } catch (err) {
-      console.error(err);
-    }
+    if (!dev)
+      (async () => {
+        try {
+          await useUserStore.getState().loadUserData();
+        } catch {
+          // intentionally ignored
+        }
+      })();
   }, []);
+
+  if (dev)
+    return (
+      <BrowserRouter>
+        <Dev></Dev>
+      </BrowserRouter>
+    );
 
   return (
     <>
@@ -43,10 +51,11 @@ function App() {
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>
+            <Route path="/user" element={<User />}></Route>
             <Route path="/wistlist" element={<WistList />}></Route>
           </Route>
           <Route element={<AdminProtectedRoute />}>
-            <Route path="/admin" element={<NotImplement />}></Route>
+            <Route path="/admin" element={<Admin />}></Route>
           </Route>
           <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>

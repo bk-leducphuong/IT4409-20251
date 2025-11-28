@@ -1,0 +1,52 @@
+import { getToken } from './storage';
+
+const BASE_URL = 'http://localhost:5001/api';
+
+async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
+  /* REQUEST INTERCEPTOR */
+  url = BASE_URL + url;
+
+  options.headers = {
+    ...options.headers,
+    'Content-Type': 'application/json',
+  };
+
+  const token = getToken();
+  if (token) {
+    options.headers.Authorization = `Bearer ${token}`;
+  }
+
+  /* REQUEST AND RETRY WITH TIMEOUT */
+  async function trueFetch(tried) {
+    try {
+      const response = await Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout)),
+      ]);
+
+      /* RESPONSE INTERCEPTOR */
+      let res;
+      try {
+        res = await response.json();
+      } catch {
+        return null;
+      }
+
+      if (!res.success) {
+        throw new Error(res.message || 'Lỗi không xác định!');
+      }
+
+      return res;
+    } catch (err) {
+      if (tried < retries) {
+        return trueFetch(tried + 1);
+      }
+      console.error(err);
+      throw err;
+    }
+  }
+
+  return await trueFetch(0);
+}
+
+export default apiFetch;

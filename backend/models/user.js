@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
       enum: ['active', 'inactive', 'suspended'],
       default: 'active',
     },
+    role: {
+      type: String,
+      enum: ['admin', 'customer'],
+      default: 'customer',
+    },
+    deleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,

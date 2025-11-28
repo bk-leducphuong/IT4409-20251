@@ -1,0 +1,50 @@
+.user {
+  width: 90%;
+  max-width: var(--max-content-width);
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  justify-self: center;
+}
+
+.user h2 {
+  color: red;
+}
+
+.user input {
+  width: 100%;
+  padding: 0.5rem 2ch;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  margin: 0.5rem 0;
+  background-color: hsl(0, 0%, 95%);
+  font-size: 1rem;
+}
+
+.user input::-ms-reveal,
+.user input::-ms-clear,
+.user input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.5rem 3ch;
+  margin: 1rem 0;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1ch;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}

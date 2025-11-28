@@ -83,12 +83,12 @@
   font-size: 1.5rem;
 }
 
-.iconContainer > i {
+.iconContainer i {
   position: relative;
   cursor: pointer;
 }
 
-.iconContainer > i > span {
+.iconContainer i > span {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,15 +108,11 @@
   visibility: hidden;
 }
 
-.dropbar {
-  position: relative;
-}
-
 .dropbar > div {
   display: none;
   font-size: 1rem;
   border-radius: 5px;
-  background: rgba(40, 40, 50, 0.4);
+  background: rgba(40, 40, 50, 0.2);
   position: absolute;
   right: 0;
   width: fit-content;
@@ -127,6 +123,7 @@
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   color: white;
+  cursor: default;
 }
 
 .dropbar i {
@@ -138,4 +135,10 @@
 .dropbar:hover > div {
   display: flex;
   flex-direction: column;
+}
+
+.dropbar button {
+  width: 100%;
+  text-align: start;
+  cursor: pointer;
 }

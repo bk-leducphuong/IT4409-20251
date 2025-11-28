@@ -1,65 +1,56 @@
-const TOKEN_NAME = 'token';
-const setToken = (token) => localStorage.setItem(TOKEN_NAME, token);
-export const getToken = () => localStorage.getItem(TOKEN_NAME);
-export const resetToken = () => localStorage.setItem(TOKEN_NAME, '');
+import apiFetch from '../libs/apiFetch';
+import { setToken, getToken, resetToken } from '../libs/storage';
 
 export const signUp = async (fullName, email, password, phone) => {
-  if (!phone || !email || !password) {
-    throw new Error('Hãy nhập các mục yêu cầu!');
-  }
+  if (!phone || !email || !password) throw new Error('All feilds are required!');
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error('Hãy nhập Email hợp lệ!');
-  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter valid email!');
 
-  if (!/^[0-9]{10,}$/.test(phone)) {
-    throw new Error('Hãy nhập số điện thoại hợp lệ! Gồm 10 chữ số!');
-  }
+  if (!/^[0-9]{10,}$/.test(phone))
+    throw new Error('Please enter valid phone number! Containing 10 digits!');
 
-  if (!/^[a-zA-Z0-9]{8,}$/.test(password)) {
-    throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
-  }
+  if (!/^[a-zA-Z0-9]{8,}$/.test(password))
+    throw new Error('Password must contain at least 8 characters including letters and numbers!');
 
-  const res = await fetch('http://localhost:5001/api/auth/register', {
+  const res = await apiFetch('/auth/register', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       fullName,
       email,
       password,
       phone,
     }),
-  }).then((res) => res.json());
+  });
 
-  if (res.success) {
-    setToken(res.data.token);
-  } else {
-    throw new Error(res.message);
-  }
+  setToken(res.data.token);
+  return res;
 };
 
 export const login = async (email, password) => {
-  if (!email || !password) {
-    throw new Error('Hãy nhập các mục yêu cầu!');
-  }
+  if (!email || !password) throw new Error('All feilds are required!');
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error('Hãy nhập Email hợp lệ!');
-  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter valid email!');
 
-  if (!/^[a-zA-Z0-9]{8,}$/.test(password)) {
-    throw new Error('Mật khẩu cần có ít nhất 8 kí tự bao gồm cả chữ cái và chữ số!');
-  }
+  if (!/^[a-zA-Z0-9]{8,}$/.test(password))
+    throw new Error('Password must contain at least 8 characters including letters and numbers!');
 
-  const res = await fetch('http://localhost:5001/api/auth/login', {
+  const res = await apiFetch('/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
-  }).then((res) => res.json());
+  });
 
-  if (res.success) {
-    setToken(res.data.token);
-  } else {
-    throw new Error(res.message);
-  }
+  setToken(res.data.token);
+  return res;
 };
+
+export const logout = async () => {
+  if (!getToken()) throw new Error("You haven' login yet!");
+
+  const res = await apiFetch('/auth/logout', { method: 'POST' });
+
+  resetToken();
+
+  return res;
+};
+
+export { resetToken, getToken } from '../libs/storage';

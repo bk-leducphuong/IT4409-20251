@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getProfile } from '../services/userServices';
+import { changePassword, getProfile, updateUser } from '../services/userServices';
 
 export const useUserStore = create((set) => ({
   data: null,
@@ -7,8 +7,29 @@ export const useUserStore = create((set) => ({
   loadUserData: async () => {
     set({ isLoading: true });
     try {
-      const data = await getProfile();
-      set({ data: data });
+      const res = await getProfile();
+      set({ data: res.data.user });
+      return res;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  resetUser: () => set({ data: null }),
+  updateUser: async (user) => {
+    set({ isLoading: true });
+    try {
+      await updateUser(user);
+      const res = await getProfile();
+      set({ data: res.data.user });
+      return res;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  changePassword: async (currentPassword, newPassword) => {
+    set({ isLoading: true });
+    try {
+      return await changePassword(currentPassword, newPassword);
     } finally {
       set({ isLoading: false });
     }

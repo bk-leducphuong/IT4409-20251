@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { login, signUp, getToken, resetToken } from '../services/authServices';
+import { login, signUp, getToken, resetToken, logout } from '../services/authServices';
 
 export const useAuthStore = create((set) => ({
   token: getToken(),
@@ -8,6 +8,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       await login(email, password);
+      set({ token: getToken() });
     } finally {
       set({ isLoading: false });
     }
@@ -21,5 +22,14 @@ export const useAuthStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  resetToken: resetToken,
+  logout: async () => {
+    set({ isLoading: true });
+    try {
+      await logout();
+      resetToken();
+      set({ token: null });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
