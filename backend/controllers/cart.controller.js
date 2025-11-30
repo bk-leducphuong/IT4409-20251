@@ -103,9 +103,26 @@ export const removeItem = async (req, res) => {
   }
 };
 
+// DELETE /api/cart - Clear entire cart
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const cart = await cartService.clearCart(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Đã xóa toàn bộ giỏ hàng',
+      data: { cart },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 export default {
   getCart,
   addItem,
   updateItemQuantity,
   removeItem,
+  clearCart,
 };
