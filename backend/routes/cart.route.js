@@ -200,4 +200,31 @@ router.put('/items/:productVariantId', cartController.updateItemQuantity);
  */
 router.delete('/items/:productVariantId', cartController.removeItem);
 
+/**
+ * @swagger
+ * /api/cart:
+ *   delete:
+ *     summary: Clear entire cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cart cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Cart'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart not found
+ */
+router.delete('/', cartController.clearCart);
+
 export default router;
