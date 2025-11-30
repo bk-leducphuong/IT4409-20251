@@ -1,0 +1,131 @@
+.buttonContainer {
+  display: flex;
+  justify-content: center !important;
+  align-items: center;
+  gap: 1ch;
+}
+
+.categoryReport button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+  padding: 0.5rem 2ch;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.25s;
+}
+
+.categoryReport button:hover {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.blackBtn {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.blackBtn:hover {
+  background-color: hsl(0, 0%, 25%) !important;
+}
+
+.redBtn {
+  color: white;
+  background-color: red;
+}
+
+.redBtn:hover {
+  background-color: hsl(0, 100%, 60%) !important;
+}
+
+.categoryReport input,
+.categoryReport select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+  width: clamp(250px, 50%, 500px);
+}
+
+.categoryReport header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.categoryReport main > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.categoryReport table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.categoryReport th,
+.categoryReport td {
+  padding: 0.5rem 0;
+}
+
+.categoryReport thead {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.categoryReport tbody {
+  text-align: center;
+}
+
+.categoryReport tbody tr:nth-child(even) {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.categoryReport tr {
+  border: 1px solid #edf2f7;
+}
+
+.categoryReport td:has(.buttonContainer) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  align-content: center;
+}
+
+.overlay > div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.overlay > div > div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1ch;
+  margin: 0.5rem 0;
+  white-space: nowrap;
+}
+
+.overlay h2 {
+  text-align: center;
+}

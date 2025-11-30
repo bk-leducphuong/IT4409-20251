@@ -1,20 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useUserStore } from '../../stores/userStore';
 import styles from './LoginForm.module.css';
 
 function LoginForm({ toggleState = () => console.log('button clicked') }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const login = useAuthStore((store) => store.login);
+  const login = useAuthStore((state) => state.login);
+  const loadUserData = useUserStore((state) => state.loadUserData);
 
   const componentLogin = async () => {
     try {
-      login(email, password);
+      await login(email, password);
+      await loadUserData();
       navigate('/');
     } catch (err) {
-      alert('Có lỗi xảy ra trong quá trình đăng nhập! Vui lòng thử lại.');
+      alert(err);
       console.error(err);
       setPassword('');
     }
@@ -41,7 +44,13 @@ function LoginForm({ toggleState = () => console.log('button clicked') }) {
           className={styles.input}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className={styles.submitButton} onClick={componentLogin}>
+        <button
+          className={styles.submitButton}
+          onClick={(e) => {
+            e.preventDefault();
+            componentLogin();
+          }}
+        >
           Login
         </button>
       </form>

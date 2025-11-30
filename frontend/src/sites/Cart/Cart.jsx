@@ -1,11 +1,33 @@
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button/Button';
-import { useState } from 'react';
+import { useCartStore } from '../../stores/cartStore';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Cart.module.css';
 
-function CartItem({ image, productName, newPrice, quantity, onQuantityChange }) {
+function CartItem({ id, image, productName, newPrice, quantity }) {
+  const updateItemQuantity = useCartStore((state) => state.updateItemQuantity);
+  const removeItemFromCart = useCartStore((state) => state.removeItemFromCart);
   const subtotal = quantity * newPrice;
+
+  async function handleQuantityChange(newQuantity) {
+    try {
+      await updateItemQuantity(id, newQuantity);
+    } catch (err) {
+      console.error(err);
+      alert(err);
+    }
+  }
+
+  async function handleDeleteItem() {
+    try {
+      await removeItemFromCart(id);
+    } catch (err) {
+      console.error(err);
+      alert(err);
+    }
+  }
 
   return (
     <tr className={styles.cartItem}>
@@ -13,6 +35,14 @@ function CartItem({ image, productName, newPrice, quantity, onQuantityChange }) 
         <div className={styles.productInfo}>
           <div className={styles.imageContainer}>
             <img src={image} alt="Product" className={styles.image} />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteItem();
+              }}
+            >
+              &times;
+            </button>
           </div>
           <div>{productName}</div>
         </div>
@@ -23,7 +53,10 @@ function CartItem({ image, productName, newPrice, quantity, onQuantityChange }) 
           type="number"
           min="1"
           value={quantity}
-          onChange={(e) => onQuantityChange(parseInt(e.target.value) || 1)}
+          onChange={(e) => {
+            e.preventDefault();
+            handleQuantityChange(e.target.value);
+          }}
           className={styles.numberInput}
         />
       </td>
@@ -33,31 +66,14 @@ function CartItem({ image, productName, newPrice, quantity, onQuantityChange }) 
 }
 
 function Cart() {
-  const exampleData = [
-    {
-      image: 'https://sc04.alicdn.com/kf/Hcb90256847954da7a90b3ce53d76d9c3r.jpg',
-      productName: 'LCD Monitor',
-      newPrice: 650,
-    },
-    {
-      image:
-        'https://th.bing.com/th/id/R.8d1e0199c5ebe4fab3e5fee28aa0dbda?rik=sQ7TrFvVmvzNzA&pid=ImgRaw&r=0',
-      productName: 'H1 GamePad',
-      newPrice: 550,
-    },
-  ];
+  const cart = useCartStore((state) => state.data);
+  const loadCart = useCartStore((state) => state.getCart);
+  const navigate = useNavigate();
+  const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
 
-  // store quantities for each item
-  const [cartItems, setCartItems] = useState(exampleData.map((item) => ({ ...item, quantity: 1 })));
-
-  // calculate total whenever cartItems change
-  const total = cartItems.reduce((sum, item) => sum + item.newPrice * item.quantity, 0);
-
-  const handleQuantityChange = (index, newQuantity) => {
-    setCartItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, quantity: newQuantity } : item)),
-    );
-  };
+  useEffect(() => {
+    loadCart();
+  }, []);
 
   return (
     <>
@@ -74,21 +90,29 @@ function Cart() {
             </tr>
           </thead>
           <tbody>
-            {cartItems.map((item, index) => (
+            {cart.map((item) => (
               <CartItem
-                key={index}
-                image={item.image}
-                productName={item.productName}
-                newPrice={item.newPrice}
+                key={item.product_variant_id._id}
+                id={item.product_variant_id._id}
+                image={item.product_variant_id.main_image_url}
+                productName={item.product_variant_id.product_id.name}
+                newPrice={item.product_variant_id.price}
                 quantity={item.quantity}
-                onQuantityChange={(q) => handleQuantityChange(index, q)}
               />
             ))}
           </tbody>
         </table>
 
         <div className={styles.buttonsConatiner}>
-          <Button backgroundColor="white">Return To Shop</Button>
+          <Button
+            backgroundColor="white"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/');
+            }}
+          >
+            Return To Shop
+          </Button>
           <Button backgroundColor="white">Update Cart</Button>
         </div>
 
@@ -111,7 +135,14 @@ function Cart() {
               <div>Total:</div>
               <div>{`$${total}`}</div>
             </div>
-            <Button>Process to Checkout</Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/checkout');
+              }}
+            >
+              Process to Checkout
+            </Button>
           </div>
         </div>
       </div>

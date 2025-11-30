@@ -1,4 +1,5 @@
 import authService from '../services/auth.service.js';
+import emailService from '../services/email.service.js';
 
 // POST /api/auth/register - Đăng ký
 export const register = async (req, res, next) => {
@@ -99,9 +100,43 @@ export const logout = async (req, res, next) => {
   }
 };
 
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập email' });
+    }
+
+    const result = await authService.forgotPassword(email);
+    res.json({ success: true, message: result.message });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword, confirmPassword } = req.body;
+    if (!token || !newPassword || !confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp đầy đủ thông tin' });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu xác nhận không khớp' });
+    }
+
+    const result = await authService.resetPassword(token, newPassword);
+    res.json({ success: true, message: result.message });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 export default {
   register,
   login,
   // getProfile,
   logout,
+  forgotPassword,
+  resetPassword,
 };

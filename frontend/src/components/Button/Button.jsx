@@ -1,22 +1,12 @@
 import styles from './Button.module.css';
 
-function Button(props) {
+function Button({ backgroundColor, children, onClick = () => console.log('button clicked') }) {
   const style =
-    !props.backgroundColor || props.backgroundColor.toLowerCase() === 'red'
-      ? styles.red
-      : styles.white;
+    !backgroundColor || backgroundColor.toLowerCase() === 'red' ? styles.red : styles.white;
 
   return (
-    <button
-      className={style}
-      onClick={
-        props.onClick ||
-        (() => {
-          console.log('button clicked');
-        })
-      }
-    >
-      {props.children}
+    <button className={style} onClick={onClick}>
+      {children}
     </button>
   );
 }

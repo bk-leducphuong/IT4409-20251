@@ -6,6 +6,7 @@
   padding: 1rem 4ch;
   border-radius: 5px;
   font-weight: bold;
+  cursor: pointer;
   transition: background-color 0.25s;
 }
 

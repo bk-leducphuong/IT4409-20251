@@ -1,15 +1,10 @@
 import express from 'express';
 const router = express.Router();
 import orderController from '../controllers/order.controller.js';
-import { requireLogin, requireRole } from '../middlewares/auth.middleware.js';
-import swaggerJSDoc from 'swagger-jsdoc';
+import { requireLogin } from '../middlewares/auth.middleware.js';
 
 /**
  * @swagger
- * tags:
- *   - name: Order
- *     description: Order management
- *
  * components:
  *   schemas:
  *     OrderItem:
@@ -17,78 +12,107 @@ import swaggerJSDoc from 'swagger-jsdoc';
  *       properties:
  *         product_variant_id:
  *           type: string
- *           description: Product variant ObjectId
+ *           description: Product variant ID
+ *         product_name:
+ *           type: string
+ *         sku:
+ *           type: string
+ *         image_url:
+ *           type: string
+ *         attributes:
+ *           type: object
+ *         unit_price:
+ *           type: number
  *         quantity:
  *           type: integer
- *         price:
+ *         subtotal:
  *           type: number
  *     ShippingAddress:
  *       type: object
+ *       required:
+ *         - full_name
+ *         - phone
+ *         - address_line
  *       properties:
- *         fullName:
+ *         full_name:
  *           type: string
+ *           example: Nguyen Van A
  *         phone:
  *           type: string
- *         address:
+ *           example: "0123456789"
+ *         address_line:
  *           type: string
+ *           example: 123 Nguyen Trai Street
+ *         city:
+ *           type: string
+ *           example: Ho Chi Minh
+ *         province:
+ *           type: string
+ *           example: Ho Chi Minh
+ *         postal_code:
+ *           type: string
+ *           example: "700000"
+ *         country:
+ *           type: string
+ *           default: Vietnam
  *     Order:
  *       type: object
  *       properties:
  *         _id:
  *           type: string
+ *         order_number:
+ *           type: string
+ *           example: ORD-20231125-00001
  *         user_id:
  *           type: string
  *         items:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/OrderItem'
- *         total_amount:
- *           type: number
  *         status:
  *           type: string
+ *           enum: [pending, processing, shipped, delivered, cancelled, refunded]
  *         shipping_address:
  *           $ref: '#/components/schemas/ShippingAddress'
+ *         subtotal:
+ *           type: number
+ *         tax:
+ *           type: number
+ *         shipping_fee:
+ *           type: number
+ *         discount:
+ *           type: number
+ *         total:
+ *           type: number
  *         payment_method:
+ *           type: string
+ *           enum: [cod, credit_card, bank_transfer, momo, zalopay]
+ *         payment_status:
+ *           type: string
+ *           enum: [pending, paid, failed, refunded]
+ *         tracking_number:
+ *           type: string
+ *         carrier:
+ *           type: string
+ *         customer_note:
  *           type: string
  *         createdAt:
  *           type: string
+ *           format: date-time
  *         updatedAt:
  *           type: string
- *     OrderResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *         message:
- *           type: string
- *         data:
- *           type: object
- *           properties:
- *             order:
- *               $ref: '#/components/schemas/Order'
- *     OrdersListResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *         data:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Order'
- *         total:
- *           type: integer
- *         page:
- *           type: integer
- *         limit:
- *           type: integer
+ *           format: date-time
  */
+
+// All order routes require authentication
+router.use(requireLogin);
 
 /**
  * @swagger
- * /api/order:
+ * /api/orders:
  *   post:
- *     summary: Create a new order
- *     tags: [Order]
+ *     summary: Create order from cart (checkout)
+ *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -97,35 +121,49 @@ import swaggerJSDoc from 'swagger-jsdoc';
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cartId, shippingAddress, paymentMethod]
+ *             required:
+ *               - shipping_address
  *             properties:
- *               cartId:
- *                 type: string
- *                 description: Cart id to create order from
- *               shippingAddress:
+ *               shipping_address:
  *                 $ref: '#/components/schemas/ShippingAddress'
- *               paymentMethod:
+ *               payment_method:
  *                 type: string
+ *                 enum: [cod, credit_card, bank_transfer, momo, zalopay]
+ *                 default: cod
+ *                 example: cod
+ *               customer_note:
+ *                 type: string
+ *                 example: Please deliver after 5 PM
  *     responses:
  *       201:
  *         description: Order created successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderResponse'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
  *       400:
- *         description: Bad request
+ *         description: Invalid input or empty cart
  *       401:
  *         description: Unauthorized
  */
-router.post('/', requireLogin, orderController.createOrder);
+router.post('/', orderController.createOrder);
 
 /**
  * @swagger
- * /api/order:
+ * /api/orders:
  *   get:
- *     summary: Get orders of the authenticated user (paginated)
- *     tags: [Order]
+ *     summary: Get user's order history
+ *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -133,130 +171,138 @@ router.post('/', requireLogin, orderController.createOrder);
  *         name: page
  *         schema:
  *           type: integer
+ *           default: 1
  *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Page size
- *     responses:
- *       200:
- *         description: List of orders
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/OrdersListResponse'
- *       401:
- *         description: Unauthorized
- */
-router.get('/', requireLogin, orderController.getMyOrders);
-
-/**
- * @swagger
- * /api/order/{id}:
- *   get:
- *     summary: Get order by id
- *     tags: [Order]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Order id
- *     responses:
- *       200:
- *         description: Order detail
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/OrderResponse'
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Forbidden
- *       404:
- *         description: Not found
- */
-router.get('/:id', requireLogin, orderController.getOrderById);
-
-/**
- * @swagger
- * /api/order/admin/all:
- *   get:
- *     summary: Admin - Get all orders (filter, paginated)
- *     tags: [Order]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
+ *           default: 10
+ *         description: Items per page
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
+ *           enum: [pending, processing, shipped, delivered, cancelled, refunded]
  *         description: Filter by order status
  *     responses:
  *       200:
- *         description: Orders list
+ *         description: Order history retrieved successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrdersListResponse'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     orders:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Order'
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         limit:
+ *                           type: integer
+ *                         total:
+ *                           type: integer
+ *                         pages:
+ *                           type: integer
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden - Admin only
  */
-router.get('/admin/all', requireLogin, requireRole('admin'), orderController.getAllOrders);
+router.get('/', orderController.getUserOrders);
 
 /**
  * @swagger
- * /api/order/{id}/status:
- *   patch:
- *     summary: Admin - Update order status
- *     tags: [Order]
+ * /api/orders/{orderId}:
+ *   get:
+ *     summary: Get order details
+ *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: orderId
  *         required: true
  *         schema:
  *           type: string
+ *         description: Order ID
+ *     responses:
+ *       200:
+ *         description: Order details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Order not found
+ */
+router.get('/:orderId', orderController.getOrderDetails);
+
+/**
+ * @swagger
+ * /api/orders/{orderId}/cancel:
+ *   put:
+ *     summary: Cancel order
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order ID
  *     requestBody:
- *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [status]
  *             properties:
- *               status:
+ *               reason:
  *                 type: string
- *                 enum: [pending, processing, shipped, delivered, cancelled]
+ *                 example: Changed my mind
  *     responses:
  *       200:
- *         description: Status updated
+ *         description: Order cancelled successfully
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderResponse'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     order:
+ *                       $ref: '#/components/schemas/Order'
  *       400:
- *         description: Bad request
+ *         description: Cannot cancel order in current status
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Forbidden - Admin only
+ *       404:
+ *         description: Order not found
  */
-router.patch('/:id/status', requireLogin, requireRole('admin'), orderController.updateOrderStatus);
+router.put('/:orderId/cancel', orderController.cancelOrder);
 
 export default router;

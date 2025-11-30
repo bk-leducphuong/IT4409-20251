@@ -1,8 +1,28 @@
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../stores/userStore';
+import { useAuthStore } from '../../stores/authStore';
+import { useCartStore } from '../../stores/cartStore';
+import { useWishlistStore } from '../../stores/wishlistStore';
 import styles from './Navbar.module.css';
 
-function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = false }) {
+function Navbar() {
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+  const userData = useUserStore((state) => state.data);
+  const resetUser = useUserStore((state) => state.resetUser);
+  const cartData = useCartStore((state) => state.data);
+  const wishlistData = useWishlistStore((state) => state.data);
+
+  async function componentLogout() {
+    try {
+      await logout();
+      resetUser();
+      navigate('/');
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -32,7 +52,13 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = fal
             <li
               className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
             >
-              <button onClick={() => navigate('/login')}>Sign Up</button>
+              <button
+                onClick={() =>
+                  userData ? alert('You have already logged in') : navigate('/login')
+                }
+              >
+                Sign Up
+              </button>
             </li>
           </ul>
         </div>
@@ -45,33 +71,54 @@ function Navbar({ numberWishListItems = 0, numberCartItems = 0, isLoggedin = fal
         <div className={styles.iconContainer}>
           <button onClick={() => navigate('/wistlist')}>
             <i className="fa-regular fa-heart">
-              {numberWishListItems ? <span>{numberWishListItems}</span> : null}
+              {wishlistData.length ? <span>{wishlistData.length}</span> : null}
             </i>
           </button>
           <button onClick={() => navigate('/cart')}>
             <i className="fa-solid fa-cart-shopping">
-              {numberCartItems ? <span>{numberCartItems}</span> : null}
+              {cartData.length > 0 ? <span>{cartData.length}</span> : null}
             </i>
           </button>
-          {isLoggedin ? (
+          {userData ? (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
-                <div>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/user');
+                  }}
+                >
                   <i className="fa-solid fa-circle-user"></i>
                   Manage my account
-                </div>
-                <div>
+                </button>
+                <button>
                   <i className="fa-solid fa-basket-shopping"></i>
                   My order
-                </div>
-                <div>
+                </button>
+                <button>
                   <i className="fa-solid fa-xmark"></i>
                   My cancellations
-                </div>
-                <div>
+                </button>
+                {userData?.role == 'admin' && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/admin');
+                    }}
+                  >
+                    <i className="fa-solid fa-lock"></i>
+                    Admin
+                  </button>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    componentLogout();
+                  }}
+                >
                   <i className="fa-solid fa-arrow-right-from-bracket"></i>
                   Logout
-                </div>
+                </button>
               </div>
             </i>
           ) : (

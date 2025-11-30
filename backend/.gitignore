@@ -7,3 +7,5 @@ node_modules/
 
 # File môi trường (chứa API key, DB URL,...)
 .env
+
+.env.example

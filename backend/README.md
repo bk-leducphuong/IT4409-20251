@@ -27,6 +27,7 @@ Before you begin, ensure you have the following installed:
   - Or use **MongoDB Atlas** (cloud database) - [Sign up here](https://www.mongodb.com/cloud/atlas)
 
 Check your installations:
+
 ```bash
 node --version   # Should be v16+
 npm --version    # Should be 6+
@@ -68,6 +69,7 @@ JWT_EXPIRE=7d
 ### 3. Start MongoDB
 
 **Option A: Local MongoDB**
+
 ```bash
 # Start MongoDB service
 # On macOS
@@ -81,6 +83,7 @@ net start MongoDB
 ```
 
 **Option B: MongoDB Atlas (Cloud)**
+
 - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 - Create a free cluster
 - Get your connection string
@@ -101,6 +104,7 @@ npm run seed:users       # Add test users
 ```
 
 **Default Admin Credentials:**
+
 ```
 Email: admin@example.com
 Password: admin123
@@ -117,6 +121,7 @@ npm start
 ```
 
 You should see:
+
 ```
 ✅ MongoDB đã kết nối: localhost
 📊 Database: it4409
@@ -137,6 +142,7 @@ http://localhost:5000/api-docs
 ```
 
 This will open an interactive API documentation where you can:
+
 - ✅ View all available endpoints
 - ✅ See request/response schemas
 - ✅ Test API endpoints directly
@@ -145,25 +151,30 @@ This will open an interactive API documentation where you can:
 ### Using the API Documentation
 
 #### 1. **Browse Endpoints**
-   - All endpoints are organized by tags (Authentication, Products, Cart, etc.)
-   - Click on any endpoint to expand and see details
+
+- All endpoints are organized by tags (Authentication, Products, Cart, etc.)
+- Click on any endpoint to expand and see details
 
 #### 2. **Test Public Endpoints**
-   - Endpoints like `GET /api/products` or `GET /api/categories` can be tested immediately
-   - Click "Try it out"
-   - Fill in any required parameters
-   - Click "Execute"
-   - View the response
+
+- Endpoints like `GET /api/products` or `GET /api/categories` can be tested immediately
+- Click "Try it out"
+- Fill in any required parameters
+- Click "Execute"
+- View the response
 
 #### 3. **Test Protected Endpoints**
 
 Many endpoints require authentication. Here's how to test them:
 
 **Step 1: Login**
+
 ```bash
 POST /api/auth/login
 ```
+
 Request body:
+
 ```json
 {
   "email": "admin@example.com",
@@ -173,6 +184,7 @@ Request body:
 
 **Step 2: Copy the Token**
 From the response, copy the JWT token:
+
 ```json
 {
   "message": "Login successful",
@@ -184,6 +196,7 @@ From the response, copy the JWT token:
 ```
 
 **Step 3: Authorize in Swagger**
+
 1. Click the green **"Authorize"** button (top right in Swagger UI)
 2. In the "bearerAuth" field, enter:
    ```
@@ -202,22 +215,24 @@ Now you can test any protected endpoint (marked with a lock icon 🔒)
 
 ### Required Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `development` or `production` |
-| `PORT` | Server port | `5000` |
+| Variable      | Description               | Example                            |
+| ------------- | ------------------------- | ---------------------------------- |
+| `NODE_ENV`    | Environment mode          | `development` or `production`      |
+| `PORT`        | Server port               | `5000`                             |
 | `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/it4409` |
-| `JWT_SECRET` | Secret key for JWT tokens | `your_secret_key_here` |
-| `JWT_EXPIRE` | JWT token expiration time | `7d` (7 days) |
+| `JWT_SECRET`  | Secret key for JWT tokens | `your_secret_key_here`             |
+| `JWT_EXPIRE`  | JWT token expiration time | `7d` (7 days)                      |
 
 ### MongoDB Connection Strings
 
 **Local MongoDB:**
+
 ```
 mongodb://localhost:27017/it4409
 ```
 
 **MongoDB Atlas (Cloud):**
+
 ```
 mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/it4409?retryWrites=true&w=majority
 ```
@@ -256,6 +271,7 @@ npm run mongodb:dev:stop   # Stop local MongoDB instance
 ## 🌐 API Overview
 
 ### Base URL
+
 ```
 http://localhost:5000/api
 ```
@@ -263,11 +279,13 @@ http://localhost:5000/api
 ### API Categories
 
 #### 🔐 Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/logout` - Logout user (protected)
 
 #### 👤 User Management
+
 - `GET /api/user/profile` - Get current user profile (protected)
 - `PATCH /api/user/profile` - Update profile (protected)
 - `PATCH /api/user/profile/change-password` - Change password (protected)
@@ -278,24 +296,29 @@ http://localhost:5000/api
 - `DELETE /api/user/:id` - Delete user (admin only)
 
 #### 🛍️ Products
+
 - `GET /api/products` - Get all products (with filters)
 - `GET /api/products/:slug` - Get product by slug
 
 #### 📂 Categories
+
 - `GET /api/categories` - Get all categories
 - `GET /api/categories/:slug` - Get category by slug
 
 #### 🏷️ Brands
+
 - `GET /api/brands` - Get all brands
 - `GET /api/brands/:id` - Get brand by ID
 
 #### 🛒 Shopping Cart
+
 - `GET /api/cart` - Get user's cart (protected)
 - `POST /api/cart/items` - Add item to cart (protected)
 - `PUT /api/cart/items/:productVariantId` - Update item quantity (protected)
 - `DELETE /api/cart/items/:productVariantId` - Remove item (protected)
 
 #### 🔧 Admin - Product Management
+
 - `POST /api/admin/products` - Create product (admin only)
 - `PUT /api/admin/products/:id` - Update product (admin only)
 - `DELETE /api/admin/products/:id` - Delete product (admin only)
@@ -304,11 +327,13 @@ http://localhost:5000/api
 - `DELETE /api/admin/variants/:variant_id` - Delete variant (admin only)
 
 #### 🔧 Admin - Category Management
+
 - `POST /api/admin/categories` - Create category (admin only)
 - `PUT /api/admin/categories/:id` - Update category (admin only)
 - `DELETE /api/admin/categories/:id` - Delete category (admin only)
 
 #### 🔧 Admin - Brand Management
+
 - `POST /api/admin/brands` - Create brand (admin only)
 - `PUT /api/admin/brands/:id` - Update brand (admin only)
 - `DELETE /api/admin/brands/:id` - Delete brand (admin only)
@@ -318,6 +343,7 @@ http://localhost:5000/api
 ## 🧪 Testing
 
 ### Run Tests
+
 ```bash
 # Run all tests
 npm test
@@ -330,6 +356,7 @@ npm run test:coverage
 ```
 
 ### Test Files Location
+
 ```
 backend/controllers/__test__/
 ```
@@ -341,12 +368,14 @@ backend/controllers/__test__/
 ### MongoDB Connection Issues
 
 **Error: `MongoServerError: Authentication failed`**
+
 ```bash
 # Solution: Check your MongoDB credentials in .env file
 MONGODB_URI=mongodb://username:password@localhost:27017/it4409
 ```
 
 **Error: `MongoNetworkError: connect ECONNREFUSED`**
+
 ```bash
 # Solution: Make sure MongoDB is running
 # Check MongoDB status:
@@ -361,6 +390,7 @@ brew services start mongodb-community  # macOS
 ### Port Already in Use
 
 **Error: `EADDRINUSE: address already in use :::5000`**
+
 ```bash
 # Solution: Kill the process using port 5000
 # On macOS/Linux:
@@ -377,6 +407,7 @@ PORT=5001
 ### JWT Token Issues
 
 **Error: `jwt malformed` or `invalid token`**
+
 - Make sure to include "Bearer " prefix when sending token
 - Check that `JWT_SECRET` is set in `.env` file
 - Token may have expired (default: 7 days)
@@ -418,7 +449,7 @@ const login = async (email, password) => {
 const getProducts = async (token) => {
   const response = await fetch('http://localhost:5000/api/products', {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   const data = await response.json();

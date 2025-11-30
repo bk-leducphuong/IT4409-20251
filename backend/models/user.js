@@ -17,10 +17,18 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "customer"],
-      default: "customer",
+      enum: ['admin', 'customer'],
+      default: 'customer',
     },
     deleted: { type: Boolean, default: false },
+    resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: null,
+  },
   },
   {
     timestamps: true,
