@@ -128,9 +128,69 @@ export const logout = async (userId) => {
   return true;
 };
 
+export const forgotPassword = async (email) => {
+  const user = await User.findOne({ email, deleted: false });
+  if (!user) {
+    throw new Error('Email không tồn tại trong hệ thống');
+  }
+
+  // Tạo reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetTokenHash = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Lưu token vào database (hết hạn trong 1 giờ)
+  user.resetPasswordToken = resetTokenHash;
+  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000);
+  await user.save();
+
+  // Gửi email
+  await emailService.sendResetPasswordEmail(user.email, user.fullName, resetToken);
+
+  return { message: 'Email reset password đã được gửi' };
+};
+
+export const resetPassword = async (token, newPassword) => {
+  // Hash token để so sánh
+  const resetTokenHash = crypto
+    .createHash('sha256')
+    .update(token)
+    .digest('hex');
+
+  // Tìm user
+  const user = await User.findOne({
+    resetPasswordToken: resetTokenHash,
+    resetPasswordExpires: { $gt: new Date() },
+  });
+
+  if (!user) {
+    throw new Error('Token không hợp lệ hoặc đã hết hạn');
+  }
+
+  // Validate mật khẩu mới
+  if (newPassword.length < 6) {
+    throw new Error('Mật khẩu phải có ít nhất 6 ký tự');
+  }
+
+  // Hash mật khẩu mới
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Cập nhật mật khẩu
+  user.password = hashedPassword;
+  user.resetPasswordToken = null;
+  user.resetPasswordExpires = null;
+  await user.save();
+
+  return { message: 'Mật khẩu đã được thay đổi thành công' };
+};
+
 export default {
   register,
   login,
   getUserByToken,
   logout,
+  forgotPassword,
+  resetPassword,
 };
