@@ -8,7 +8,9 @@ import Loading from './components/Loading/Loading';
 import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
 import User from './sites/User/User';
+import Home from './sites/Home/Home.jsx';
 import WistList from './sites/WistList/WistList';
+
 
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
@@ -44,7 +46,8 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<NotImplement />}></Route>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/Home" element={<Home />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
