@@ -177,9 +177,28 @@ export const removeItemFromCart = async (userId, productVariantId) => {
   }
 };
 
+// Clear entire cart
+export const clearCart = async (userId) => {
+  try {
+    const cart = await Cart.findOne({ user_id: userId });
+    if (!cart) {
+      throw new Error('Giỏ hàng không tồn tại');
+    }
+
+    // Clear all items
+    cart.items = [];
+    await cart.save();
+
+    return cart;
+  } catch (error) {
+    throw new Error(error.message || 'Không thể xóa toàn bộ giỏ hàng');
+  }
+};
+
 export default {
   getUserCart,
   addItemToCart,
   updateItemQuantity,
   removeItemFromCart,
+  clearCart,
 };
