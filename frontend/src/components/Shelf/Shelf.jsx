@@ -1,13 +1,14 @@
 import Button from '../Button/Button';
-import { useEffect, useState, Children } from 'react';
+import { useState, Children } from 'react';
 import styles from './Shelf.module.css';
 
 function Shelf({
   topic,
   strong,
   name,
-  buttonName,
+  numberItems = 4,
   children,
+  buttonName,
   onClick = () => console.log('button clicked'),
 }) {
   const data = Children.toArray(children);
@@ -23,7 +24,7 @@ function Shelf({
           {name && <div className={styles.name}>{name}</div>}
 
           <div className={styles.buttonContainer}>
-            {data.length > 4 && (
+            {data.length > numberItems && (
               <>
                 <button
                   className={styles.button}
@@ -38,7 +39,7 @@ function Shelf({
                   className={styles.button}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (index + 4 < data.length) setIndex((i) => i + 1);
+                    if (index + numberItems < data.length) setIndex((i) => i + 1);
                   }}
                 >
                   <i className="fa-solid fa-arrow-right"></i>
@@ -54,7 +55,7 @@ function Shelf({
         </div>
       </div>
 
-      <div className={styles.cardsContainer}>{data.slice(index, index + 4)}</div>
+      <div className={styles.cardsContainer}>{data.slice(index, index + numberItems)}</div>
     </div>
   );
 }

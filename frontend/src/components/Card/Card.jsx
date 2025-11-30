@@ -1,6 +1,6 @@
 import styles from './Card.module.css';
 
-function Card({ image, oldPrice, newPrice, productName, rating, iconButtons }) {
+function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, addToCartButton }) {
   // Calculate discount only if both prices exist
   const hasDiscount = oldPrice != null && newPrice != null && oldPrice > newPrice;
   const discount = hasDiscount ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : null;
@@ -19,15 +19,9 @@ function Card({ image, oldPrice, newPrice, productName, rating, iconButtons }) {
           {hasDiscount && <div className={styles.discount}>{`${discount}%`}</div>}
 
           {/* ICONS */}
-          <div className={styles.buttonContainer}>
-            {iconButtons}
-            {/* <button>
-              <i className={`fa-regular fa-heart`}></i>
-            </button>
-            <button>  
-              <i className={`fa-regular fa-eye`}></i>
-            </button> */}
-          </div>
+          <div className={styles.buttonContainer}>{iconButtons}</div>
+
+          {addToCartButton}
         </div>
       )}
 

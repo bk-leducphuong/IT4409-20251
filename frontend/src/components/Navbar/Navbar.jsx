@@ -2,14 +2,16 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
+import { useWishlistStore } from '../../stores/wishlistStore';
 import styles from './Navbar.module.css';
 
-function Navbar({ numberWishListItems = 0 }) {
+function Navbar() {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const userData = useUserStore((state) => state.data);
   const resetUser = useUserStore((state) => state.resetUser);
   const cartData = useCartStore((state) => state.data);
+  const wishlistData = useWishlistStore((state) => state.data);
 
   async function componentLogout() {
     try {
@@ -69,7 +71,7 @@ function Navbar({ numberWishListItems = 0 }) {
         <div className={styles.iconContainer}>
           <button onClick={() => navigate('/wistlist')}>
             <i className="fa-regular fa-heart">
-              {numberWishListItems ? <span>{numberWishListItems}</span> : null}
+              {wishlistData.length ? <span>{wishlistData.length}</span> : null}
             </i>
           </button>
           <button onClick={() => navigate('/cart')}>
