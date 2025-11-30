@@ -1,6 +1,5 @@
-
 function Footer() {
-
+    
     const listStyle = {
         display:"flex",
         flexDirection:"column",

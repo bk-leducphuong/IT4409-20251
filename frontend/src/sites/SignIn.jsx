@@ -26,6 +26,7 @@ export default function SignIn() {
             style={{ width: "70%", maxWidth: "500px", borderRadius: "10px" }}
           />
         </div>
+        
 
         {/* Right form section */}
         <div

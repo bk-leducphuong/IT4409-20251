@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 import WU from "../../assets/image9.jpg";
+import Services from "../../components/Services";
 
 export default function Home() {
   const flashSaleProducts = [
@@ -70,7 +71,7 @@ export default function Home() {
     navigate(`/product/${id}`);
   };
 
-  const handleAddToCart = (product) => {
+  handleAddToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     cart.push(product);
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -132,7 +133,7 @@ export default function Home() {
             <div
               key={p.id}
               className={styles.productCard}
-              onClick={() => handleViewDetails(p.id)} // whole card clickable
+              onClick={() => handleViewDetails(p.id)}
             >
               <div className={styles.imgContainer}>
                 <img src={p.img} alt={p.name} />
@@ -140,7 +141,7 @@ export default function Home() {
                 <button
                   className={styles.hoverCart}
                   onClick={(e) => {
-                    e.stopPropagation(); // prevent card click
+                    e.stopPropagation();
                     handleAddToCart(p);
                   }}
                 >
@@ -157,7 +158,7 @@ export default function Home() {
         </div>
 
         <div className={styles.viewAll}>
-          <button>View All Products</button>
+          <button onClick={() => navigate("/all-products")}>View All Products</button>
         </div>
       </section>
 
@@ -177,7 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-                {/* ---------- Best Selling Section ---------- */}
+      {/* ---------- Best Selling Section ---------- */}
       <section className={styles.bestSelling}>
         <p className={styles.Bsellinglabel}>this month's</p>
         <h2 className={styles.sectionTitle}>Best Selling</h2>
@@ -201,13 +202,63 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Product Info */}
               <h4>{p.name}</h4>
               <p style={{ fontWeight: "bold", color: "red" }}>${p.price}</p>
             </div>
           ))}
         </div>
       </section>
+
+      {/* ---------- New Arrival Section ---------- */}
+      <section className={styles.newArrival}>
+        <p className={styles.newArrivalLabel}>Featured</p>
+        <h2 className={styles.sectionTitle}>New Arrival</h2>
+
+        <div className={styles.newArrivalGrid}>
+          <div className={styles.largeCard}>
+            <img src={WU} alt="PlayStation 5" />
+            <div className={styles.textOverlay}>
+              <h3>PlayStation 5</h3>
+              <p>Black and White version of the PS5 coming out on sale.</p>
+              <button>Shop Now</button>
+            </div>
+          </div>
+
+          <div className={styles.rightColumn}>
+            <div className={styles.mediumCard}>
+              <img src={WU} alt="Women's Collections" />
+              <div className={styles.textOverlay}>
+                <h3>Women’s Collections</h3>
+                <p>Featured women collections that give you another vibe.</p>
+                <button>Shop Now</button>
+              </div>
+            </div>
+
+            <div className={styles.smallCards}>
+              <div className={styles.smallCard}>
+                <img src={WU} alt="Speakers" />
+                <div className={styles.textOverlay}>
+                  <h3>Speakers</h3>
+                  <p>Amazon wireless speakers</p>
+                  <button>Shop Now</button>
+                </div>
+              </div>
+
+              <div className={styles.smallCard}>
+                <img src={WU} alt="Perfume" />
+                <div className={styles.textOverlay}>
+                  <h3>Perfume</h3>
+                  <p>GUCCI INTENSE OUD EDP</p>
+                  <button>Shop Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Services ABOVE Footer ---------- */}
+      <Services />
 
       <Footer />
     </div>
