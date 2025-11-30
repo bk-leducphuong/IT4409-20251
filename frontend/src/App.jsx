@@ -4,14 +4,13 @@ import Login from './sites/Login/Login';
 import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
 import Contact from './sites/Contact/Contact';
-import Loading from './components/Loading/Loading';
+import Home from './sites/Home/Home';
 import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
 import User from './sites/User/User';
-import Home from './sites/Home/Home.jsx';
 import WistList from './sites/WistList/WistList';
 
-
+import Loading from './components/Loading/Loading';
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtectedRoute';
 
@@ -47,10 +46,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/Home" element={<Home />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/product/:slug" element={<NotImplement />}></Route>
+          <Route path="/products" element={<NotImplement />}></Route>
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>

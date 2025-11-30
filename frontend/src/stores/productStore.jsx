@@ -3,10 +3,10 @@ import { getProductBySlug, getProducts } from '../services/productServices';
 
 export const useProductStore = create((set) => ({
   isLoading: false,
-  getProducts: async (category, brand, search, sort_by, page, limit) => {
+  getProducts: async (queryObject) => {
     set({ isLoading: true });
     try {
-      return await getProducts(category, brand, search, sort_by, page, limit);
+      return await getProducts(queryObject);
     } finally {
       set({ isLoading: false });
     }

@@ -1,219 +1,275 @@
-import React, { useRef, useState, useEffect } from "react";
-import Navbar from "../../components/Navbar/Navbar.jsx";
-import Footer from "../../components/Footer/Footer.jsx";
-import styles from "./Home.module.css";
-import { useNavigate } from "react-router-dom";
-import WU from "../../assets/react.svg";
-import Services from "../../components/Services/Services.jsx";
+import Navbar from '../../components/Navbar/Navbar';
+import Shelf from '../../components/Shelf/Shelf';
+import Card from '../../components/Card/Card';
+import Button from '../../components/Button/Button';
+import Services from '../../components/Services/Services';
+import Footer from '../../components/Footer/Footer';
+import { useBrandStore } from '../../stores/brandStore';
+import { useCategoryStore } from '../../stores/categoryStore';
+import { useProductStore } from '../../stores/productStore';
+import { useWishlistStore } from '../../stores/wishlistStore';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './Home.module.css';
 
-export default function Home() {
-  const flashSaleProducts = [
-    { id: 1, name: "Wireless Headphones", price: 99, oldPrice: 149, img: WU },
-    { id: 2, name: "Smart Watch", price: 79, oldPrice: 129, img: WU },
-    { id: 3, name: "Gaming Mouse", price: 59, oldPrice: 99, img: WU },
-    { id: 4, name: "Mechanical Keyboard", price: 89, oldPrice: 139, img: WU },
-    { id: 5, name: "VR Headset", price: 199, oldPrice: 249, img: WU },
-    { id: 6, name: "Smart Glasses", price: 159, oldPrice: 199, img: WU },
-  ];
-
-  const categories = [
-    { id: 1, name: "Phones", img: WU },
-    { id: 2, name: "Computers", img: WU },
-    { id: 3, name: "SmartWatch", img: WU },
-    { id: 4, name: "Camera", img: WU },
-    { id: 5, name: "Headphones", img: WU },
-    { id: 6, name: "Gaming", img: WU },
-  ];
-
-  const bestSelling = [
-    { id: 1, name: "iPhone 14 Pro", price: 999, img: WU },
-    { id: 2, name: "MacBook Air M3", price: 1199, img: WU },
-    { id: 3, name: "iPad Pro", price: 799, img: WU },
-    { id: 4, name: "AirPods Pro", price: 249, img: WU },
-  ];
-
-  const flashScrollRef = useRef(null);
-  const navigate = useNavigate();
-
-  // ---------- Scroll Buttons ----------
-  const scrollLeft = () => flashScrollRef.current.scrollBy({ left: -240, behavior: "smooth" });
-  const scrollRight = () => flashScrollRef.current.scrollBy({ left: 240, behavior: "smooth" });
-
-  // ---------- Countdown Timer ----------
-  const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 23, minutes: 59, seconds: 59 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        let { days, hours, minutes, seconds } = prev;
-        if (seconds > 0) seconds--;
-        else if (minutes > 0) {
-          seconds = 59;
-          minutes--;
-        } else if (hours > 0) {
-          hours--;
-          minutes = 59;
-          seconds = 59;
-        } else if (days > 0) {
-          days--;
-          hours = 23;
-          minutes = 59;
-          seconds = 59;
-        }
-        return { days, hours, minutes, seconds };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // ---------- Logic for Buttons ----------
-  const handleViewDetails = (id) => {
-    navigate(`/product/${id}`);
-  };
-
-  const handleAddToCart = (product) => {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert(`${product.name} added to cart!`);
-  };
-
+function CategoryCard({ icon, image, name, onClick = () => console.log('button clicked') }) {
   return (
-    <div className={styles.homeContainer}>
-      <Navbar />
-
-      {/* ---------- Hero Section ---------- */}
-      <section className={styles.heroSection}>
-        <div>
-          <h1>iPhone 14 Pro</h1>
-          <p>
-            Experience the future of smartphones with the all-new iPhone 14 Pro.
-            Powered by the A17 Bionic chip.
-          </p>
-          <button>Shop Now</button>
-        </div>
-        <img src={WU} alt="iPhone Banner" />
-      </section>
-
-      {/* ---------- Flash Sales Section ---------- */}
-      <section className={styles.flashSales}>
-        <div className={styles.flashSalesHeader}>
-          <div className={styles.flashSalesTitle}>
-            <p className={styles.flashSalesLabel}>Today's</p>
-            <h2 className={styles.sectionTitle}>Flash Sales</h2>
-          </div>
-
-          <div className={styles.countdown}>
-            <div>
-              <span>Days</span>
-              <p>{timeLeft.days.toString().padStart(2, "0")}</p>
-            </div>
-            <div>
-              <span>Hours</span>
-              <p>{timeLeft.hours.toString().padStart(2, "0")}</p>
-            </div>
-            <div>
-              <span>Minutes</span>
-              <p>{timeLeft.minutes.toString().padStart(2, "0")}</p>
-            </div>
-            <div>
-              <span>Seconds</span>
-              <p>{timeLeft.seconds.toString().padStart(2, "0")}</p>
-            </div>
-          </div>
-
-          <div className={styles.arrowButtons}>
-            <button onClick={scrollLeft}>‹</button>
-            <button onClick={scrollRight}>›</button>
-          </div>
-        </div>
-
-        <div ref={flashScrollRef} className={styles.productRow}>
-          {flashSaleProducts.map((p) => (
-            <div
-              key={p.id}
-              className={styles.productCard}
-              onClick={() => handleViewDetails(p.id)} // whole card clickable
-            >
-              <div className={styles.imgContainer}>
-                <img src={p.img} alt={p.name} />
-
-                <button
-                  className={styles.hoverCart}
-                  onClick={(e) => {
-                    e.stopPropagation(); // prevent card click
-                    handleAddToCart(p);
-                  }}
-                >
-                  Add to Cart
-                </button>
-              </div>
-              <h4>{p.name}</h4>
-              <div className={styles.price}>
-                <p className={styles.old}>${p.oldPrice}</p>
-                <p className={styles.new}>${p.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.viewAll}>
-          <button>View All Products</button>
-        </div>
-      </section>
-
-      {/* ---------- Browse by Category ---------- */}
-      <section className={styles.categories}>
-        <p className={styles.Categorylabel}>Category</p>
-        <h2 className={styles.sectionTitle}>Browse by Category</h2>
-        <div className={styles.categoriesGrid}>
-          {categories.map((cat) => (
-            <div key={cat.id} className={styles.categoryCard}>
-              <img src={cat.img} alt={cat.name} />
-              <p>
-                <b>{cat.name}</b>
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-                     {/* ---------- Best Selling Section ---------- */}
-      <section className={styles.bestSelling}>
-        <p className={styles.Bsellinglabel}>this month's</p>
-        <h2 className={styles.sectionTitle}>Best Selling</h2>
-
-        <div className={styles.bestSellingGrid}>
-          {bestSelling.map((p) => (
-            <div
-              key={p.id}
-              className={styles.bestSellingCard}
-              onClick={() => handleViewDetails(p.id)}
-            >
-              <div className={styles.imgContainer}>
-                <img src={p.img} alt={p.name} />
-                <button
-                  className={styles.hoverCart}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart(p);
-                  }}
-                >
-                  Add to Cart
-                </button>
-              </div>
-
-              <h4>{p.name}</h4>
-              <p style={{ fontWeight: "bold", color: "red" }}>${p.price}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- Services Section (NEW) ---------- */}
-      <Services />
-
-      <Footer />
-    </div>
+    <button onClick={onClick} className={styles.categoryCard}>
+      <div>
+        {icon}
+        {!icon && image && <img src={image} alt="decoration" />}
+      </div>
+      <div>{name}</div>
+    </button>
   );
 }
+
+function Home() {
+  const brands = useBrandStore((state) => state.data);
+  const loadBrands = useBrandStore((state) => state.loadBrands);
+
+  const categories = useCategoryStore((state) => state.data);
+  const loadCategories = useCategoryStore((state) => state.loadCategories);
+
+  const getProducts = useProductStore((state) => state.getProducts);
+  const [firstBrandItems, setFirstBrandItem] = useState(null);
+  const [secondBrandItems, setSecondBrandItem] = useState(null);
+  const [thirdBrandItems, setThirdBrandItem] = useState(null);
+
+  const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
+
+  const navigate = useNavigate();
+
+  async function fetchBrand() {
+    try {
+      await loadBrands();
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  }
+
+  async function fetchCategory() {
+    try {
+      await loadCategories();
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      await Promise.allSettled([fetchBrand(), fetchCategory()]);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (
+      brands &&
+      brands.length > 0 &&
+      (firstBrandItems == null || secondBrandItems == null || thirdBrandItems == null)
+    ) {
+      (async () => {
+        const [firstItems, secondItems, thirdItems] = await Promise.all([
+          getProducts({ brand: brands[0].name }),
+          getProducts({ brand: brands[1].name }),
+          getProducts({ brand: brands[2].name }),
+        ]);
+
+        setFirstBrandItem(firstItems.data.products);
+        setSecondBrandItem(secondItems.data.products);
+        setThirdBrandItem(thirdItems.data.products);
+      })();
+    }
+  }, [brands]);
+
+  return (
+    <>
+      <Navbar />
+
+      <header className={`${styles.container} ${styles.header}`}>
+        <nav>
+          <ul>
+            {brands &&
+              brands.map((brand) => (
+                <li key={brand._id}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/products?brand=${brand.name}`);
+                    }}
+                  >
+                    {brand.name}
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </nav>
+
+        <div>
+          <img
+            src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
+            alt="decoration"
+          />
+        </div>
+      </header>
+
+      {firstBrandItems && (
+        <Shelf topic={brands?.[0]?.name || "Today's"} strong={brands?.[0]?.name || 'Flash Sales'}>
+          {firstBrandItems.map((item) => (
+            <Card
+              key={item._id}
+              productName={item.name}
+              image={item.variants?.[0]?.main_image_url}
+              newPrice={item.variants?.[0]?.price}
+              iconButtons={
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addItemToWishlist(item._id).catch((error) => {
+                        console.error(error);
+                        alert(error);
+                      });
+                    }}
+                  >
+                    <i className={`fa-regular fa-heart`}></i>
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/product/${item.slug}`);
+                    }}
+                  >
+                    <i className={`fa-regular fa-eye`}></i>
+                  </button>
+                </>
+              }
+            />
+          ))}
+        </Shelf>
+      )}
+
+      <Shelf topic={'Categories'} strong={'Browse By Category'} numberItems={6}>
+        {categories &&
+          categories.map((category) => (
+            <CategoryCard
+              key={category._id}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(`/products?category=${category.slug}`);
+              }}
+              name={category.name}
+            />
+          ))}
+      </Shelf>
+
+      {secondBrandItems && (
+        <Shelf
+          topic={brands?.[1]?.name || 'This Month'}
+          strong={brands?.[1]?.name || 'Best Selling Products'}
+        >
+          {secondBrandItems.map((item) => (
+            <Card
+              key={item._id}
+              productName={item.name}
+              image={item.variants?.[0]?.main_image_url}
+              newPrice={item.variants?.[0]?.price}
+              iconButtons={
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addItemToWishlist(item._id).catch((error) => {
+                        console.error(error);
+                        alert(error);
+                      });
+                    }}
+                  >
+                    <i className={`fa-regular fa-heart`}></i>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/product/${item.slug}`);
+                    }}
+                  >
+                    <i className={`fa-regular fa-eye`}></i>
+                  </button>
+                </>
+              }
+            />
+          ))}
+        </Shelf>
+      )}
+
+      {thirdBrandItems && (
+        <Shelf
+          topic={brands?.[2]?.name || 'Our Products'}
+          strong={brands?.[2]?.name || 'Explore Our Products'}
+        >
+          {thirdBrandItems.map((item) => (
+            <Card
+              key={item._id}
+              productName={item.name}
+              image={item.variants?.[0]?.main_image_url}
+              newPrice={item.variants?.[0]?.price}
+              iconButtons={
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addItemToWishlist(item._id).catch((error) => {
+                        console.error(error);
+                        alert(error);
+                      });
+                    }}
+                  >
+                    <i className={`fa-regular fa-heart`}></i>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/product/${item.slug}`);
+                    }}
+                  >
+                    <i className={`fa-regular fa-eye`}></i>
+                  </button>
+                </>
+              }
+            />
+          ))}
+        </Shelf>
+      )}
+
+      <div className={styles.viewAll}>
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            navigate('/products');
+          }}
+        >
+          View All Products
+        </Button>
+      </div>
+
+      <Services />
+
+      <button
+        className={styles.toTop}
+        onClick={(e) => {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      >
+        <i className="fa-solid fa-arrow-up"></i>
+      </button>
+
+      <Footer />
+    </>
+  );
+}
+
+export default Home;
