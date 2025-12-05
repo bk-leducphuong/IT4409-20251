@@ -5,6 +5,7 @@ import seedCategories from './seedCategories.js';
 import seedUsers from './seedUsers.js';
 import seedProducts from './seedProducts.js';
 import seedOrders from './seedOrders.js';
+import seedReviews from './seedReviews.js';
 
 dotenv.config();
 
@@ -35,6 +36,10 @@ const seedAll = async () => {
     await seedOrders();
     console.log('');
 
+    console.log('6️⃣  Seeding Reviews...');
+    await seedReviews();
+    console.log('');
+
     console.log('🎉 ĐÃ SEED TẤT CẢ DỮ LIỆU THÀNH CÔNG!');
     console.log('');
     console.log('📊 Tóm tắt:');
@@ -45,6 +50,7 @@ const seedAll = async () => {
     console.log('   ✅ Product Variants: ~150 variants');
     console.log('   ✅ Product Images: ~500 images');
     console.log('   ✅ Orders: ~30-50 orders');
+    console.log('   ✅ Reviews: ~50-150 reviews');
     console.log('');
     console.log('ℹ️  Thông tin đăng nhập:');
     console.log('   - Email user: (xem trong database)');

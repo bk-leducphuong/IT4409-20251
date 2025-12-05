@@ -49,6 +49,7 @@ import adminCategoryRoutes from './routes/admin.category.route.js';
 import adminBrandRoutes from './routes/admin.brand.route.js';
 import orderRoutes from './routes/order.route.js';
 import adminOrderRoutes from './routes/admin.order.route.js';
+import reviewRoutes from './routes/review.route.js';
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use('/api/brands', brandRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Admin routes
 app.use('/api/admin', adminProductRoutes);

@@ -15,6 +15,7 @@
     "seed:categories": "node seeds/seedCategories.js",
     "seed:users": "node seeds/seedUsers.js",
     "seed:products": "node seeds/seedProducts.js",
+    "seed:reviews": "node seeds/seedReviews.js",
     "seed:all": "node seeds/seedAll.js",
     "mongodb:dev:start": "mongodb-runner start --port 27017 --downloadDir ./db --db-path ./db/dev",
     "mongodb:dev:stop": "mongodb-runner stop --all"
