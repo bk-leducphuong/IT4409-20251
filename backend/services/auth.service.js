@@ -145,8 +145,14 @@ export const forgotPassword = async (email) => {
   user.resetPasswordExpires = new Date(Date.now() + 60 * 5 * 1000)
   await user.save();
 
+  const resetToken = jwt.sign(
+    { id: user._id, purpose: 'password-reset' },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE || '5m' }
+  );
+
   // Gửi email chứa OTP (plain + html)
-  await emailService.sendResetPasswordEmail(user.email, user.fullName, otp);
+  await emailService.sendResetPasswordEmail(user.email, user.fullName, otp, resetToken);
 
   return { message: 'OTP đã được gửi vào email. Vui lòng kiểm tra và nhập OTP.' };
 };

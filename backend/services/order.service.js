@@ -3,6 +3,7 @@ import Cart from '../models/cart.js';
 import ProductVariant from '../models/productVariant.js';
 import Product from '../models/product.js';
 import User from '../models/user.js';
+import emailService from '../libs/email.js';
 
 // Tax rate (10% VAT in Vietnam)
 const TAX_RATE = 0.1;
