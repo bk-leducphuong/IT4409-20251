@@ -40,7 +40,7 @@ transporter.verify()
     console.error('💡 Tip: Make sure to use App Password from Google Account settings');
   });
 
-export const sendEmail = async (to, subject, html) => {
+export const sendEmail = async (to, subject, html, text) => {
   try {
     if (!to) throw new Error('Missing "to" field');
     if (!smtpUser || !smtpPass) {
@@ -51,7 +51,8 @@ export const sendEmail = async (to, subject, html) => {
       from: process.env.EMAIL_FROM || smtpUser,
       to,
       subject,
-      html,
+      text: text || undefined,
+      html: html || undefined,
     });
     
     console.log('✅ Email sent successfully:', info.messageId);
@@ -62,7 +63,11 @@ export const sendEmail = async (to, subject, html) => {
   }
 };
 
-export const sendResetPasswordEmail = async (to, fullName, otp) => {
+export const sendResetPasswordEmail = async (to, fullName, otp, resetToken) => {
+  const link = process.env.FRONTEND_URL && resetToken
+    ? `${process.env.FRONTEND_URL.replace(/\/$/, '')}/reset-password?token=${encodeURIComponent(resetToken)}`
+    : null;
+
   const html = `
     <div style="font-family: Arial, sans-serif; padding: 20px;">
       <h2>Đặt lại mật khẩu</h2>
@@ -71,7 +76,8 @@ export const sendResetPasswordEmail = async (to, fullName, otp) => {
       <div style="margin: 20px 0; padding: 12px; background:#f5f5f5; border-radius:4px; text-align:center;">
         <span style="font-size:24px; font-weight:700;">${otp}</span>
       </div>
-      <p>Mã này có hiệu lực trong 5 phút. Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
+      ${link ? `<p>Hoặc nhấn <a href="${link}">vào đây</a> để đặt lại mật khẩu.</p>` : ''}
+      <p>Mã này có hiệu lực trong 5 phút. Nếu bạn không yêu cầu, bỏ qua email này.</p>
     </div>
   `;
 
@@ -80,10 +86,11 @@ export const sendResetPasswordEmail = async (to, fullName, otp) => {
 Bạn đã yêu cầu đặt lại mật khẩu.
 Mã OTP của bạn là: ${otp}
 
+${link ? `Hoặc mở link sau để đặt lại mật khẩu: ${link}\n\n` : ''}
+
 Mã có hiệu lực trong 5 phút. Nếu bạn không yêu cầu, bỏ qua email này.
 `;
 
   return sendEmail(to, 'OTP đặt lại mật khẩu', html, text);
 };
-
 export default { sendEmail, sendResetPasswordEmail };
