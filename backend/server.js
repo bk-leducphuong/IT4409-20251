@@ -1,7 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-dotenv.config();
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import pinoHttp from 'pino-http';
@@ -44,7 +43,6 @@ import productRoutes from './routes/product.route.js';
 import categoryRoutes from './routes/category.route.js';
 import brandRoutes from './routes/brand.route.js';
 import cartRoutes from './routes/cart.route.js';
-import orderRoutes from './routes/order.route.js';
 import wishlistRoutes from './routes/wishlist.route.js';
 import adminProductRoutes from './routes/admin.product.route.js';
 import adminCategoryRoutes from './routes/admin.category.route.js';
@@ -75,7 +73,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/order', orderRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 

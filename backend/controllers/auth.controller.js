@@ -1,5 +1,5 @@
 import authService from '../services/auth.service.js';
-import emailService from '../services/email.service.js';
+import emailService from '../libs/email.js';
 
 // POST /api/auth/register - Đăng ký
 export const register = async (req, res, next) => {
@@ -100,6 +100,7 @@ export const logout = async (req, res, next) => {
   }
 };
 
+// ...existing code...
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -109,6 +110,19 @@ export const forgotPassword = async (req, res) => {
 
     const result = await authService.forgotPassword(email);
     res.json({ success: true, message: result.message });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// New: verify OTP -> returns resetSessionToken
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ success: false, message: 'Email và OTP là bắt buộc' });
+
+    const result = await authService.verifyOtp(email, otp);
+    res.json({ success: true, message: 'OTP hợp lệ', data: result });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -131,12 +145,12 @@ export const resetPassword = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 export default {
   register,
   login,
   // getProfile,
   logout,
   forgotPassword,
+  verifyOtp,
   resetPassword,
 };
