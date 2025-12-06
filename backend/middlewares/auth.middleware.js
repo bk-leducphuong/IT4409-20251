@@ -70,3 +70,6 @@ export const requireRole = (...roles) => {
     next();
   };
 };
+
+// Alias for requireLogin (for consistency with other projects)
+export const authenticateToken = requireLogin;

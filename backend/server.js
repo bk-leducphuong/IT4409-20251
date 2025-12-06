@@ -6,6 +6,11 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import pinoHttp from 'pino-http';
 import logger from './logger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const options = {
   definition: {
@@ -51,6 +56,7 @@ import adminBrandRoutes from './routes/admin.brand.route.js';
 import orderRoutes from './routes/order.route.js';
 import adminOrderRoutes from './routes/admin.order.route.js';
 import reviewRoutes from './routes/review.route.js';
+import uploadRoutes from './routes/upload.route.js';
 
 const app = express();
 
@@ -63,6 +69,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Logger
 app.use(pinoHttp({ logger }));
+
+// Serve static files (uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 
@@ -78,6 +87,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Admin routes
 app.use('/api/admin', adminProductRoutes);
