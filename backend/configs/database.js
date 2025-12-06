@@ -5,7 +5,7 @@ const connectDB = async () => {
     const connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/it4409';
     const conn = await mongoose.connect(process.env.MONGODB_URI);
 
-    console.log(`✅ MongoDB đã kết nối: ${conn.connection.host}`);
+    console.log(`✅ MongoDB đã kết nối`);
     console.log(`📊 Database: ${conn.connection.name}`);
   } catch (error) {
     console.error(`❌ Lỗi kết nối MongoDB: ${error.message}`);
