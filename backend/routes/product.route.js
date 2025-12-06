@@ -1,6 +1,8 @@
 import express from 'express';
 const router = express.Router();
 import productController from '../controllers/product.controller.js';
+import reviewController from '../controllers/review.controller.js';
+import { requireLogin } from '../middlewares/auth.middleware.js';
 
 /**
  * @swagger
@@ -181,5 +183,129 @@ router.get('/', productController.getProducts);
  *         description: Product not found
  */
 router.get('/:slug', productController.getProductBySlug);
+
+/**
+ * @swagger
+ * /api/products/{slug}/reviews:
+ *   get:
+ *     summary: Get reviews for a product
+ *     tags: [Reviews]
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product slug
+ *       - in: query
+ *         name: rating
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 5
+ *         description: Filter by rating
+ *       - in: query
+ *         name: verified_only
+ *         schema:
+ *           type: boolean
+ *         description: Show only verified purchases
+ *       - in: query
+ *         name: sort_by
+ *         schema:
+ *           type: string
+ *           enum: [newest, helpful, rating_high, rating_low]
+ *           default: newest
+ *         description: Sort reviews
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Items per page
+ *     responses:
+ *       200:
+ *         description: List of reviews with statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     reviews:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Review'
+ *                     statistics:
+ *                       $ref: '#/components/schemas/RatingStatistics'
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         currentPage:
+ *                           type: integer
+ *                         totalPages:
+ *                           type: integer
+ *                         totalItems:
+ *                           type: integer
+ *                         itemsPerPage:
+ *                           type: integer
+ *       404:
+ *         description: Product not found
+ */
+router.get('/:slug/reviews', reviewController.getProductReviews);
+
+/**
+ * @swagger
+ * /api/products/{slug}/reviews:
+ *   post:
+ *     summary: Add a review for a product
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product slug
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ReviewInput'
+ *     responses:
+ *       201:
+ *         description: Review created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     review:
+ *                       $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Invalid input or user already reviewed
+ *       404:
+ *         description: Product not found
+ */
+router.post('/:slug/reviews', requireLogin, reviewController.addReview);
 
 export default router;

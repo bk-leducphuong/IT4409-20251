@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import User from '../models/user.js';
+import crypto from 'crypto';
+import emailService from '../libs/email.js';
 
 // Tạo JWT Token
 const generateToken = (userId) => {
@@ -128,9 +130,105 @@ export const logout = async (userId) => {
   return true;
 };
 
+export const forgotPassword = async (email) => {
+  const user = await User.findOne({ email, deleted: false });
+  if (!user) {
+    throw new Error('Email không tồn tại trong hệ thống');
+  }
+
+  // Tạo OTP 6 chữ số
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+  // Lưu OTP hash vào database (hết hạn trong 5 phút)
+  user.resetPasswordToken = otpHash;
+  user.resetPasswordExpires = new Date(Date.now() + 60 * 5 * 1000);
+  await user.save();
+
+  const resetToken = jwt.sign({ id: user._id, purpose: 'password-reset' }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '5m',
+  });
+
+  // Gửi email chứa OTP (plain + html)
+  await emailService.sendResetPasswordEmail(user.email, user.fullName, otp, resetToken);
+
+  return { message: 'OTP đã được gửi vào email. Vui lòng kiểm tra và nhập OTP.' };
+};
+
+// Verify OTP (returns a short-lived reset session token)
+export const verifyOtp = async (email, otp) => {
+  const user = await User.findOne({ email, deleted: false });
+  if (!user) {
+    throw new Error('Email không tồn tại');
+  }
+  if (
+    !user.resetPasswordToken ||
+    !user.resetPasswordExpires ||
+    user.resetPasswordExpires < new Date()
+  ) {
+    throw new Error('OTP đã hết hạn hoặc không tồn tại. Vui lòng gửi lại yêu cầu.');
+  }
+
+  const otpHash = crypto.createHash('sha256').update(String(otp)).digest('hex');
+  if (otpHash !== user.resetPasswordToken) {
+    throw new Error('OTP không hợp lệ');
+  }
+
+  // Tạo reset session token (dùng để xác thực việc đổi mật khẩu) - ngắn hạn
+  const resetSessionToken = jwt.sign(
+    { id: user._id, purpose: 'password-reset' },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.RESET_SESSION_EXPIRE || '15m',
+    },
+  );
+
+  // Optionally clear resetPasswordToken to prevent reuse (or keep until reset)
+  // user.resetPasswordToken = null;
+  // user.resetPasswordExpires = null;
+  // await user.save();
+
+  return { resetSessionToken };
+};
+
+export const resetPassword = async (token, newPassword) => {
+  // token here is the resetSessionToken (JWT)
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw new Error('Token reset không hợp lệ hoặc đã hết hạn');
+  }
+  if (!decoded || decoded.purpose !== 'password-reset' || !decoded.id) {
+    throw new Error('Token reset không hợp lệ');
+  }
+
+  const user = await User.findById(decoded.id);
+  if (!user) throw new Error('Người dùng không tồn tại');
+
+  // Validate mật khẩu mới
+  if (newPassword.length < 6) {
+    throw new Error('Mật khẩu phải có ít nhất 6 ký tự');
+  }
+
+  // Hash mật khẩu mới
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Cập nhật mật khẩu và xoá token OTP
+  user.password = hashedPassword;
+  user.resetPasswordToken = null;
+  user.resetPasswordExpires = null;
+  await user.save();
+
+  return { message: 'Mật khẩu đã được thay đổi thành công' };
+};
+
 export default {
   register,
   login,
   getUserByToken,
   logout,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 };

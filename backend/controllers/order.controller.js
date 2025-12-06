@@ -1,4 +1,5 @@
 import orderService from '../services/order.service.js';
+import emailService from '../libs/email.js';
 import { errorHandler } from '../middlewares/error.middleware.js';
 
 // POST /api/orders - Create order from cart (checkout)
