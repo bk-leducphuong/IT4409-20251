@@ -9,6 +9,7 @@ import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
+import UserSearch from './sites/UserSearch/UserSearch';
 
 import Loading from './components/Loading/Loading';
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
@@ -49,6 +50,7 @@ function App() {
           <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/search" element={<UserSearch />}></Route>
           <Route path="/product/:slug" element={<NotImplement />}></Route>
           <Route path="/products" element={<NotImplement />}></Route>
           <Route element={<UserProtectedRoute />}>
