@@ -56,6 +56,7 @@ import orderRoutes from './routes/order.route.js';
 import adminOrderRoutes from './routes/admin.order.route.js';
 import reviewRoutes from './routes/review.route.js';
 import uploadRoutes from './routes/upload.route.js';
+import addressRoutes from './routes/address.route.js';
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/home', homeRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/user/addresses', addressRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
