@@ -3,6 +3,7 @@ import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
+import { useState } from 'react';
 import styles from './Navbar.module.css';
 
 function Navbar() {
@@ -12,6 +13,7 @@ function Navbar() {
   const resetUser = useUserStore((state) => state.resetUser);
   const cartData = useCartStore((state) => state.data);
   const wishlistData = useWishlistStore((state) => state.data);
+  const [searchInput, setSearchInput] = useState('');
 
   async function componentLogout() {
     try {
@@ -22,6 +24,16 @@ function Navbar() {
       alert(err);
       console.error(err);
     }
+  }
+
+  function handleSearch(e) {
+    e.preventDefault();
+    if (searchInput.trim() === '') {
+      alert('Please enter a search term');
+      return;
+    }
+    navigate(`/search?q=${encodeURIComponent(searchInput)}`);
+    setSearchInput('');
   }
 
   return (
@@ -63,10 +75,22 @@ function Navbar() {
           </ul>
         </div>
 
-        <div className={styles.inputContainer}>
-          <input type="text" placeholder="What are you looking for?" className={styles.input} />
-          <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
-        </div>
+        <form className={styles.inputContainer} onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            className={styles.input}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button
+            type="submit"
+            className={styles.searchButton}
+            onClick={handleSearch}
+          >
+            <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
+          </button>
+        </form>
 
         <div className={styles.iconContainer}>
           <button onClick={() => navigate('/wistlist')}>
