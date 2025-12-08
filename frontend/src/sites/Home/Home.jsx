@@ -34,10 +34,44 @@ function Home() {
   const [firstBrandItems, setFirstBrandItem] = useState(null);
   const [secondBrandItems, setSecondBrandItem] = useState(null);
   const [thirdBrandItems, setThirdBrandItem] = useState(null);
+  const [heroSlides, setHeroSlides] = useState([]);
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [hover, setHover] = useState(false);
 
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await getProducts({ limit: 8, sort_by: 'newest' });
+        const slides = (result.data?.products || [])
+          .map((product) => ({
+            image: product.variants?.[0]?.main_image_url,
+            slug: product.slug,
+            name: product.name,
+          }))
+          .filter((item) => item.image);
+
+        if (slides.length) {
+          setHeroSlides(slides.slice(0, 6)); // limit to 6 images
+          setHeroIndex(0);
+        }
+      } catch (error) {
+        console.error('Failed to load hero slides', error);
+      }
+    })();
+  }, [getProducts]);
+
+  useEffect(() => {
+    if (heroSlides.length < 2) return;
+
+    const id = setInterval(() => {
+      setHeroIndex((current) => (current + 1) % heroSlides.length);
+    }, 4500);
+
+    return () => clearInterval(id);
+  }, [heroSlides]);
 
   useEffect(() => {
     if (
@@ -63,6 +97,7 @@ function Home() {
     <>
       <Navbar />
 
+      {/* Header with categories in nav */}
       <header className={`${styles.container} ${styles.header}`}>
         <nav>
           <ul>
@@ -81,15 +116,39 @@ function Home() {
               ))}
           </ul>
         </nav>
+        <div
+          className={styles.heroSlider}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          {/* Slides */}
+          {heroSlides.length > 0 &&
+            heroSlides.map((item, idx) => (
+              <img
+                key={item.slug || idx}
+                className={`${styles.heroSlide} ${heroIndex === idx ? styles.activeSlide : ''}`}
+                src={item.image}
+                alt={item.name || 'product'}
+                onClick={() => item.slug && navigate(`/product/${item.slug}`)}
+              />
+            ))}
 
-        <div>
-          <img
-            src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
-            alt="decoration"
-          />
+          {/* Dots */}
+          {heroSlides.length > 0 && (
+            <div className={`${styles.heroDots} ${hover ? styles.showDots : ''}`}>
+              {heroSlides.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`${styles.dot} ${heroIndex === idx ? styles.activeDot : ''}`}
+                  onClick={() => setHeroIndex(idx)}
+                ></span>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
+      {/* Brand shelves */}
       {firstBrandItems && (
         <Shelf topic={brands?.[0]?.name || "Today's"} strong={brands?.[0]?.name || 'Flash Sales'}>
           {firstBrandItems.map((item) => (
@@ -126,16 +185,17 @@ function Home() {
         </Shelf>
       )}
 
-      <Shelf topic={'Categories'} strong={'Browse By Category'} numberItems={6}>
-        {categories &&
-          categories.map((category) => (
+      {/* Brands using CategoryCard */}
+      <Shelf topic={'Brands'} strong={'Browse By Brand'} numberItems={brands?.length || 6}>
+        {brands &&
+          brands.map((brand) => (
             <CategoryCard
-              key={category._id}
+              key={brand._id}
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/products?category=${category.slug}`);
+                navigate(`/products?brand=${brand.name}`);
               }}
-              name={category.name}
+              name={brand.name}
             />
           ))}
       </Shelf>
@@ -220,7 +280,7 @@ function Home() {
         <Button
           onClick={(e) => {
             e.preventDefault();
-            navigate('/products');
+            navigate('/viewallproduct');
           }}
         >
           View All Products
