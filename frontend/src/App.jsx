@@ -10,6 +10,7 @@ import NotFoundPage from './sites/NotFound/NotFound';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
 import UserSearch from './sites/UserSearch/UserSearch';
+import ViewAllProduct from './sites/ViewAllProduct/ViewAllProduct';
 
 import Loading from './components/Loading/Loading';
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
@@ -51,6 +52,7 @@ function App() {
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/search" element={<UserSearch />}></Route>
+          <Route path="/viewallproduct" element={<ViewAllProduct />}></Route>
           <Route path="/product/:slug" element={<NotImplement />}></Route>
           <Route path="/products" element={<NotImplement />}></Route>
           <Route element={<UserProtectedRoute />}>
