@@ -152,6 +152,19 @@ const orderSchema = new mongoose.Schema(
       min: 0,
       // Discount amount (from coupons, promotions, etc.)
     },
+    
+    // Coupon information (snapshot at time of order)
+    coupon: {
+      coupon_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coupon',
+      },
+      code: String,
+      discount_type: String,
+      discount_value: Number,
+      discount_amount: Number,
+    },
+    
     total: {
       type: Number,
       required: true,

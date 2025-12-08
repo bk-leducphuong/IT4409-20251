@@ -8,6 +8,7 @@ import seedOrders from './seedOrders.js';
 import seedReviews from './seedReviews.js';
 import mongoose from 'mongoose';
 import Address from '../models/address.js';
+import Coupon from '../models/coupon.js';
 
 dotenv.config();
 
@@ -46,6 +47,10 @@ const seedAll = async () => {
     await seedAddresses();
     console.log('');
 
+    console.log('8️⃣  Seeding Coupons...');
+    await seedCoupons();
+    console.log('');
+
     console.log('🎉 ĐÃ SEED TẤT CẢ DỮ LIỆU THÀNH CÔNG!');
     console.log('');
     console.log('📊 Tóm tắt:');
@@ -58,6 +63,7 @@ const seedAll = async () => {
     console.log('   ✅ Orders: ~30-50 orders');
     console.log('   ✅ Reviews: ~50-150 reviews');
     console.log('   ✅ Addresses: ~10-15 addresses');
+    console.log('   ✅ Coupons: ~8 coupons');
     console.log('');
     console.log('ℹ️  Thông tin đăng nhập:');
     console.log('   - Email user: (xem trong database)');
@@ -193,6 +199,114 @@ const seedAddresses = async () => {
     console.log(`✅ Đã tạo ${addresses.length} địa chỉ mẫu cho ${users.length} users`);
   } catch (error) {
     console.error('❌ Lỗi khi seed địa chỉ:', error);
+  }
+};
+
+// Seed coupons function
+const seedCoupons = async () => {
+  try {
+    const User = mongoose.model('User');
+
+    // Get admin user
+    const adminUser = await User.findOne({ role: 'admin' });
+    
+    if (!adminUser) {
+      console.log('⚠️  No admin user found. Skipping coupon seeding.');
+      return;
+    }
+
+    // Clear existing coupons
+    await Coupon.deleteMany({});
+
+    const coupons = [
+      {
+        code: 'WELCOME10',
+        description: 'Welcome discount - 10% off for new customers',
+        discount_type: 'percentage',
+        discount_value: 10,
+        max_discount_amount: 50000,
+        min_order_value: 0,
+        usage_limit: null,
+        usage_limit_per_user: 1,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-12-31'),
+        created_by: adminUser._id,
+      },
+      {
+        code: 'SUMMER2024',
+        description: 'Summer sale - 20% off on all items',
+        discount_type: 'percentage',
+        discount_value: 20,
+        max_discount_amount: 100000,
+        min_order_value: 500000,
+        usage_limit: 1000,
+        usage_limit_per_user: 2,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-08-31'),
+        created_by: adminUser._id,
+      },
+      {
+        code: 'SAVE50K',
+        description: 'Fixed discount - Save 50,000 VND',
+        discount_type: 'fixed_amount',
+        discount_value: 50000,
+        min_order_value: 300000,
+        usage_limit: 500,
+        usage_limit_per_user: 1,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-12-31'),
+        created_by: adminUser._id,
+      },
+      {
+        code: 'FREESHIP',
+        description: 'Free shipping on all orders',
+        discount_type: 'free_shipping',
+        discount_value: 0,
+        min_order_value: 200000,
+        usage_limit: null,
+        usage_limit_per_user: 5,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-12-31'),
+        created_by: adminUser._id,
+      },
+      {
+        code: 'MEGA50',
+        description: 'Mega sale - 50% off (max 200k)',
+        discount_type: 'percentage',
+        discount_value: 50,
+        max_discount_amount: 200000,
+        min_order_value: 1000000,
+        usage_limit: 100,
+        usage_limit_per_user: 1,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-06-30'),
+        created_by: adminUser._id,
+      },
+      {
+        code: 'VIP100K',
+        description: 'VIP discount - 100,000 VND off',
+        discount_type: 'fixed_amount',
+        discount_value: 100000,
+        min_order_value: 1500000,
+        usage_limit: 50,
+        usage_limit_per_user: 1,
+        is_active: true,
+        valid_from: new Date(),
+        valid_until: new Date('2025-12-31'),
+        created_by: adminUser._id,
+      },
+    ];
+
+    await Coupon.insertMany(coupons);
+
+    console.log(`✅ Đã tạo ${coupons.length} mã giảm giá`);
+  } catch (error) {
+    console.error('❌ Lỗi khi seed coupons:', error);
   }
 };
 
