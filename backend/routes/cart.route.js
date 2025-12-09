@@ -227,4 +227,87 @@ router.delete('/items/:productVariantId', cartController.removeItem);
  */
 router.delete('/', cartController.clearCart);
 
+/**
+ * @swagger
+ * /api/cart/apply-coupon:
+ *   post:
+ *     summary: Apply coupon to cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - code
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 description: Coupon code to apply
+ *                 example: SUMMER2024
+ *     responses:
+ *       200:
+ *         description: Coupon applied successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     coupon:
+ *                       type: object
+ *                     cart:
+ *                       $ref: '#/components/schemas/Cart'
+ *       400:
+ *         description: Invalid coupon or does not meet requirements
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart not found
+ */
+router.post('/apply-coupon', cartController.applyCoupon);
+
+/**
+ * @swagger
+ * /api/cart/remove-coupon:
+ *   delete:
+ *     summary: Remove coupon from cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Coupon removed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     cart:
+ *                       $ref: '#/components/schemas/Cart'
+ *       400:
+ *         description: No coupon applied to cart
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Cart not found
+ */
+router.delete('/remove-coupon', cartController.removeCoupon);
+
 export default router;

@@ -18,6 +18,7 @@
     "seed:reviews": "node seeds/seedReviews.js",
     "seed:addresses": "node seeds/seedAddresses.js",
     "seed:orders": "node seeds/seedOrders.js",
+    "seed:coupons": "node seeds/seedCoupons.js",
     "seed:all": "node seeds/seedAll.js",
     "mongodb:dev:start": "mongodb-runner start --port 27017 --downloadDir ./db --db-path ./db/dev",
     "mongodb:dev:stop": "mongodb-runner stop --all"

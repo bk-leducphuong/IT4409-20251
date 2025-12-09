@@ -3,6 +3,7 @@ import Cart from '../models/cart.js';
 import ProductVariant from '../models/productVariant.js';
 import Product from '../models/product.js';
 import User from '../models/user.js';
+import Coupon from '../models/coupon.js';
 import emailService from '../libs/email.js';
 
 // Tax rate (10% VAT in Vietnam)
@@ -78,8 +79,42 @@ export const createOrderFromCart = async (userId, orderData) => {
 
     // Calculate totals
     const tax = Math.round(subtotal * TAX_RATE);
-    const shipping_fee = calculateShippingFee(subtotal);
-    const discount = 0; // TODO: Implement discount/coupon logic
+    let shipping_fee = calculateShippingFee(subtotal);
+    let discount = 0;
+    let couponData = null;
+
+    // Handle coupon if applied
+    if (cart.applied_coupon && cart.applied_coupon.coupon_id) {
+      const coupon = await Coupon.findById(cart.applied_coupon.coupon_id);
+      
+      if (coupon && coupon.is_valid) {
+        // Verify user can still use this coupon
+        const canUse = coupon.canBeUsedBy(userId);
+        if (canUse.valid) {
+          // Calculate discount with current subtotal
+          discount = coupon.calculateDiscount(subtotal, shipping_fee);
+          
+          // If coupon is free_shipping, set shipping_fee to 0
+          if (coupon.discount_type === 'free_shipping') {
+            discount = shipping_fee;
+            shipping_fee = 0;
+          }
+          
+          // Record coupon usage
+          await coupon.recordUsage(userId);
+          
+          // Save coupon data for order
+          couponData = {
+            coupon_id: coupon._id,
+            code: coupon.code,
+            discount_type: coupon.discount_type,
+            discount_value: coupon.discount_value,
+            discount_amount: discount,
+          };
+        }
+      }
+    }
+
     const total = subtotal + tax + shipping_fee - discount;
 
     // Create order
@@ -92,6 +127,7 @@ export const createOrderFromCart = async (userId, orderData) => {
       tax,
       shipping_fee,
       discount,
+      coupon: couponData,
       total,
       payment_method: payment_method || 'cod',
       payment_status: payment_method === 'cod' ? 'pending' : 'pending',
@@ -100,6 +136,7 @@ export const createOrderFromCart = async (userId, orderData) => {
 
     // Clear cart after successful order
     cart.items = [];
+    cart.applied_coupon = undefined;
     await cart.save();
 
     // Populate order for return
@@ -192,6 +229,31 @@ export const cancelOrder = async (orderId, userId, reason = '') => {
       });
     }
 
+    // Restore coupon usage if coupon was used
+    if (order.coupon && order.coupon.coupon_id) {
+      const coupon = await Coupon.findById(order.coupon.coupon_id);
+      if (coupon) {
+        // Decrease total usage count
+        coupon.usage_count = Math.max(0, coupon.usage_count - 1);
+        
+        // Decrease user's usage count
+        const userUsage = coupon.used_by.find(
+          (usage) => usage.user_id.toString() === userId.toString()
+        );
+        if (userUsage && userUsage.usage_count > 0) {
+          userUsage.usage_count -= 1;
+          // Remove user from used_by if usage_count is 0
+          if (userUsage.usage_count === 0) {
+            coupon.used_by = coupon.used_by.filter(
+              (usage) => usage.user_id.toString() !== userId.toString()
+            );
+          }
+        }
+        
+        await coupon.save();
+      }
+    }
+
     await order.save();
 
     return order;
@@ -279,13 +341,36 @@ export const updateOrderStatus = async (orderId, statusData) => {
     if (tracking_number) order.tracking_number = tracking_number;
     if (carrier) order.carrier = carrier;
 
-    // Handle refund - restore stock
+    // Handle refund - restore stock and coupon usage
     if (status === 'refunded') {
       for (const item of order.items) {
         await ProductVariant.findByIdAndUpdate(item.product_variant_id, {
           $inc: { stock_quantity: item.quantity },
         });
       }
+      
+      // Restore coupon usage if coupon was used
+      if (order.coupon && order.coupon.coupon_id) {
+        const coupon = await Coupon.findById(order.coupon.coupon_id);
+        if (coupon) {
+          coupon.usage_count = Math.max(0, coupon.usage_count - 1);
+          
+          const userUsage = coupon.used_by.find(
+            (usage) => usage.user_id.toString() === order.user_id.toString()
+          );
+          if (userUsage && userUsage.usage_count > 0) {
+            userUsage.usage_count -= 1;
+            if (userUsage.usage_count === 0) {
+              coupon.used_by = coupon.used_by.filter(
+                (usage) => usage.user_id.toString() !== order.user_id.toString()
+              );
+            }
+          }
+          
+          await coupon.save();
+        }
+      }
+      
       order.payment_status = 'refunded';
     }
 
