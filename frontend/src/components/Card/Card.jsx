@@ -1,12 +1,31 @@
+import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../stores/userStore';
 import styles from './Card.module.css';
 
-function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, addToCartButton }) {
+function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, addToCartButton, onAddToCart }) {
+  const navigate = useNavigate();
+  const userData = useUserStore((state) => state.data);
+
   // Calculate discount only if both prices exist
   const hasDiscount = oldPrice != null && newPrice != null && oldPrice > newPrice;
   const discount = hasDiscount ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : null;
 
   // Clamp rating between 0 and 5
   const safeRating = Math.max(0, Math.min(5, Math.round(rating || 0)));
+
+  function handleAddToCart(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    
+    if (onAddToCart) {
+      onAddToCart();
+    }
+  }
 
   return (
     <div className={styles.cardContainer}>
@@ -20,6 +39,11 @@ function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, add
 
           {/* ICONS */}
           <div className={styles.buttonContainer}>{iconButtons}</div>
+
+          {/* ADD TO CART BUTTON (HOVER) */}
+          <button className={styles.addToCartBtn} onClick={handleAddToCart}>
+            <i className="fa-solid fa-cart-shopping"></i> Add To Cart
+          </button>
 
           {addToCartButton}
         </div>
