@@ -14,6 +14,11 @@
   position: relative;
 }
 
+.imageContainer:hover .addToCartBtn {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .image {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -97,4 +102,34 @@
 
 .faded {
   color: #ccc;
+}
+
+.addToCartBtn {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.addToCartBtn:hover {
+  background-color: #333;
+}
+
+.addToCartBtn i {
+  font-size: 1rem;
 }
