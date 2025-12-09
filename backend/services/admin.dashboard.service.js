@@ -245,9 +245,7 @@ export const getSalesAnalytics = async (filters = {}) => {
         total_orders: totals.total_orders,
         total_items_sold: totals.total_items_sold,
         average_order_value:
-          totals.total_orders > 0
-            ? Math.round(totals.total_sales / totals.total_orders)
-            : 0,
+          totals.total_orders > 0 ? Math.round(totals.total_sales / totals.total_orders) : 0,
       },
       sales_data: salesData.map((item) => ({
         date: item._id,
@@ -316,10 +314,7 @@ export const getTopProducts = async (filters = {}) => {
         },
       },
       {
-        $sort:
-          sortBy === 'quantity'
-            ? { total_quantity_sold: -1 }
-            : { total_revenue: -1 },
+        $sort: sortBy === 'quantity' ? { total_quantity_sold: -1 } : { total_revenue: -1 },
       },
       { $limit: parseInt(limit) },
     ]);
