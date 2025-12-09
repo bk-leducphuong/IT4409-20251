@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import adminCouponController from '../controllers/admin.coupon.controller.js';
-import { requireLogin, requireAdmin } from '../middlewares/auth.middleware.js';
+import { requireLogin, requireRole } from '../middlewares/auth.middleware.js';
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ import { requireLogin, requireAdmin } from '../middlewares/auth.middleware.js';
 
 // All coupon routes require authentication and admin privileges
 router.use(requireLogin);
-router.use(requireAdmin);
+router.use(requireRole('admin'));
 
 /**
  * @swagger
