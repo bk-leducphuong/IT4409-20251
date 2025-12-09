@@ -1,29 +1,34 @@
 # Admin Dashboard Analytics Feature
 
 ## Overview
+
 This feature provides comprehensive analytics for the admin dashboard, including sales statistics, revenue reports, popular products, user statistics, and order analytics.
 
 ## API Endpoints
 
 ### 1. GET /api/admin/dashboard/stats
+
 Get comprehensive dashboard statistics including revenue, orders, users, and products.
 
 **Authentication:** Required (Bearer Token)  
 **Role:** Admin
 
 #### Query Parameters
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| startDate | string (ISO 8601) | No | Start date for filtering |
-| endDate | string (ISO 8601) | No | End date for filtering |
+
+| Parameter | Type              | Required | Description              |
+| --------- | ----------------- | -------- | ------------------------ |
+| startDate | string (ISO 8601) | No       | Start date for filtering |
+| endDate   | string (ISO 8601) | No       | End date for filtering   |
 
 #### Example Request
+
 ```bash
 GET /api/admin/dashboard/stats?startDate=2024-01-01&endDate=2024-12-31
 Authorization: Bearer <token>
 ```
 
 #### Example Response
+
 ```json
 {
   "success": true,
@@ -68,25 +73,29 @@ Authorization: Bearer <token>
 ---
 
 ### 2. GET /api/admin/dashboard/sales
+
 Get detailed sales analytics with time-based grouping (daily, weekly, or monthly).
 
 **Authentication:** Required (Bearer Token)  
 **Role:** Admin
 
 #### Query Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| startDate | string (ISO 8601) | No | 30 days ago | Start date for filtering |
-| endDate | string (ISO 8601) | No | Today | End date for filtering |
-| groupBy | string | No | daily | Grouping period: `daily`, `weekly`, `monthly` |
+
+| Parameter | Type              | Required | Default     | Description                                   |
+| --------- | ----------------- | -------- | ----------- | --------------------------------------------- |
+| startDate | string (ISO 8601) | No       | 30 days ago | Start date for filtering                      |
+| endDate   | string (ISO 8601) | No       | Today       | End date for filtering                        |
+| groupBy   | string            | No       | daily       | Grouping period: `daily`, `weekly`, `monthly` |
 
 #### Example Request
+
 ```bash
 GET /api/admin/dashboard/sales?startDate=2024-11-01&endDate=2024-12-01&groupBy=daily
 Authorization: Bearer <token>
 ```
 
 #### Example Response
+
 ```json
 {
   "success": true,
@@ -134,26 +143,30 @@ Authorization: Bearer <token>
 ---
 
 ### 3. GET /api/admin/dashboard/top-products
+
 Get top-selling products with detailed sales metrics.
 
 **Authentication:** Required (Bearer Token)  
 **Role:** Admin
 
 #### Query Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| startDate | string (ISO 8601) | No | All time | Start date for filtering |
-| endDate | string (ISO 8601) | No | All time | End date for filtering |
-| limit | integer | No | 10 | Number of products to return (1-100) |
-| sortBy | string | No | revenue | Sort by: `revenue` or `quantity` |
+
+| Parameter | Type              | Required | Default  | Description                          |
+| --------- | ----------------- | -------- | -------- | ------------------------------------ |
+| startDate | string (ISO 8601) | No       | All time | Start date for filtering             |
+| endDate   | string (ISO 8601) | No       | All time | End date for filtering               |
+| limit     | integer           | No       | 10       | Number of products to return (1-100) |
+| sortBy    | string            | No       | revenue  | Sort by: `revenue` or `quantity`     |
 
 #### Example Request
+
 ```bash
 GET /api/admin/dashboard/top-products?limit=10&sortBy=revenue
 Authorization: Bearer <token>
 ```
 
 #### Example Response
+
 ```json
 {
   "success": true,
@@ -196,35 +209,41 @@ Authorization: Bearer <token>
 ## Features
 
 ### Sales Statistics
+
 - Total revenue from completed orders
 - Total number of orders
 - Average order value
 - Revenue breakdown by order status
 
 ### Revenue Reports
+
 - Time-based sales analytics (daily, weekly, monthly)
 - Sales trends over custom date ranges
 - Payment method breakdown
 - Total items sold
 
 ### Popular Products
+
 - Top-selling products by revenue or quantity
 - Product-level and variant-level analytics
 - Includes category and brand information
 - Display images for better visualization
 
 ### User Statistics
+
 - Total registered users
 - Active customers count
 - New users this month
 
 ### Order Analytics
+
 - Orders by status breakdown
 - Recent orders (last 7 days)
 - Pending orders requiring attention
 - Revenue per status
 
 ### Product Inventory Insights
+
 - Total products and variants
 - Low stock alerts (< 10 units)
 - Out of stock items
@@ -234,14 +253,17 @@ Authorization: Bearer <token>
 ## Technical Implementation
 
 ### Files Created
+
 1. **services/admin.dashboard.service.js** - Business logic for analytics
 2. **controllers/admin.dashboard.controller.js** - Request handlers
 3. **routes/admin.dashboard.route.js** - API route definitions
 
 ### Files Modified
+
 1. **server.js** - Registered dashboard routes
 
 ### Dependencies
+
 - Uses existing models: Order, User, Product, ProductVariant
 - Leverages MongoDB aggregation framework for efficient queries
 - Follows existing authentication and error handling patterns
@@ -253,47 +275,54 @@ Authorization: Bearer <token>
 ### Using cURL
 
 #### Get Dashboard Stats
+
 ```bash
 curl -X GET "http://localhost:5001/api/admin/dashboard/stats" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 #### Get Sales Analytics (Last 7 days, Daily)
+
 ```bash
 curl -X GET "http://localhost:5001/api/admin/dashboard/sales?groupBy=daily" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 #### Get Top 20 Products by Quantity
+
 ```bash
 curl -X GET "http://localhost:5001/api/admin/dashboard/top-products?limit=20&sortBy=quantity" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### Using JavaScript/Fetch
+
 ```javascript
 const token = 'YOUR_TOKEN_HERE';
 
 // Get dashboard stats
 const stats = await fetch('http://localhost:5001/api/admin/dashboard/stats', {
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
-}).then(res => res.json());
+    Authorization: `Bearer ${token}`,
+  },
+}).then((res) => res.json());
 
 // Get monthly sales for 2024
-const sales = await fetch('http://localhost:5001/api/admin/dashboard/sales?startDate=2024-01-01&endDate=2024-12-31&groupBy=monthly', {
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-}).then(res => res.json());
+const sales = await fetch(
+  'http://localhost:5001/api/admin/dashboard/sales?startDate=2024-01-01&endDate=2024-12-31&groupBy=monthly',
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  },
+).then((res) => res.json());
 
 // Get top 5 products
 const topProducts = await fetch('http://localhost:5001/api/admin/dashboard/top-products?limit=5', {
   headers: {
-    'Authorization': `Bearer ${token}`
-  }
-}).then(res => res.json());
+    Authorization: `Bearer ${token}`,
+  },
+}).then((res) => res.json());
 ```
 
 ---
@@ -319,6 +348,7 @@ All endpoints return standardized error responses:
 ```
 
 Common HTTP status codes:
+
 - `200` - Success
 - `400` - Bad Request (invalid parameters)
 - `401` - Unauthorized (missing or invalid token)
@@ -330,11 +360,13 @@ Common HTTP status codes:
 ## Testing
 
 To test the endpoints, you'll need:
+
 1. A valid admin user account
 2. Authentication token (obtained from login)
 3. Sample data in the database (orders, products, users)
 
 You can use the seeding scripts if needed:
+
 ```bash
 npm run seed
 ```
@@ -344,6 +376,7 @@ npm run seed
 ## Future Enhancements
 
 Potential improvements:
+
 1. Export data to CSV/Excel
 2. Real-time dashboard updates (WebSocket)
 3. Custom date range presets (Today, This Week, This Month, etc.)
