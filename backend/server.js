@@ -52,8 +52,10 @@ import wishlistRoutes from './routes/wishlist.route.js';
 import adminProductRoutes from './routes/admin.product.route.js';
 import adminCategoryRoutes from './routes/admin.category.route.js';
 import adminBrandRoutes from './routes/admin.brand.route.js';
+import adminCouponRoutes from './routes/admin.coupon.route.js';
 import orderRoutes from './routes/order.route.js';
 import adminOrderRoutes from './routes/admin.order.route.js';
+import adminDashboardRoutes from './routes/admin.dashboard.route.js';
 import reviewRoutes from './routes/review.route.js';
 import uploadRoutes from './routes/upload.route.js';
 import addressRoutes from './routes/address.route.js';
@@ -94,7 +96,9 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', adminProductRoutes);
 app.use('/api/admin', adminCategoryRoutes);
 app.use('/api/admin', adminBrandRoutes);
+app.use('/api/admin/coupons', adminCouponRoutes);
 app.use('/api/admin', adminOrderRoutes);
+app.use('/api/admin', adminDashboardRoutes);
 
 const PORT = process.env.PORT || 5001;
 
