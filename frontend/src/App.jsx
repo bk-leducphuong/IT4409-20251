@@ -7,6 +7,8 @@ import Contact from './sites/Contact/Contact';
 import Home from './sites/Home/Home';
 import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
+import Product from './sites/Product/Product';
+import Searching from './sites/Searching/Searching';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
 
@@ -49,8 +51,8 @@ function App() {
           <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/product/:slug" element={<NotImplement />}></Route>
-          <Route path="/products" element={<NotImplement />}></Route>
+          <Route path="/product/:slug" element={<Product />}></Route>
+          <Route path="/products" element={<Searching />}></Route>
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>

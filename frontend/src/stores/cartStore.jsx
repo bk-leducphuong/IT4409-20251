@@ -4,7 +4,7 @@ import { addItem, deleteItem, getCart, updateQuantity } from '../services/cartSe
 export const useCartStore = create((set) => ({
   data: [],
   isLoading: false,
-  getCart: async () => {
+  loadCart: async () => {
     set({ isLoading: true });
     try {
       const cart = await getCart();

@@ -19,7 +19,7 @@ function CheckOutItem({ image, productName, totalPrice }) {
 
 function CheckOut() {
   const cart = useCartStore((state) => state.data);
-  const loadCart = useCartStore((state) => state.getCart);
+  const loadCart = useCartStore((state) => state.loadCart);
   const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
 
   useEffect(() => {

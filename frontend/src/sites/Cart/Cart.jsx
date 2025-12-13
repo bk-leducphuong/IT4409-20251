@@ -67,7 +67,7 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
 
 function Cart() {
   const cart = useCartStore((state) => state.data);
-  const loadCart = useCartStore((state) => state.getCart);
+  const loadCart = useCartStore((state) => state.loadCart);
   const navigate = useNavigate();
   const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
 
@@ -90,16 +90,17 @@ function Cart() {
             </tr>
           </thead>
           <tbody>
-            {cart.map((item) => (
-              <CartItem
-                key={item.product_variant_id._id}
-                id={item.product_variant_id._id}
-                image={item.product_variant_id.main_image_url}
-                productName={item.product_variant_id.product_id.name}
-                newPrice={item.product_variant_id.price}
-                quantity={item.quantity}
-              />
-            ))}
+            {cart &&
+              cart.map((item) => (
+                <CartItem
+                  key={item.product_variant_id._id}
+                  id={item.product_variant_id._id}
+                  image={item.product_variant_id.main_image_url}
+                  productName={item.product_variant_id.product_id.name}
+                  newPrice={item.product_variant_id.price}
+                  quantity={item.quantity}
+                />
+              ))}
           </tbody>
         </table>
 

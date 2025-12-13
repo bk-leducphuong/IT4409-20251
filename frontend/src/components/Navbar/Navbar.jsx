@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -6,6 +7,7 @@ import { useWishlistStore } from '../../stores/wishlistStore';
 import styles from './Navbar.module.css';
 
 function Navbar() {
+  const [productName, setProductName] = useState('');
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const userData = useUserStore((state) => state.data);
@@ -64,8 +66,19 @@ function Navbar() {
         </div>
 
         <div className={styles.inputContainer}>
-          <input type="text" placeholder="What are you looking for?" className={styles.input} />
-          <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            className={styles.input}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
+          <button
+            className={styles.searchIcon}
+            onClick={() => navigate(`/products?product=${productName}`)}
+          >
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </button>
         </div>
 
         <div className={styles.iconContainer}>
@@ -79,7 +92,7 @@ function Navbar() {
               {cartData.length > 0 ? <span>{cartData.length}</span> : null}
             </i>
           </button>
-          {userData ? (
+          {userData && (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
                 <button
@@ -121,8 +134,6 @@ function Navbar() {
                 </button>
               </div>
             </i>
-          ) : (
-            <i className={`fa-solid fa-circle-user ${styles.hidden}`}></i>
           )}
         </div>
       </nav>
