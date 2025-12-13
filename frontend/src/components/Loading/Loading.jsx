@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useBrandStore } from '../../stores/brandStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useCategoryStore } from '../../stores/categoryStore';
+import { useOrderStore } from '../../stores/orderStore';
 import { useProductStore } from '../../stores/productStore';
 import { useUserStore } from '../../stores/userStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
@@ -14,6 +15,7 @@ function Loading() {
   const brandLoading = useBrandStore((state) => state.isLoading);
   const cartLoading = useCartStore((state) => state.isLoading);
   const categoryLoading = useCategoryStore((state) => state.isLoading);
+  const orderLoading = useOrderStore((state) => state.isLoading);
   const productLoading = useProductStore((state) => state.isLoading);
   const wishlistLoading = useWishlistStore((state) => state.isLoading);
   const userLoading = useUserStore((state) => state.isLoading);
@@ -25,6 +27,7 @@ function Loading() {
     userLoading ||
     cartLoading ||
     categoryLoading ||
+    orderLoading ||
     wishlistLoading ||
     productLoading;
 
