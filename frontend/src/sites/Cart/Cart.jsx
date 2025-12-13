@@ -69,7 +69,9 @@ function Cart() {
   const cart = useCartStore((state) => state.data);
   const loadCart = useCartStore((state) => state.loadCart);
   const navigate = useNavigate();
-  const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
+  const haveItem = cart && cart.length > 0;
+  const total =
+    cart?.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0) ?? 0;
 
   useEffect(() => {
     loadCart();
@@ -80,72 +82,96 @@ function Cart() {
       <Navbar />
 
       <div className={styles.container}>
-        <table className={styles.table}>
-          <thead>
-            <tr className={styles.cartItem}>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cart &&
-              cart.map((item) => (
-                <CartItem
-                  key={item.product_variant_id._id}
-                  id={item.product_variant_id._id}
-                  image={item.product_variant_id.main_image_url}
-                  productName={item.product_variant_id.product_id.name}
-                  newPrice={item.product_variant_id.price}
-                  quantity={item.quantity}
-                />
-              ))}
-          </tbody>
-        </table>
+        {haveItem ? (
+          <>
+            <table className={styles.table}>
+              <thead>
+                <tr className={styles.cartItem}>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart &&
+                  cart.map((item) => (
+                    <CartItem
+                      key={item.product_variant_id._id}
+                      id={item.product_variant_id._id}
+                      image={item.product_variant_id.main_image_url}
+                      productName={item.product_variant_id.product_id.name}
+                      newPrice={item.product_variant_id.price}
+                      quantity={item.quantity}
+                    />
+                  ))}
+              </tbody>
+            </table>
 
-        <div className={styles.buttonsConatiner}>
-          <Button
-            backgroundColor="white"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('/');
-            }}
-          >
-            Return To Shop
-          </Button>
-          <Button backgroundColor="white">Update Cart</Button>
-        </div>
+            <div className={styles.buttonsConatiner}>
+              <Button
+                backgroundColor="white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/');
+                }}
+              >
+                Return To Shop
+              </Button>
+              <Button backgroundColor="white">Clear Cart</Button>
+            </div>
+          </>
+        ) : (
+          <div className={styles.notice}>
+            <div>
+              <i className="fa-solid fa-cart-shopping"></i>
+              No item in your cart
+            </div>
+            <div>
+              <Button
+                backgroundColor="white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/');
+                }}
+              >
+                Return To Shop
+              </Button>
+            </div>
+          </div>
+        )}
 
-        <div className={styles.checkout}>
-          <div className={styles.coupon}>
-            <input type="text" placeholder="Coupon code" />
-            <Button>Apply Coupon</Button>
+        {haveItem && (
+          <div className={styles.checkout}>
+            <div className={styles.coupon}>
+              <input type="text" placeholder="Coupon code" />
+              <Button>Apply Coupon</Button>
+            </div>
+            <div className={styles.checkoutDetails}>
+              <div className={styles.header}>Cart Total</div>
+              <div className={`${styles.detail} ${styles.underline}`}>
+                <div>Subtotal:</div>
+                <div>{`$${total}`}</div>
+              </div>
+              <div className={`${styles.detail} ${styles.underline}`}>
+                <div>Shipping:</div>
+                <div>Free</div>
+              </div>
+              <div className={styles.detail}>
+                <div>Total:</div>
+                <div>{`$${total}`}</div>
+              </div>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/checkout');
+                }}
+              >
+                Process to Checkout
+              </Button>
+            </div>
           </div>
-          <div className={styles.checkoutDetails}>
-            <div className={styles.header}>Cart Total</div>
-            <div className={`${styles.detail} ${styles.underline}`}>
-              <div>Subtotal:</div>
-              <div>{`$${total}`}</div>
-            </div>
-            <div className={`${styles.detail} ${styles.underline}`}>
-              <div>Shipping:</div>
-              <div>Free</div>
-            </div>
-            <div className={styles.detail}>
-              <div>Total:</div>
-              <div>{`$${total}`}</div>
-            </div>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/checkout');
-              }}
-            >
-              Process to Checkout
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
 
       <Footer />

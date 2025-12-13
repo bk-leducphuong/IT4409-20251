@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { getBrandByID, getBrands } from '../services/brandServices';
 
 export const useBrandStore = create((set) => ({
-  data: [],
+  data: null,
   isLoading: false,
   loadBrands: async () => {
     set({ isLoading: true });

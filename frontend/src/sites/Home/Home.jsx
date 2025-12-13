@@ -26,10 +26,8 @@ function CategoryCard({ icon, image, name, onClick = () => console.log('button c
 
 function Home() {
   const brands = useBrandStore((state) => state.data);
-  const loadBrands = useBrandStore((state) => state.loadBrands);
 
   const categories = useCategoryStore((state) => state.data);
-  const loadCategories = useCategoryStore((state) => state.loadCategories);
 
   const getProducts = useProductStore((state) => state.getProducts);
   const [firstBrandItems, setFirstBrandItem] = useState(null);
@@ -39,30 +37,6 @@ function Home() {
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
 
   const navigate = useNavigate();
-
-  async function fetchBrand() {
-    try {
-      await loadBrands();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
-  async function fetchCategory() {
-    try {
-      await loadCategories();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
-  useEffect(() => {
-    (async () => {
-      await Promise.allSettled([fetchBrand(), fetchCategory()]);
-    })();
-  }, []);
 
   useEffect(() => {
     if (
@@ -91,16 +65,16 @@ function Home() {
       <header className={`${styles.container} ${styles.header}`}>
         <nav>
           <ul>
-            {brands &&
-              brands.map((brand) => (
-                <li key={brand._id}>
+            {categories &&
+              categories.map((category) => (
+                <li key={category._id}>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate(`/products?brand=${brand.name}`);
+                      navigate(`/products?category=${category.slug}`);
                     }}
                   >
-                    {brand.name}
+                    {category.name}
                   </button>
                 </li>
               ))}

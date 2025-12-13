@@ -5,7 +5,6 @@ import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
 import Contact from './sites/Contact/Contact';
 import Home from './sites/Home/Home';
-import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
 import Product from './sites/Product/Product';
 import Searching from './sites/Searching/Searching';
@@ -19,6 +18,8 @@ import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtected
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useUserStore } from './stores/userStore';
+import { useBrandStore } from './stores/brandStore';
+import { useCategoryStore } from './stores/categoryStore';
 
 import Dev from './sites/Dev';
 
@@ -27,13 +28,12 @@ function App() {
 
   useEffect(() => {
     if (!dev)
-      (async () => {
-        try {
-          await useUserStore.getState().loadUserData();
-        } catch {
-          // intentionally ignored
-        }
-      })();
+      (async () =>
+        await Promise.allSettled([
+          useUserStore.getState().loadUserData(),
+          useBrandStore.getState().loadBrands(),
+          useCategoryStore.getState().loadCategories(),
+        ]))();
   }, []);
 
   if (dev)

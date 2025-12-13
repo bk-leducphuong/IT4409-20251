@@ -7,7 +7,7 @@ import {
 } from '../services/wishlistServices';
 
 export const useWishlistStore = create((set) => ({
-  data: [],
+  data: null,
   isLoading: false,
   loadWishlist: async () => {
     set({ isLoading: true });

@@ -30,6 +30,8 @@ function Searching() {
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
   const navigate = useNavigate();
 
+  const haveItem = products && products.length > 0;
+
   async function handleSearch() {
     try {
       const res = await getProducts({
@@ -131,7 +133,7 @@ function Searching() {
         </div>
 
         <div className={styles.products}>
-          {products &&
+          {haveItem > 0 ? (
             products.map((product) => (
               <Card
                 key={product._id}
@@ -162,47 +164,54 @@ function Searching() {
                   </>
                 }
               />
-            ))}
+            ))
+          ) : (
+            <div className={styles.notice}>
+              <i className="fa-solid fa-magnifying-glass"></i> No product found
+            </div>
+          )}
         </div>
 
-        <div className={styles.pagination}>
-          <div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) setPage((p) => p - 1);
-              }}
-            >
-              <i className="fa-solid fa-arrow-left"></i>
-            </button>
-            <span>
-              Current page: {page}/{totalPage}
-            </span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                if (page < totalPage) setPage((p) => p + 1);
-              }}
-            >
-              <i className="fa-solid fa-arrow-right"></i>
-            </button>
+        {haveItem && (
+          <div className={styles.pagination}>
+            <div>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page > 1) setPage((p) => p - 1);
+                }}
+              >
+                <i className="fa-solid fa-arrow-left"></i>
+              </button>
+              <span>
+                Current page: {page}/{totalPage}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page < totalPage) setPage((p) => p + 1);
+                }}
+              >
+                <i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+            <div>
+              Product per page:
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                <option value={8}>8</option>
+                <option value={16}>16</option>
+                <option value={20}>20</option>
+                <option value={40}>40</option>
+              </select>
+            </div>
           </div>
-          <div>
-            Product per page:
-            <select
-              value={limit}
-              onChange={(e) => {
-                setLimit(Number(e.target.value));
-                setPage(1);
-              }}
-            >
-              <option value={8}>8</option>
-              <option value={16}>16</option>
-              <option value={20}>20</option>
-              <option value={40}>40</option>
-            </select>
-          </div>
-        </div>
+        )}
       </div>
 
       <Footer />

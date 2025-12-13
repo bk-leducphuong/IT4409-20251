@@ -1,14 +1,19 @@
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Shelf from '../../components/Shelf/Shelf';
+import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import { useWishlistStore } from '../../stores/wishlistStore';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import styles from './WistList.module.css';
 
 function WistList() {
   const wishlist = useWishlistStore((state) => state.data);
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
   const deleteItemFromWishlist = useWishlistStore((state) => state.deleteItemFromWishlist);
+  const haveItem = wishlist && wishlist.length > 0;
+  const navigate = useNavigate();
 
   async function handleDeleteItem(id) {
     try {
@@ -32,12 +37,10 @@ function WistList() {
   return (
     <>
       <Navbar />
-      <Shelf
-        name={`Wistlist${wishlist?.length > 0 ? ` (${wishlist.length})` : ''}`}
-        buttonName="Move All To Bag"
-      >
-        {wishlist &&
-          wishlist.map((item) => (
+
+      {haveItem ? (
+        <Shelf name={`Wistlist${wishlist?.length > 0 ? ` (${wishlist.length})` : ''}`}>
+          {wishlist.map((item) => (
             <Card
               key={item.product_id._id}
               productName={item.product_id.name}
@@ -55,13 +58,27 @@ function WistList() {
               }
             />
           ))}
-      </Shelf>
-      <Shelf name="Just For You" buttonName="See All">
-        <Card productName="HAVIT HV-G92 Gamepad" oldPrice="160" newPrice="120" rating="4" />
-        <Card productName="HAVIT HV-G92 Gamepad" oldPrice="160" newPrice="120" rating="4" />
-        <Card productName="HAVIT HV-G92 Gamepad" oldPrice="160" newPrice="120" rating="4" />
-        <Card productName="HAVIT HV-G92 Gamepad" oldPrice="160" newPrice="120" rating="4" />
-      </Shelf>
+        </Shelf>
+      ) : (
+        <div className={styles.notice}>
+          <div>
+            <i className="fa-solid fa-heart"></i>
+            No item in your wistlist
+          </div>
+          <div>
+            <Button
+              backgroundColor="white"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/');
+              }}
+            >
+              Return To Shop
+            </Button>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );

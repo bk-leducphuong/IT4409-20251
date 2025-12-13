@@ -64,6 +64,14 @@
   gap: 1.33%;
 }
 
+.notice {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 2rem;
+  width: 100%;
+}
+
 .pagination {
   display: flex;
   flex-direction: column;

@@ -84,12 +84,12 @@ function Navbar() {
         <div className={styles.iconContainer}>
           <button onClick={() => navigate('/wistlist')}>
             <i className="fa-regular fa-heart">
-              {wishlistData.length ? <span>{wishlistData.length}</span> : null}
+              {wishlistData && wishlistData.length ? <span>{wishlistData.length}</span> : null}
             </i>
           </button>
           <button onClick={() => navigate('/cart')}>
             <i className="fa-solid fa-cart-shopping">
-              {cartData.length > 0 ? <span>{cartData.length}</span> : null}
+              {cartData && cartData.length > 0 ? <span>{cartData.length}</span> : null}
             </i>
           </button>
           {userData && (
