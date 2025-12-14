@@ -77,7 +77,7 @@ function Order({ order, done, refresh }) {
               <div className={styles.paymentDetail}>
                 <div>
                   <div>Method: {order.payment_method}</div>
-                  <div>Status: {order.payment_status}</div>
+                  <div>Status: {order.status}</div>
                   <div>Customer Note: {order.customer_note}</div>
                 </div>
                 <div>
@@ -92,7 +92,9 @@ function Order({ order, done, refresh }) {
 
             <div className={styles.buttons}>
               <button onClick={done}>Done</button>
-              <button onClick={() => setReason('')}>Cancel Order</button>
+              {order.status != 'cancelled' && (
+                <button onClick={() => setReason('')}>Cancel Order</button>
+              )}
             </div>
           </>
         ) : (

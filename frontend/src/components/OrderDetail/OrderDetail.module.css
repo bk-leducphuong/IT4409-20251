@@ -1,6 +1,5 @@
 .order {
-  width: 90%;
-  max-width: var(--max-content-width);
+  width: 100%;
   padding: 3rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

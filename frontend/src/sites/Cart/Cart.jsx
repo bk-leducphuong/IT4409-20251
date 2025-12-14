@@ -2,7 +2,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button/Button';
 import { useCartStore } from '../../stores/cartStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Cart.module.css';
 
@@ -68,6 +68,11 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
 function Cart() {
   const cart = useCartStore((state) => state.data);
   const loadCart = useCartStore((state) => state.loadCart);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  const [coupon, setCoupon] = useState('');
+  const applyCoupon = useCartStore((state) => state.applyCoupon);
+
   const navigate = useNavigate();
   const haveItem = cart && cart.length > 0;
   const total =
@@ -118,7 +123,18 @@ function Cart() {
               >
                 Return To Shop
               </Button>
-              <Button backgroundColor="white">Clear Cart</Button>
+              <Button
+                backgroundColor="white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  clearCart().catch((err) => {
+                    console.error(err);
+                    alert(err);
+                  });
+                }}
+              >
+                Clear Cart
+              </Button>
             </div>
           </>
         ) : (
@@ -144,8 +160,23 @@ function Cart() {
         {haveItem && (
           <div className={styles.checkout}>
             <div className={styles.coupon}>
-              <input type="text" placeholder="Coupon code" />
-              <Button>Apply Coupon</Button>
+              <input
+                type="text"
+                placeholder="Coupon code"
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+              />
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  applyCoupon(coupon).catch((err) => {
+                    console.error(err);
+                    alert(err);
+                  });
+                }}
+              >
+                Apply Coupon
+              </Button>
             </div>
             <div className={styles.checkoutDetails}>
               <div className={styles.header}>Cart Total</div>

@@ -28,8 +28,10 @@ function CheckOut() {
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
   const [paymentMethod, setPayMentMethod] = useState('cod');
+  const [coupon, setCoupon] = useState('');
 
   const cart = useCartStore((state) => state.data);
+  const applyCoupon = useCartStore((state) => state.applyCoupon);
   const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
 
   const createOrder = useOrderStore((state) => state.createOrder);
@@ -129,8 +131,8 @@ function CheckOut() {
                 <div>
                   <input
                     type="radio"
-                    onChange={() => setPayMentMethod('bank')}
-                    checked={paymentMethod === 'bank'}
+                    onChange={() => setPayMentMethod('bank_transfer')}
+                    checked={paymentMethod === 'bank_transfer'}
                   />
                   Bank
                 </div>
@@ -152,8 +154,23 @@ function CheckOut() {
             </div>
 
             <div className={styles.buttons}>
-              <input type="text" placeholder="Coupon Code" />
-              <Button>Apply Coupon</Button>
+              <input
+                type="text"
+                placeholder="Coupon Code"
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+              />
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  applyCoupon(coupon).catch((err) => {
+                    console.error(err);
+                    alert(err);
+                  });
+                }}
+              >
+                Apply Coupon
+              </Button>
               <Button onClick={handleCreateOrder}>Place Order</Button>
             </div>
           </section>

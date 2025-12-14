@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { addItem, deleteItem, getCart, updateQuantity } from '../services/cartServices';
+import {
+  addItem,
+  deleteItem,
+  getCart,
+  updateQuantity,
+  clearCart,
+  applyCoupon,
+} from '../services/cartServices';
 
 export const useCartStore = create((set) => ({
   data: null,
@@ -44,5 +51,24 @@ export const useCartStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  resetCart: () => set({ data: null }),
+  clearCart: async () => {
+    set({ isLoading: true });
+    try {
+      const cart = await clearCart();
+      set({ data: cart.data.cart.items });
+      return cart;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  applyCoupon: async (code) => {
+    set({ isLoading: true });
+    try {
+      const cart = await applyCoupon(code);
+      set({ data: cart.data.cart.items });
+      return cart;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
