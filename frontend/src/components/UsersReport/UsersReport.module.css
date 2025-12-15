@@ -79,7 +79,8 @@
   background-color: transparent;
 }
 
-.usersReport input {
+.usersReport input,
+.usersReport select {
   padding: 0.5rem 1rem;
   border: 1px solid #edf2f7;
   border-radius: 5px;

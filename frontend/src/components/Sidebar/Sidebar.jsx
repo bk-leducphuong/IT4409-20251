@@ -3,10 +3,11 @@ import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from './Sidebar.module.css';
 
-function Sidebar() {
+function Sidebar({ setState }) {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const resetUser = useUserStore((state) => state.resetUser);
+  const userData = useUserStore((state) => state.data);
 
   async function handleLogout() {
     try {
@@ -25,28 +26,28 @@ function Sidebar() {
       <nav>
         <ul>
           <li>
-            <button>
+            <button onClick={() => setState('dashboard')}>
               <i className="fa-solid fa-chart-pie w-5"></i> Dashborad
             </button>
           </li>
           <li>
-            <button>
+            <button onClick={() => setState('users')}>
               <i className="fa-solid fa-user"></i> Users
             </button>
           </li>
           <li>
-            <button>
+            <button onClick={() => setState('products')}>
               <i className="fa-solid fa-box"></i> Products
             </button>
           </li>
           <li>
-            <button>
+            <button onClick={() => setState('brands')}>
               <i className="fa-regular fa-copyright"></i> Brands
             </button>
           </li>
           <li>
-            <button>
-              <i className="fa-solid fa-icons"></i> Catagory
+            <button onClick={() => setState('categories')}>
+              <i className="fa-solid fa-icons"></i> Catagories
             </button>
           </li>
         </ul>
@@ -54,7 +55,7 @@ function Sidebar() {
       <footer>
         <div>AD</div>
         <div>
-          <div>Admin</div>
+          <div>{userData.fullName}</div>
           <div>Hello Admin</div>
         </div>
         <button onClick={handleLogout}>

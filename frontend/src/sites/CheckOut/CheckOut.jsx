@@ -39,6 +39,7 @@ function CheckOut() {
   async function handleCreateOrder() {
     try {
       await createOrder(fullName, phone, street, city, postalCode, country, paymentMethod, note);
+      alert('Created order successfully!');
     } catch (error) {
       console.error(error);
       alert(error);

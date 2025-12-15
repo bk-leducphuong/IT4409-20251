@@ -319,12 +319,13 @@ function UsersReport() {
 
             <div>
               <div>State:</div>
-              <input
-                type="text"
-                placeholder="Enter user's state active or inactive"
-                value={newUser.status}
+              <select
+                value={newUser.status || 'active'}
                 onChange={(e) => setNewUser({ ...newUser, status: e.target.value })}
-              />
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
 
             <div className={styles.buttonsContainer}>
@@ -396,12 +397,13 @@ function UsersReport() {
 
             <div>
               <div>State:</div>
-              <input
-                type="text"
-                placeholder="Enter user's state active or inactive"
+              <select
                 value={editingUser.status}
                 onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
-              />
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
 
             <div className={styles.buttonsContainer}>

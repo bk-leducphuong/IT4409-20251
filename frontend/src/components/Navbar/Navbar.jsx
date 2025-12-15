@@ -104,14 +104,14 @@ function Navbar() {
                   <i className="fa-solid fa-circle-user"></i>
                   Manage my account
                 </button>
-                <button>
+                {/* <button>
                   <i className="fa-solid fa-basket-shopping"></i>
                   My order
                 </button>
                 <button>
                   <i className="fa-solid fa-xmark"></i>
                   My cancellations
-                </button>
+                </button> */}
                 {userData?.role == 'admin' && (
                   <button
                     onClick={(e) => {
