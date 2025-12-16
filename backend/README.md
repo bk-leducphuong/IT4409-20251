@@ -25,6 +25,7 @@ Before you begin, ensure you have the following installed:
 - **npm** or **yarn** - Comes with Node.js
 - **MongoDB** (v4.4 or higher) - [Download here](https://www.mongodb.com/try/download/community)
   - Or use **MongoDB Atlas** (cloud database) - [Sign up here](https://www.mongodb.com/cloud/atlas)
+- **Docker** (optional, for Meilisearch) - [Download here](https://www.docker.com/products/docker-desktop)
 
 Check your installations:
 
@@ -32,6 +33,7 @@ Check your installations:
 node --version   # Should be v16+
 npm --version    # Should be 6+
 mongo --version  # Should be 4.4+ (if using local MongoDB)
+docker --version # Optional, for Meilisearch
 ```
 
 ---
@@ -89,7 +91,23 @@ net start MongoDB
 - Get your connection string
 - Update `MONGODB_URI` in `.env` file
 
-### 4. Seed the Database (Optional but Recommended)
+### 4. Start Meilisearch (Optional - for search functionality)
+
+```bash
+# Navigate to meilisearch directory
+cd meilisearch
+
+# Start Meilisearch with Docker
+docker-compose up -d
+
+# Verify it's running
+curl http://localhost:7700/health
+
+# Go back to backend directory
+cd ..
+```
+
+### 5. Seed the Database (Optional but Recommended)
 
 ```bash
 # Seed all data at once (admin, categories, brands, products, users)
@@ -110,7 +128,14 @@ Email: admin@example.com
 Password: admin123
 ```
 
-### 5. Start the Server
+### 6. Sync Meilisearch (Optional - if using search)
+
+```bash
+# Sync products to Meilisearch for fast search
+npm run sync:meilisearch
+```
+
+### 7. Start the Server
 
 ```bash
 # Development mode (with auto-reload)
@@ -215,13 +240,15 @@ Now you can test any protected endpoint (marked with a lock icon 🔒)
 
 ### Required Environment Variables
 
-| Variable      | Description               | Example                            |
-| ------------- | ------------------------- | ---------------------------------- |
-| `NODE_ENV`    | Environment mode          | `development` or `production`      |
-| `PORT`        | Server port               | `5000`                             |
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/it4409` |
-| `JWT_SECRET`  | Secret key for JWT tokens | `your_secret_key_here`             |
-| `JWT_EXPIRE`  | JWT token expiration time | `7d` (7 days)                      |
+| Variable           | Description                | Example                            |
+| ------------------ | -------------------------- | ---------------------------------- |
+| `NODE_ENV`         | Environment mode           | `development` or `production`      |
+| `PORT`             | Server port                | `5000`                             |
+| `MONGODB_URI`      | MongoDB connection string  | `mongodb://localhost:27017/it4409` |
+| `JWT_SECRET`       | Secret key for JWT tokens  | `your_secret_key_here`             |
+| `JWT_EXPIRE`       | JWT token expiration time  | `7d` (7 days)                      |
+| `MEILI_HOST`       | Meilisearch server URL     | `http://localhost:7700`            |
+| `MEILI_MASTER_KEY` | Meilisearch master key     | `myMasterKey123`                   |
 
 ### MongoDB Connection Strings
 
@@ -256,6 +283,9 @@ npm run seed:categories  # Seed categories only
 npm run seed:products    # Seed products only
 npm run seed:users       # Seed test users only
 npm run seed:addresses   # Seed addresses only
+
+# Meilisearch
+npm run sync:meilisearch # Sync all products to Meilisearch
 
 # Testing
 npm test                 # Run all tests
@@ -308,8 +338,15 @@ http://localhost:5000/api
 
 #### 🛍️ Products
 
-- `GET /api/products` - Get all products (with filters)
+- `GET /api/products` - Get all products (with filters and search)
 - `GET /api/products/:slug` - Get product by slug
+
+**Search & Filters:**
+- `?search=laptop` - Full-text search with typo tolerance
+- `?category=electronics` - Filter by category slug
+- `?brand=Apple` - Filter by brand name
+- `?sort_by=price_asc|price_desc|newest|name_asc|name_desc` - Sort results
+- `?page=1&limit=20` - Pagination
 
 #### 📂 Categories
 
@@ -348,6 +385,13 @@ http://localhost:5000/api
 - `POST /api/admin/brands` - Create brand (admin only)
 - `PUT /api/admin/brands/:id` - Update brand (admin only)
 - `DELETE /api/admin/brands/:id` - Delete brand (admin only)
+
+#### 🔧 Admin - Meilisearch Management
+
+- `POST /api/admin/meilisearch/sync` - Sync all products to Meilisearch (admin only)
+- `POST /api/admin/meilisearch/configure` - Configure index settings (admin only)
+- `GET /api/admin/meilisearch/stats` - Get index statistics (admin only)
+- `DELETE /api/admin/meilisearch/clear` - Clear all documents (admin only)
 
 ---
 
@@ -534,6 +578,8 @@ backend/
 - ✅ JWT-based authentication
 - ✅ Role-based access control (Admin/User)
 - ✅ MongoDB with Mongoose ODM
+- ✅ **Meilisearch integration for lightning-fast product search**
+- ✅ **Typo-tolerant search with auto-complete**
 - ✅ Interactive API documentation (Swagger/OpenAPI)
 - ✅ CORS enabled
 - ✅ Error handling middleware
@@ -586,15 +632,43 @@ ISC
    Authorization: Bearer <your_token_here>
    ```
 5. **Pagination**: Many list endpoints support `page` and `limit` query params
-6. **Filtering**: Product endpoint supports filters:
-   - `?category=laptop`
-   - `?brand=Apple`
-   - `?search=MacBook`
-   - `?sort_by=price_asc|price_desc|newest`
+6. **Product Search & Filtering**: Powerful search with filters:
+   - `?search=MacBook` - Full-text search (powered by Meilisearch)
+   - `?category=laptop` - Filter by category
+   - `?brand=Apple` - Filter by brand
+   - `?sort_by=price_asc|price_desc|newest|name_asc|name_desc`
+   - Supports typo tolerance: "lapto" finds "laptop"
+   - Prefix search: "mac" finds "MacBook"
 
 ---
 
 ## 📖 Additional Documentation
+
+### Meilisearch Integration
+
+The backend includes a powerful search engine integration using Meilisearch:
+
+- **Lightning-fast product search** (<50ms response times)
+- **Typo tolerance** (handles spelling mistakes automatically)
+- **Faceted search** (filter by category, brand, price, etc.)
+- **Automatic synchronization** with MongoDB
+- **Fallback to MongoDB** if Meilisearch is unavailable
+
+**Documentation:**
+
+- 🔍 [Meilisearch Integration Guide](./docs/MEILISEARCH_INTEGRATION.md) - Complete setup and usage guide
+
+**Quick Start:**
+```bash
+# Start Meilisearch
+cd meilisearch && docker-compose up -d
+
+# Sync products
+npm run sync:meilisearch
+
+# Test search
+curl "http://localhost:5001/api/products?search=laptop"
+```
 
 ### Address Management Feature
 

@@ -3,6 +3,8 @@ import ProductVariant from '../models/productVariant.js';
 import ProductImage from '../models/productImage.js';
 import Category from '../models/category.js';
 import Brand from '../models/brand.js';
+import meilisearchService from './meilisearch.service.js';
+import logger from '../logger.js';
 
 // ============ Product Services ============
 
@@ -37,6 +39,11 @@ export const createProduct = async (productData) => {
       category_id,
       brand_id,
     });
+
+    // Sync with Meilisearch (non-blocking)
+    meilisearchService
+      .addProductToIndex(product._id)
+      .catch((err) => logger.error(`Failed to add product to Meilisearch: ${err.message}`));
 
     return product;
   } catch (error) {
@@ -80,6 +87,11 @@ export const updateProduct = async (productId, updateData) => {
       { new: true, runValidators: true },
     ).populate('category_id brand_id');
 
+    // Sync with Meilisearch (non-blocking)
+    meilisearchService
+      .updateProductInIndex(productId)
+      .catch((err) => logger.error(`Failed to update product in Meilisearch: ${err.message}`));
+
     return product;
   } catch (error) {
     throw new Error(`Không thể cập nhật sản phẩm: ${error.message}`);
@@ -106,6 +118,11 @@ export const deleteProduct = async (productId) => {
 
     // Xóa sản phẩm
     await Product.findByIdAndDelete(productId);
+
+    // Sync with Meilisearch (non-blocking)
+    meilisearchService
+      .deleteProductFromIndex(productId)
+      .catch((err) => logger.error(`Failed to delete product from Meilisearch: ${err.message}`));
 
     return true;
   } catch (error) {
@@ -144,6 +161,11 @@ export const createVariant = async (variantData) => {
       attributes: attributes || {},
     });
 
+    // Update product in Meilisearch since variant affects product data (non-blocking)
+    meilisearchService
+      .updateProductInIndex(product_id)
+      .catch((err) => logger.error(`Failed to update product in Meilisearch: ${err.message}`));
+
     return variant;
   } catch (error) {
     throw new Error(`Không thể tạo biến thể: ${error.message}`);
@@ -170,6 +192,13 @@ export const updateVariant = async (variantId, updateData) => {
       { new: true, runValidators: true },
     );
 
+    // Update product in Meilisearch since variant affects product data (non-blocking)
+    if (variant) {
+      meilisearchService
+        .updateProductInIndex(variant.product_id)
+        .catch((err) => logger.error(`Failed to update product in Meilisearch: ${err.message}`));
+    }
+
     return variant;
   } catch (error) {
     throw new Error(`Không thể cập nhật biến thể: ${error.message}`);
@@ -184,11 +213,18 @@ export const deleteVariant = async (variantId) => {
       return null;
     }
 
+    const productId = variant.product_id;
+
     // Xóa tất cả images của variant này
     await ProductImage.deleteMany({ variant_id: variantId });
 
     // Xóa variant
     await ProductVariant.findByIdAndDelete(variantId);
+
+    // Update product in Meilisearch since variant affects product data (non-blocking)
+    meilisearchService
+      .updateProductInIndex(productId)
+      .catch((err) => logger.error(`Failed to update product in Meilisearch: ${err.message}`));
 
     return true;
   } catch (error) {
