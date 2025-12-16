@@ -68,7 +68,9 @@ function LoginForm({ toggleState = () => console.log('button clicked') }) {
           <input type="checkbox" className={styles.checkBox} />
           Remember me
         </label>
-        <button className={styles.a}>Forgot password?</button>
+        <button className={styles.a} onClick={() => navigate('/forgot-password')}>
+          Forgot password?
+        </button>
       </div>
       <div className={styles.formFooter}>
         Don&apos;t have an account?{' '}

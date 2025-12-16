@@ -27,7 +27,7 @@ function UsersReport() {
 
   async function fetchUsers() {
     try {
-      const res = await getUsers(page);
+      const res = await getUsers(page, limit);
       setUsers(res.data.users);
       setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
@@ -88,19 +88,12 @@ function UsersReport() {
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        await fetchUsers();
-        await fetchAdmins();
-      } catch {
-        toast.error('Something went wrong');
-      }
-    })();
+    (async () => await Promise.allSettled([fetchUsers(), fetchAdmins()]))();
   }, []);
 
   useEffect(() => {
     (async () => await fetchUsers())();
-  }, [page]);
+  }, [page, limit]);
 
   return (
     <div className={styles.usersReport}>
