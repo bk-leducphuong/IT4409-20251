@@ -1,0 +1,256 @@
+.productInfo {
+  margin: 0 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 0.5rem 2rem;
+}
+
+.productInfo > div:last-child {
+  grid-row: span 4 / span 4;
+  grid-column-start: 2;
+  grid-row-start: 1;
+}
+
+.variantInfo {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 1ch;
+  margin-left: clamp(1ch, 30%, 7rem);
+}
+
+.noVariants {
+  font-size: 1.1rem;
+  text-align: center;
+  color: grey;
+}
+
+.productVariant > div:nth-child(3) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.productVariant > button {
+  margin-top: 1rem;
+}
+
+.productReport button,
+.productVariant button {
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 2ch;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.productReport button:hover,
+.productVariant button:hover {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.grey {
+  color: grey;
+}
+
+.blackBtn {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.blackBtn:hover {
+  background-color: hsl(0, 0%, 25%) !important;
+}
+
+.redBtn {
+  background-color: red;
+  color: white;
+}
+
+.redBtn:hover {
+  background-color: hsl(0, 100%, 40%) !important;
+}
+
+.productReport i {
+  font-size: 1rem;
+  margin-right: 1ch;
+}
+
+.productReport header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.productReport header p {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+.productReport main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.productReport main > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.productReport input,
+.productVariant input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+  width: clamp(250px, 50%, 500px);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.table thead * {
+  padding: 0.5rem 0;
+}
+
+.table tbody {
+  text-align: center;
+}
+
+.table tbody tr {
+  border: 1px solid #edf2f7;
+}
+
+.table tbody tr td {
+  padding: 0.5rem 0;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+  width: fit-content !important;
+  justify-self: center;
+}
+
+.table td:has(.buttonsContainer) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.table img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 5px;
+  object-fit: cover;
+  gap: 0.5rem;
+}
+
+.paginationContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.paginationContainer > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+}
+
+.paginationContainer button {
+  background-color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.paginationContainer select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: hsla(0, 0%, 0%, 0.1);
+}
+
+.overlay > div {
+  padding: 1rem;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.overlay h2 {
+  text-align: center;
+}
+
+.form > div:not(:last-child) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+}
+
+.form textarea,
+.form select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+}
+
+.form textarea {
+  height: 5rem;
+}

@@ -209,7 +209,7 @@ const seedCoupons = async () => {
 
     // Get admin user
     const adminUser = await User.findOne({ role: 'admin' });
-    
+
     if (!adminUser) {
       console.log('⚠️  No admin user found. Skipping coupon seeding.');
       return;

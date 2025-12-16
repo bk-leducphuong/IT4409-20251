@@ -59,7 +59,6 @@
 
 .inputContainer {
   position: relative;
-  display: flex;
 }
 
 .input {
@@ -69,30 +68,13 @@
   padding: 0.75rem;
   padding-right: 2.5rem;
   width: 100%;
-  flex: 1;
-}
-
-.searchButton {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  background-color: transparent;
-  border: none;
-  padding: 0 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.25s;
-}
-
-.searchButton:hover {
-  color: red;
 }
 
 .searchIcon {
-  pointer-events: none;
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .iconContainer {
@@ -122,10 +104,6 @@
   font-size: 0.5rem;
 }
 
-.hidden {
-  visibility: hidden;
-}
-
 .dropbar > div {
   display: none;
   font-size: 1rem;
@@ -142,6 +120,7 @@
   -webkit-backdrop-filter: blur(2px);
   color: white;
   cursor: default;
+  z-index: 1;
 }
 
 .dropbar i {

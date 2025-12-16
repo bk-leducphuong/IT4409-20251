@@ -152,3 +152,28 @@ export const deleteCategory = async (id) => {
 
   return await apiFetch(`/admin/categories/${id}`, { method: 'DELETE' });
 };
+
+/* ORDER */
+export const getOrders = async (queryObject) => {
+  const param = new URLSearchParams(queryObject).toString();
+  return await apiFetch(`/admin/orders?${param}`, { method: 'GET' });
+};
+
+export const getOrderById = async (id) => {
+  if (!id) throw new Error('All feilds are required!');
+
+  return await apiFetch(`/admin/orders/${id}`, { method: 'GET' });
+};
+
+export const getOrdersStatistics = async () => {
+  return await apiFetch('/admin/orders/statistics', { method: 'GET' });
+};
+
+export const updateOrderStatus = async (id, status) => {
+  if (!id || !status) throw new Error('All feilds are required!');
+
+  return await apiFetch(`/admin/orders/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  });
+};

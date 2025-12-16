@@ -86,23 +86,23 @@ export const createOrderFromCart = async (userId, orderData) => {
     // Handle coupon if applied
     if (cart.applied_coupon && cart.applied_coupon.coupon_id) {
       const coupon = await Coupon.findById(cart.applied_coupon.coupon_id);
-      
+
       if (coupon && coupon.is_valid) {
         // Verify user can still use this coupon
         const canUse = coupon.canBeUsedBy(userId);
         if (canUse.valid) {
           // Calculate discount with current subtotal
           discount = coupon.calculateDiscount(subtotal, shipping_fee);
-          
+
           // If coupon is free_shipping, set shipping_fee to 0
           if (coupon.discount_type === 'free_shipping') {
             discount = shipping_fee;
             shipping_fee = 0;
           }
-          
+
           // Record coupon usage
           await coupon.recordUsage(userId);
-          
+
           // Save coupon data for order
           couponData = {
             coupon_id: coupon._id,
@@ -235,21 +235,21 @@ export const cancelOrder = async (orderId, userId, reason = '') => {
       if (coupon) {
         // Decrease total usage count
         coupon.usage_count = Math.max(0, coupon.usage_count - 1);
-        
+
         // Decrease user's usage count
         const userUsage = coupon.used_by.find(
-          (usage) => usage.user_id.toString() === userId.toString()
+          (usage) => usage.user_id.toString() === userId.toString(),
         );
         if (userUsage && userUsage.usage_count > 0) {
           userUsage.usage_count -= 1;
           // Remove user from used_by if usage_count is 0
           if (userUsage.usage_count === 0) {
             coupon.used_by = coupon.used_by.filter(
-              (usage) => usage.user_id.toString() !== userId.toString()
+              (usage) => usage.user_id.toString() !== userId.toString(),
             );
           }
         }
-        
+
         await coupon.save();
       }
     }
@@ -348,29 +348,29 @@ export const updateOrderStatus = async (orderId, statusData) => {
           $inc: { stock_quantity: item.quantity },
         });
       }
-      
+
       // Restore coupon usage if coupon was used
       if (order.coupon && order.coupon.coupon_id) {
         const coupon = await Coupon.findById(order.coupon.coupon_id);
         if (coupon) {
           coupon.usage_count = Math.max(0, coupon.usage_count - 1);
-          
+
           const userUsage = coupon.used_by.find(
-            (usage) => usage.user_id.toString() === order.user_id.toString()
+            (usage) => usage.user_id.toString() === order.user_id.toString(),
           );
           if (userUsage && userUsage.usage_count > 0) {
             userUsage.usage_count -= 1;
             if (userUsage.usage_count === 0) {
               coupon.used_by = coupon.used_by.filter(
-                (usage) => usage.user_id.toString() !== order.user_id.toString()
+                (usage) => usage.user_id.toString() !== order.user_id.toString(),
               );
             }
           }
-          
+
           await coupon.save();
         }
       }
-      
+
       order.payment_status = 'refunded';
     }
 

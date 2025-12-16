@@ -2,8 +2,8 @@ import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import SignUpForm from '../../components/SignUpForm/SignUpForm';
 import LoginForm from '../../components/LoginForm/LoginForm';
-import styles from './Login.module.css';
 import { useState } from 'react';
+import styles from './Login.module.css';
 
 function Login() {
   const [state, setState] = useState('sign up');

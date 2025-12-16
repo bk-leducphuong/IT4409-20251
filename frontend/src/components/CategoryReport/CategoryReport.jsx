@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { useAdminStore } from '../../stores/adminStore';
-import { useState, useEffect } from 'react';
 import styles from './CategoryReport.module.css';
 
 function CategoryReport() {
@@ -20,8 +21,7 @@ function CategoryReport() {
     try {
       await loadCategories();
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -30,9 +30,9 @@ function CategoryReport() {
       await createCategory(newCategory.name, newCategory.slug, newCategory.parent_category_id);
       await loadCategories();
       setNewCategory(null);
+      toast.success('Category created successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -46,9 +46,9 @@ function CategoryReport() {
       );
       await loadCategories();
       setEditingCategory(null);
+      toast.success('Category updated successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -57,9 +57,9 @@ function CategoryReport() {
       await deleteCategory(deletingCategory._id);
       await loadCategories();
       setDeletingCategory(null);
+      toast.success('Category deleted successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 

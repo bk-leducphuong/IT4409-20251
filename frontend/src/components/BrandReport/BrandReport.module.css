@@ -55,6 +55,11 @@
   align-items: center;
 }
 
+.brandReport header p {
+  font-size: 0.8rem;
+  color: grey;
+}
+
 .brandReport main > div:first-child {
   display: flex;
   justify-content: space-between;

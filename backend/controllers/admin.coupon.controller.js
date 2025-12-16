@@ -130,10 +130,7 @@ export const updateCoupon = async (req, res) => {
     }
 
     // Validate percentage discount if provided
-    if (
-      updateData.discount_type === 'percentage' &&
-      updateData.discount_value !== undefined
-    ) {
+    if (updateData.discount_type === 'percentage' && updateData.discount_value !== undefined) {
       const value = parseFloat(updateData.discount_value);
       if (isNaN(value) || value < 0 || value > 100) {
         return res.status(400).json({
@@ -144,10 +141,7 @@ export const updateCoupon = async (req, res) => {
     }
 
     // Validate fixed_amount discount if provided
-    if (
-      updateData.discount_type === 'fixed_amount' &&
-      updateData.discount_value !== undefined
-    ) {
+    if (updateData.discount_type === 'fixed_amount' && updateData.discount_value !== undefined) {
       const value = parseFloat(updateData.discount_value);
       if (isNaN(value) || value < 0) {
         return res.status(400).json({

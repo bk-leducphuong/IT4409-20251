@@ -7,8 +7,8 @@ class CouponService {
    */
   async applyCouponToCart(userId, couponCode, cartData) {
     // Find the coupon by code
-    const coupon = await Coupon.findOne({ 
-      code: couponCode.toUpperCase() 
+    const coupon = await Coupon.findOne({
+      code: couponCode.toUpperCase(),
     });
 
     if (!coupon) {
@@ -42,7 +42,7 @@ class CouponService {
     // Check minimum order value
     if (subtotal < coupon.min_order_value) {
       throw new Error(
-        `Minimum order value of ${coupon.min_order_value.toLocaleString()} VND is required to use this coupon`
+        `Minimum order value of ${coupon.min_order_value.toLocaleString()} VND is required to use this coupon`,
       );
     }
 
@@ -88,7 +88,7 @@ class CouponService {
    */
   async removeCouponFromCart(userId) {
     const cart = await Cart.findOne({ user_id: userId });
-    
+
     if (!cart) {
       throw new Error('Cart not found');
     }
@@ -111,8 +111,8 @@ class CouponService {
    * Validate coupon code without applying
    */
   async validateCoupon(userId, couponCode, subtotal = 0) {
-    const coupon = await Coupon.findOne({ 
-      code: couponCode.toUpperCase() 
+    const coupon = await Coupon.findOne({
+      code: couponCode.toUpperCase(),
     });
 
     if (!coupon) {
@@ -125,9 +125,7 @@ class CouponService {
     if (!coupon.is_valid) {
       return {
         valid: false,
-        message: coupon.is_expired 
-          ? 'This coupon has expired' 
-          : 'This coupon is not valid',
+        message: coupon.is_expired ? 'This coupon has expired' : 'This coupon is not valid',
       };
     }
 
@@ -164,8 +162,8 @@ class CouponService {
    */
   async createCoupon(couponData, adminUserId) {
     // Check if coupon code already exists
-    const existingCoupon = await Coupon.findOne({ 
-      code: couponData.code.toUpperCase() 
+    const existingCoupon = await Coupon.findOne({
+      code: couponData.code.toUpperCase(),
     });
 
     if (existingCoupon) {
@@ -210,7 +208,7 @@ class CouponService {
 
     // If updating code, check for duplicates
     if (updateData.code && updateData.code.toUpperCase() !== coupon.code) {
-      const existingCoupon = await Coupon.findOne({ 
+      const existingCoupon = await Coupon.findOne({
         code: updateData.code.toUpperCase(),
         _id: { $ne: couponId },
       });
@@ -223,11 +221,9 @@ class CouponService {
 
     // Validate dates if provided
     if (updateData.valid_from || updateData.valid_until) {
-      const validFrom = updateData.valid_from 
-        ? new Date(updateData.valid_from) 
-        : coupon.valid_from;
-      const validUntil = updateData.valid_until 
-        ? new Date(updateData.valid_until) 
+      const validFrom = updateData.valid_from ? new Date(updateData.valid_from) : coupon.valid_from;
+      const validUntil = updateData.valid_until
+        ? new Date(updateData.valid_until)
         : coupon.valid_until;
 
       if (validUntil <= validFrom) {
@@ -268,8 +264,7 @@ class CouponService {
    * Get coupon by ID (admin)
    */
   async getCouponById(couponId) {
-    const coupon = await Coupon.findById(couponId)
-      .populate('created_by', 'full_name email');
+    const coupon = await Coupon.findById(couponId).populate('created_by', 'full_name email');
 
     if (!coupon) {
       throw new Error('Coupon not found');
@@ -282,14 +277,7 @@ class CouponService {
    * Get all coupons with filters (admin)
    */
   async getAllCoupons(filters = {}) {
-    const {
-      page = 1,
-      limit = 20,
-      is_active,
-      discount_type,
-      search,
-      sort = '-createdAt',
-    } = filters;
+    const { page = 1, limit = 20, is_active, discount_type, search, sort = '-createdAt' } = filters;
 
     const query = {};
 
@@ -348,9 +336,7 @@ class CouponService {
       total_usage: coupon.usage_count,
       unique_users: coupon.used_by.length,
       usage_limit: coupon.usage_limit,
-      usage_remaining: coupon.usage_limit 
-        ? coupon.usage_limit - coupon.usage_count 
-        : 'Unlimited',
+      usage_remaining: coupon.usage_limit ? coupon.usage_limit - coupon.usage_count : 'Unlimited',
       is_active: coupon.is_active,
       is_expired: coupon.is_expired,
       is_valid: coupon.is_valid,

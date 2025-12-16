@@ -1,39 +1,30 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
-import { useState } from 'react';
 import styles from './Navbar.module.css';
 
 function Navbar() {
+  const [productName, setProductName] = useState('');
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
   const userData = useUserStore((state) => state.data);
   const resetUser = useUserStore((state) => state.resetUser);
   const cartData = useCartStore((state) => state.data);
   const wishlistData = useWishlistStore((state) => state.data);
-  const [searchInput, setSearchInput] = useState('');
 
   async function componentLogout() {
     try {
       await logout();
       resetUser();
       navigate('/');
+      toast.success('Logged out successfully');
     } catch (err) {
-      alert(err);
-      console.error(err);
+      toast.error(err.message);
     }
-  }
-
-  function handleSearch(e) {
-    e.preventDefault();
-    if (searchInput.trim() === '') {
-      alert('Please enter a search term');
-      return;
-    }
-    navigate(`/search?q=${encodeURIComponent(searchInput)}`);
-    setSearchInput('');
   }
 
   return (
@@ -66,7 +57,7 @@ function Navbar() {
             >
               <button
                 onClick={() =>
-                  userData ? alert('You have already logged in') : navigate('/login')
+                  userData ? toast.error('You have already logged in') : navigate('/login')
                 }
               >
                 Sign Up
@@ -75,35 +66,34 @@ function Navbar() {
           </ul>
         </div>
 
-        <form className={styles.inputContainer} onSubmit={handleSearch}>
+        <div className={styles.inputContainer}>
           <input
             type="text"
             placeholder="What are you looking for?"
             className={styles.input}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
           />
           <button
-            type="submit"
-            className={styles.searchButton}
-            onClick={handleSearch}
+            className={styles.searchIcon}
+            onClick={() => navigate(`/products?product=${productName}`)}
           >
-            <i className={`fa-solid fa-magnifying-glass ${styles.searchIcon}`}></i>
+            <i className="fa-solid fa-magnifying-glass"></i>
           </button>
-        </form>
+        </div>
 
         <div className={styles.iconContainer}>
           <button onClick={() => navigate('/wistlist')}>
             <i className="fa-regular fa-heart">
-              {wishlistData.length ? <span>{wishlistData.length}</span> : null}
+              {wishlistData && wishlistData.length ? <span>{wishlistData.length}</span> : null}
             </i>
           </button>
           <button onClick={() => navigate('/cart')}>
             <i className="fa-solid fa-cart-shopping">
-              {cartData.length > 0 ? <span>{cartData.length}</span> : null}
+              {cartData && cartData.length > 0 ? <span>{cartData.length}</span> : null}
             </i>
           </button>
-          {userData ? (
+          {userData && (
             <i className={`fa-solid fa-circle-user ${styles.dropbar}`}>
               <div>
                 <button
@@ -115,14 +105,14 @@ function Navbar() {
                   <i className="fa-solid fa-circle-user"></i>
                   Manage my account
                 </button>
-                <button>
+                {/* <button>
                   <i className="fa-solid fa-basket-shopping"></i>
                   My order
                 </button>
                 <button>
                   <i className="fa-solid fa-xmark"></i>
                   My cancellations
-                </button>
+                </button> */}
                 {userData?.role == 'admin' && (
                   <button
                     onClick={(e) => {
@@ -145,8 +135,6 @@ function Navbar() {
                 </button>
               </div>
             </i>
-          ) : (
-            <i className={`fa-solid fa-circle-user ${styles.hidden}`}></i>
           )}
         </div>
       </nav>
