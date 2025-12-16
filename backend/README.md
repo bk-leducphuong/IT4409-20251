@@ -255,6 +255,7 @@ npm run seed:brands      # Seed brands only
 npm run seed:categories  # Seed categories only
 npm run seed:products    # Seed products only
 npm run seed:users       # Seed test users only
+npm run seed:addresses   # Seed addresses only
 
 # Testing
 npm test                 # Run all tests
@@ -294,6 +295,16 @@ http://localhost:5000/api
 - `GET /api/user/:id` - Get user by ID (admin only)
 - `PATCH /api/user/:id` - Update user (admin only)
 - `DELETE /api/user/:id` - Delete user (admin only)
+
+#### 📍 Address Management
+
+- `GET /api/user/addresses` - Get all addresses (protected)
+- `GET /api/user/addresses/default` - Get default address (protected)
+- `GET /api/user/addresses/:id` - Get address by ID (protected)
+- `POST /api/user/addresses` - Create new address (protected)
+- `PUT /api/user/addresses/:id` - Update address (protected)
+- `PUT /api/user/addresses/:id/default` - Set default address (protected)
+- `DELETE /api/user/addresses/:id` - Delete address (protected)
 
 #### 🛍️ Products
 
@@ -498,8 +509,14 @@ backend/
 ├── configs/
 │   └── database.js         # MongoDB configuration
 ├── controllers/            # Request handlers
+│   └── __test__/           # Unit tests
+├── docs/                   # Feature documentation
+│   ├── ADDRESS_MANAGEMENT.md
+│   ├── ADDRESS_API_EXAMPLES.md
+│   └── ADDRESS_QUICK_REFERENCE.md
 ├── middlewares/            # Custom middleware (auth, error handling)
 ├── models/                 # Mongoose schemas
+├── postman/                # Postman collections
 ├── routes/                 # API routes (with Swagger docs)
 ├── seeds/                  # Database seeding scripts
 ├── services/               # Business logic
@@ -523,6 +540,8 @@ backend/
 - ✅ Database seeding scripts
 - ✅ Jest testing setup
 - ✅ Input validation
+- ✅ Address management (multiple shipping/billing addresses)
+- ✅ Postman collection for API testing
 
 ---
 
@@ -575,10 +594,51 @@ ISC
 
 ---
 
+## 📖 Additional Documentation
+
+### Address Management Feature
+
+The backend includes a comprehensive address management system that allows users to:
+
+- Manage multiple shipping and billing addresses
+- Set default addresses
+- Validate phone numbers (Vietnamese format)
+- Soft delete addresses
+
+**Documentation:**
+
+- 📘 [Full Documentation](./docs/ADDRESS_MANAGEMENT.md) - Complete feature overview
+- 📗 [API Examples](./docs/ADDRESS_API_EXAMPLES.md) - Usage examples with code
+- 📙 [Quick Reference](./docs/ADDRESS_QUICK_REFERENCE.md) - Fast lookup guide
+- 📦 [Postman Collection](./postman/Address_Management_API.postman_collection.json) - Ready-to-use API tests
+
+**Quick Example:**
+
+```javascript
+// Create an address
+const response = await fetch('http://localhost:5000/api/user/addresses', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    fullName: 'Nguyen Van A',
+    phone: '0987654321',
+    addressLine1: '123 Nguyen Trai',
+    city: 'Thanh Xuan',
+    province: 'Ha Noi',
+    country: 'Vietnam',
+    addressType: 'both',
+  }),
+});
+```
+
 ## 🆘 Need Help?
 
 - Check the [Swagger documentation](http://localhost:5000/api-docs) for detailed API specs
-- Review [SWAGGER_DOCUMENTATION.md](./SWAGGER_DOCUMENTATION.md) for more details
-- See [TESTING.md](./TESTING.md) for testing guidelines
+- Import [Postman Collection](./postman/) for quick API testing
+- See feature documentation in [docs/](./docs/) folder
+- Review test files in [controllers/**test**/](./controllers/__test__/) for examples
 
 **Happy coding! 🚀**

@@ -1,6 +1,39 @@
 import Cart from '../models/cart.js';
 import ProductVariant from '../models/productVariant.js';
 
+// Calculate cart totals including coupon discount
+export const calculateCartTotals = (cart) => {
+  let subtotal = 0;
+
+  // Calculate subtotal from items
+  if (cart.items && cart.items.length > 0) {
+    cart.items.forEach((item) => {
+      if (item.product_variant_id && item.product_variant_id.price) {
+        subtotal += item.product_variant_id.price * item.quantity;
+      }
+    });
+  }
+
+  // Calculate discount from applied coupon
+  let discount = 0;
+  if (cart.applied_coupon && cart.applied_coupon.discount_amount) {
+    discount = cart.applied_coupon.discount_amount;
+  }
+
+  // Assume flat shipping fee (can be customized)
+  const shipping_fee = subtotal > 0 ? 30000 : 0; // 30,000 VND flat rate
+
+  // Calculate total
+  const total = Math.max(0, subtotal + shipping_fee - discount);
+
+  return {
+    subtotal,
+    discount,
+    shipping_fee,
+    total,
+  };
+};
+
 // Get user's current cart
 export const getUserCart = async (userId) => {
   try {
@@ -20,7 +53,17 @@ export const getUserCart = async (userId) => {
       cart = await Cart.create({ user_id: userId, items: [] });
     }
 
-    return cart;
+    // Calculate totals
+    const totals = calculateCartTotals(cart);
+
+    // Return cart with totals as plain object
+    const cartObj = cart.toObject();
+    cartObj.subtotal = totals.subtotal;
+    cartObj.discount = totals.discount;
+    cartObj.shipping_fee = totals.shipping_fee;
+    cartObj.total = totals.total;
+
+    return cartObj;
   } catch (error) {
     throw new Error('Không thể lấy giỏ hàng: ' + error.message);
   }
@@ -82,7 +125,15 @@ export const addItemToCart = async (userId, productVariantId, quantity = 1) => {
       },
     });
 
-    return cart;
+    // Calculate totals
+    const totals = calculateCartTotals(cart);
+    const cartObj = cart.toObject();
+    cartObj.subtotal = totals.subtotal;
+    cartObj.discount = totals.discount;
+    cartObj.shipping_fee = totals.shipping_fee;
+    cartObj.total = totals.total;
+
+    return cartObj;
   } catch (error) {
     throw new Error(error.message || 'Không thể thêm sản phẩm vào giỏ hàng');
   }
@@ -134,7 +185,15 @@ export const updateItemQuantity = async (userId, productVariantId, quantity) => 
       },
     });
 
-    return updatedCart;
+    // Calculate totals
+    const totals = calculateCartTotals(updatedCart);
+    const cartObj = updatedCart.toObject();
+    cartObj.subtotal = totals.subtotal;
+    cartObj.discount = totals.discount;
+    cartObj.shipping_fee = totals.shipping_fee;
+    cartObj.total = totals.total;
+
+    return cartObj;
   } catch (error) {
     throw new Error(error.message || 'Không thể cập nhật số lượng sản phẩm');
   }
@@ -171,7 +230,15 @@ export const removeItemFromCart = async (userId, productVariantId) => {
       },
     });
 
-    return updatedCart;
+    // Calculate totals
+    const totals = calculateCartTotals(updatedCart);
+    const cartObj = updatedCart.toObject();
+    cartObj.subtotal = totals.subtotal;
+    cartObj.discount = totals.discount;
+    cartObj.shipping_fee = totals.shipping_fee;
+    cartObj.total = totals.total;
+
+    return cartObj;
   } catch (error) {
     throw new Error(error.message || 'Không thể xóa sản phẩm khỏi giỏ hàng');
   }
@@ -185,8 +252,9 @@ export const clearCart = async (userId) => {
       throw new Error('Giỏ hàng không tồn tại');
     }
 
-    // Clear all items
+    // Clear all items and coupon
     cart.items = [];
+    cart.applied_coupon = undefined;
     await cart.save();
 
     return cart;
@@ -201,4 +269,5 @@ export default {
   updateItemQuantity,
   removeItemFromCart,
   clearCart,
+  calculateCartTotals,
 };
