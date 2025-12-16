@@ -1,6 +1,7 @@
 import Button from '../Button/Button';
-import { useUserStore } from '../../stores/userStore';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useUserStore } from '../../stores/userStore';
 import styles from './UserDetail.module.css';
 
 function UserDetail() {
@@ -47,9 +48,9 @@ function UserDetail() {
 
       await Promise.all([res1, res2]);
       await loadUserData();
+      toast.success('Profile updated successfully');
     } catch (err) {
-      console.error(err);
-      alert(err);
+      toast.error(err.message);
       cancel();
     }
   }

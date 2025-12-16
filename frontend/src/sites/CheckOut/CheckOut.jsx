@@ -2,6 +2,8 @@ import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Button from '../../components/Button/Button';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../../stores/cartStore';
 import { useOrderStore } from '../../stores/orderStore';
 import styles from './CheckOut.module.css';
@@ -32,17 +34,20 @@ function CheckOut() {
 
   const cart = useCartStore((state) => state.data);
   const applyCoupon = useCartStore((state) => state.applyCoupon);
-  const total = cart.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0);
+  const total =
+    cart?.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0) ?? 0;
 
   const createOrder = useOrderStore((state) => state.createOrder);
+
+  const navigate = useNavigate();
 
   async function handleCreateOrder() {
     try {
       await createOrder(fullName, phone, street, city, postalCode, country, paymentMethod, note);
-      alert('Created order successfully!');
+      toast.success('Order placed successfully');
+      navigate('/user');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -164,10 +169,9 @@ function CheckOut() {
               <Button
                 onClick={(e) => {
                   e.preventDefault();
-                  applyCoupon(coupon).catch((err) => {
-                    console.error(err);
-                    alert(err);
-                  });
+                  applyCoupon(coupon)
+                    .then(() => toast.success('Coupon applied'))
+                    .catch((err) => toast.error(err.message));
                 }}
               >
                 Apply Coupon

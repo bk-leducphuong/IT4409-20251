@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAdminStore } from '../../stores/adminStore';
 import styles from './OrderReport.module.css';
 
@@ -18,7 +19,7 @@ function OrderReport() {
       setTotalPage(res.data.pagination.pages);
       setOrders(res.data.orders);
     } catch (err) {
-      alert(err);
+      toast.error(err.message);
     }
   }
 
@@ -75,8 +76,9 @@ function OrderReport() {
                           .then((res) => {
                             res = res.data.order;
                             setOrders(orders.map((o) => (o._id === res._id ? res : o)));
+                            toast.success('Order status updated');
                           })
-                          .catch((err) => alert(err))
+                          .catch((err) => toast.error(err.message))
                       }
                     >
                       <option value="pending">Pending</option>

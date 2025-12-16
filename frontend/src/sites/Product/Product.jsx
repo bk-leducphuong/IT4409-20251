@@ -4,6 +4,7 @@ import Card from '../../components/Card/Card';
 import Footer from '../../components/Footer/Footer';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../../stores/cartStore';
 import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
@@ -31,7 +32,7 @@ function Product() {
         setRelatedProducts(related);
         window.scrollTo({ top: 0 });
       } catch (error) {
-        console.error(error);
+        toast.error(error.message);
         navigate('/product-doesnt-exist');
       }
     })();
@@ -86,8 +87,7 @@ function Product() {
           <div className={styles.actions}>
             <div className={styles.quantityButtons}>
               <button
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   if (quantity > 1) setQuantity((q) => q - 1);
                 }}
               >
@@ -96,8 +96,7 @@ function Product() {
               <span>{quantity}</span>
               <button
                 className={styles.red}
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   setQuantity((q) => q + 1);
                 }}
               >
@@ -109,10 +108,9 @@ function Product() {
               className={styles.red}
               onClick={(e) => {
                 e.preventDefault();
-                addItemToCart(selectedVariant?._id, quantity).catch((error) => {
-                  console.error(error);
-                  alert(error);
-                });
+                addItemToCart(selectedVariant?._id, quantity)
+                  .then(() => toast.success('Item added to cart'))
+                  .catch((error) => toast.error(error.message));
               }}
             >
               Add To Cart
@@ -121,10 +119,9 @@ function Product() {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                addItemToWishlist(product?._id).catch((error) => {
-                  console.error(error);
-                  alert(error);
-                });
+                addItemToWishlist(product?._id)
+                  .then(() => toast.success('Item added to wishlist'))
+                  .catch((error) => toast.error(error.message));
               }}
             >
               <i className="fa-regular fa-heart"></i>
@@ -162,10 +159,9 @@ function Product() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>

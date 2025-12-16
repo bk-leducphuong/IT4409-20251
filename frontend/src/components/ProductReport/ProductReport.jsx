@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useProductStore } from '../../stores/productStore';
 import { useBrandStore } from '../../stores/brandStore';
 import { useCategoryStore } from '../../stores/categoryStore';
@@ -180,7 +181,12 @@ function ProductVariant({ selectingProduct, cancel }) {
                       Storage: newVariant.storage,
                       Color: newVariant.color,
                     },
-                  }).catch((err) => alert(err))
+                  })
+                    .then(() => {
+                      toast.success('Variant created');
+                      setNewVariant(null);
+                    })
+                    .catch((err) => toast.error(err.message))
                 }
               >
                 Create variant
@@ -297,7 +303,12 @@ function ProductVariant({ selectingProduct, cancel }) {
                       Storage: editingVariant.attributes.Storage,
                       Color: editingVariant.attributes.Color,
                     },
-                  }).catch((err) => alert(err))
+                  })
+                    .then(() => {
+                      toast.success('Variant updated');
+                      setEditingVariant(null);
+                    })
+                    .catch((err) => toast.error(err.message))
                 }
               >
                 Update variant
@@ -315,7 +326,14 @@ function ProductVariant({ selectingProduct, cancel }) {
             <div className={styles.buttonsContainer}>
               <button
                 className={styles.redBtn}
-                onClick={() => deleteVariant(deletingVariant._id).catch((err) => alert(err))}
+                onClick={() =>
+                  deleteVariant(deletingVariant._id)
+                    .then(() => {
+                      toast.success('Variant deleted');
+                      setDeletingVariant(null);
+                    })
+                    .catch((err) => toast.error(err.message))
+                }
               >
                 Delete
               </button>
@@ -357,7 +375,7 @@ function ProductReport() {
       setProducts(res.data.products);
       setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -367,7 +385,7 @@ function ProductReport() {
       setProducts(res.data.products);
       setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -554,7 +572,12 @@ function ProductReport() {
                     newProduct.description,
                     newProduct.category_id,
                     newProduct.brand_id,
-                  ).catch((err) => alert(err))
+                  )
+                    .then(() => {
+                      toast.success('Product created');
+                      setNewProduct(null);
+                    })
+                    .catch((err) => toast.error(err.message))
                 }
               >
                 Create product
@@ -642,7 +665,12 @@ function ProductReport() {
                     editingProduct.description,
                     editingProduct.category_id._id,
                     editingProduct.brand_id._id,
-                  ).catch((err) => alert(err))
+                  )
+                    .then(() => {
+                      toast.success('Product updated');
+                      setEditingProduct(null);
+                    })
+                    .catch((err) => toast.error(err.message))
                 }
               >
                 Update product
@@ -660,7 +688,14 @@ function ProductReport() {
             <div className={styles.buttonsContainer}>
               <button
                 className={styles.redBtn}
-                onClick={() => deleteProduct(deletingProduct._id).catch((err) => alert(err))}
+                onClick={() =>
+                  deleteProduct(deletingProduct._id)
+                    .then(() => {
+                      toast.success('Product deleted');
+                      setDeletingProduct(null);
+                    })
+                    .catch((err) => toast.error(err.message))
+                }
               >
                 Delete
               </button>

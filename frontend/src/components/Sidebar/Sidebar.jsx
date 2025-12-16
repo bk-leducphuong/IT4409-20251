@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from './Sidebar.module.css';
@@ -14,9 +15,9 @@ function Sidebar({ setState }) {
       await logout();
       resetUser();
       navigate('/');
+      toast.success('Logged out successfully');
     } catch (err) {
-      console.error(err);
-      alert(err);
+      toast.error(err.message);
     }
   }
 

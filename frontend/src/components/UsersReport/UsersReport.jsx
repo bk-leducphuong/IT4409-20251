@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAdminStore } from '../../stores/adminStore';
 import styles from './UsersReport.module.css';
 
@@ -30,8 +31,7 @@ function UsersReport() {
       setUsers(res.data.users);
       setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -40,8 +40,7 @@ function UsersReport() {
       const res = await getAdmins();
       setAdmins(res.data.admins);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -57,9 +56,9 @@ function UsersReport() {
       );
       await fetchUsers();
       setNewUser(null);
+      toast.success('User created successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -70,9 +69,9 @@ function UsersReport() {
       await fetchUsers();
       await fetchAdmins();
       setDeletingUser(null);
+      toast.success('User deleted successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -82,9 +81,9 @@ function UsersReport() {
       await fetchUsers();
       await fetchAdmins();
       setEditingUser(null);
+      toast.success('User updated successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -94,7 +93,7 @@ function UsersReport() {
         await fetchUsers();
         await fetchAdmins();
       } catch {
-        // intentionally ignored
+        toast.error('Something went wrong');
       }
     })();
   }, []);
@@ -110,19 +109,7 @@ function UsersReport() {
           <h1>Users management</h1>
           <p>Manage access, roles and users status.</p>
         </div>
-        <button
-          onClick={() =>
-            setNewUser({
-              fullName: '',
-              email: '',
-              password: '',
-              phone: '',
-              address: '',
-              status: 'active',
-            })
-          }
-          className={styles.blackBtn}
-        >
+        <button onClick={() => setNewUser({ status: 'active' })} className={styles.blackBtn}>
           + Add new user
         </button>
       </header>

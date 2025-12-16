@@ -3,9 +3,10 @@ import Footer from '../../components/Footer/Footer';
 import Shelf from '../../components/Shelf/Shelf';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
-import { useWishlistStore } from '../../stores/wishlistStore';
-import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { useWishlistStore } from '../../stores/wishlistStore';
 import styles from './WistList.module.css';
 
 function WistList() {
@@ -18,9 +19,9 @@ function WistList() {
   async function handleDeleteItem(id) {
     try {
       await deleteItemFromWishlist(id);
+      toast.success('Item deleted from wishlist');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -28,8 +29,8 @@ function WistList() {
     (async () => {
       try {
         await loadWishlist();
-      } catch {
-        // intentionally ignored
+      } catch (err) {
+        toast.error(err.message);
       }
     })();
   }, []);

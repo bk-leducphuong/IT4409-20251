@@ -17,6 +17,7 @@ import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtected
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { useUserStore } from './stores/userStore';
 import { useBrandStore } from './stores/brandStore';
 import { useCategoryStore } from './stores/categoryStore';
@@ -66,6 +67,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Loading />
+      <Toaster />
     </>
   );
 }

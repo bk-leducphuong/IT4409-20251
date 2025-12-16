@@ -4,6 +4,7 @@ import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useBrandStore } from '../../stores/brandStore';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { useProductStore } from '../../stores/productStore';
@@ -42,11 +43,11 @@ function Searching() {
         page,
         limit,
       });
+      if (res.data.products.length === 0) toast.error('No product found');
       setProducts(res.data.products);
       setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -145,10 +146,9 @@ function Searching() {
                     <button
                       onClick={(e) => {
                         e.preventDefault();
-                        addItemToWishlist(product._id).catch((error) => {
-                          console.error(error);
-                          alert(error);
-                        });
+                        addItemToWishlist(product._id)
+                          .then(() => toast.success('Item added to wishlist'))
+                          .catch((error) => toast.error(error.message));
                       }}
                     >
                       <i className={`fa-regular fa-heart`}></i>
@@ -184,7 +184,7 @@ function Searching() {
                 <i className="fa-solid fa-arrow-left"></i>
               </button>
               <span>
-                Current page: {page}/{totalPage}
+                Current page: {page} / {totalPage}
               </span>
               <button
                 onClick={(e) => {
@@ -200,7 +200,7 @@ function Searching() {
               <select
                 value={limit}
                 onChange={(e) => {
-                  setLimit(Number(e.target.value));
+                  setLimit(e.target.value);
                   setPage(1);
                 }}
               >

@@ -10,6 +10,7 @@ import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import styles from './Home.module.css';
 
 function CategoryCard({ icon, image, name, onClick = () => console.log('button clicked') }) {
@@ -102,10 +103,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>
@@ -156,10 +156,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>
@@ -195,10 +194,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>

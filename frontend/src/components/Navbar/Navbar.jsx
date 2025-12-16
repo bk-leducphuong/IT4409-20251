@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useUserStore } from '../../stores/userStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -20,9 +21,9 @@ function Navbar() {
       await logout();
       resetUser();
       navigate('/');
+      toast.success('Logged out successfully');
     } catch (err) {
-      alert(err);
-      console.error(err);
+      toast.error(err.message);
     }
   }
 
@@ -56,7 +57,7 @@ function Navbar() {
             >
               <button
                 onClick={() =>
-                  userData ? alert('You have already logged in') : navigate('/login')
+                  userData ? toast.error('You have already logged in') : navigate('/login')
                 }
               >
                 Sign Up

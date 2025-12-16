@@ -4,6 +4,7 @@ import Button from '../../components/Button/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import styles from './Cart.module.css';
 
 function CartItem({ id, image, productName, newPrice, quantity }) {
@@ -15,17 +16,16 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
     try {
       await updateItemQuantity(id, newQuantity);
     } catch (err) {
-      console.error(err);
-      alert(err);
+      toast.error(err.message);
     }
   }
 
   async function handleDeleteItem() {
     try {
       await removeItemFromCart(id);
+      toast.success('Item removed from cart');
     } catch (err) {
-      console.error(err);
-      alert(err);
+      toast.error(err.message);
     }
   }
 
@@ -127,10 +127,9 @@ function Cart() {
                 backgroundColor="white"
                 onClick={(e) => {
                   e.preventDefault();
-                  clearCart().catch((err) => {
-                    console.error(err);
-                    alert(err);
-                  });
+                  clearCart()
+                    .then(() => toast.success('Cart cleared'))
+                    .catch((err) => toast.error(err.message));
                 }}
               >
                 Clear Cart
@@ -169,10 +168,9 @@ function Cart() {
               <Button
                 onClick={(e) => {
                   e.preventDefault();
-                  applyCoupon(coupon).catch((err) => {
-                    console.error(err);
-                    alert(err);
-                  });
+                  applyCoupon(coupon)
+                    .then(() => toast.success('Coupon applied'))
+                    .catch((err) => toast.error(err.message));
                 }}
               >
                 Apply Coupon

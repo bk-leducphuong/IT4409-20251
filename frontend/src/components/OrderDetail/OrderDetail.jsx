@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useOrderStore } from '../../stores/orderStore';
 import styles from './OrderDetail.module.css';
 
@@ -11,10 +12,10 @@ function Order({ order, done, refresh }) {
       await cancelOrder(order._id, reason);
       setReason(null);
       done();
+      toast.success('Order cancelled');
       await refresh();
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -122,8 +123,7 @@ function OrderDetail() {
       const res = await getOrder();
       setOrders(res.data.orders);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 

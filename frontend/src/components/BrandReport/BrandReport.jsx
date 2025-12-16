@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useBrandStore } from '../../stores/brandStore';
 import { useAdminStore } from '../../stores/adminStore';
-import { useState, useEffect } from 'react';
 import styles from './BrandReport.module.css';
 
 function BrandReport() {
@@ -20,8 +21,7 @@ function BrandReport() {
     try {
       await loadBrands();
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -30,9 +30,9 @@ function BrandReport() {
       await createBrand(newBrand.name, newBrand.logo_url);
       await loadBrands();
       setNewBrand(null);
+      toast.success('Brand created successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -41,9 +41,9 @@ function BrandReport() {
       await updateBrand(editingBrand._id, editingBrand.name, editingBrand.logo_url);
       await loadBrands();
       setEditingBrand(null);
+      toast.success('Brand updated successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -52,9 +52,9 @@ function BrandReport() {
       await deleteBrand(deletingBrand._id);
       await loadBrands();
       setDeletingBrand(null);
+      toast.success('Brand deleted successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
