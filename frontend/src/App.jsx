@@ -5,12 +5,12 @@ import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
 import Contact from './sites/Contact/Contact';
 import Home from './sites/Home/Home';
-import NotImplement from './sites/NotImplement/NotImplement';
 import NotFoundPage from './sites/NotFound/NotFound';
+import Product from './sites/Product/Product';
+import Searching from './sites/Searching/Searching';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
 import UserSearch from './sites/UserSearch/UserSearch';
-import ViewAllProduct from './sites/ViewAllProduct/ViewAllProduct';
 
 import Loading from './components/Loading/Loading';
 import UserProtectedRoute from './components/UserProtectedRoute/UserProtectedRoute';
@@ -18,7 +18,10 @@ import AdminProtectedRoute from './components/AdminProtectedRoute/AdminProtected
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { useUserStore } from './stores/userStore';
+import { useBrandStore } from './stores/brandStore';
+import { useCategoryStore } from './stores/categoryStore';
 
 import Dev from './sites/Dev';
 
@@ -27,13 +30,12 @@ function App() {
 
   useEffect(() => {
     if (!dev)
-      (async () => {
-        try {
-          await useUserStore.getState().loadUserData();
-        } catch {
-          // intentionally ignored
-        }
-      })();
+      (async () =>
+        await Promise.allSettled([
+          useUserStore.getState().loadUserData(),
+          useBrandStore.getState().loadBrands(),
+          useCategoryStore.getState().loadCategories(),
+        ]))();
   }, []);
 
   if (dev)
@@ -52,7 +54,6 @@ function App() {
           <Route path="/contact" element={<Contact />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/search" element={<UserSearch />}></Route>
-          <Route path="/viewallproduct" element={<ViewAllProduct />}></Route>
           <Route path="/product/:slug" element={<NotImplement />}></Route>
           <Route path="/products" element={<NotImplement />}></Route>
           <Route element={<UserProtectedRoute />}>
@@ -68,6 +69,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <Loading />
+      <Toaster />
     </>
   );
 }

@@ -10,6 +10,7 @@ import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import styles from './Home.module.css';
 
 function CategoryCard({ icon, image, name, onClick = () => console.log('button clicked') }) {
@@ -26,10 +27,8 @@ function CategoryCard({ icon, image, name, onClick = () => console.log('button c
 
 function Home() {
   const brands = useBrandStore((state) => state.data);
-  const loadBrands = useBrandStore((state) => state.loadBrands);
 
   const categories = useCategoryStore((state) => state.data);
-  const loadCategories = useCategoryStore((state) => state.loadCategories);
 
   const getProducts = useProductStore((state) => state.getProducts);
   const [firstBrandItems, setFirstBrandItem] = useState(null);
@@ -41,30 +40,6 @@ function Home() {
 
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
   const navigate = useNavigate();
-
-  async function fetchBrand() {
-    try {
-      await loadBrands();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
-  async function fetchCategory() {
-    try {
-      await loadCategories();
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
-  useEffect(() => {
-    (async () => {
-      await Promise.allSettled([fetchBrand(), fetchCategory()]);
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -187,10 +162,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>
@@ -242,10 +216,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>
@@ -281,10 +254,9 @@ function Home() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      addItemToWishlist(item._id).catch((error) => {
-                        console.error(error);
-                        alert(error);
-                      });
+                      addItemToWishlist(item._id)
+                        .then(() => toast.success('Item added to wishlist'))
+                        .catch((error) => toast.error(error.message));
                     }}
                   >
                     <i className={`fa-regular fa-heart`}></i>

@@ -12,7 +12,7 @@ const seedCoupons = async () => {
 
     // Get admin user for created_by field
     const adminUser = await User.findOne({ role: 'admin' });
-    
+
     if (!adminUser) {
       console.log('⚠️  No admin user found. Please run seedAdmin.js first.');
       process.exit(1);
@@ -135,16 +135,23 @@ const seedCoupons = async () => {
     console.log(`✅ Successfully created ${coupons.length} coupons!`);
     console.log('\n📋 Available Coupons:');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    
+
     coupons.forEach((coupon) => {
-      const status = !coupon.is_active ? '❌ INACTIVE' : 
-                     new Date(coupon.valid_until) < new Date() ? '⏰ EXPIRED' : 
-                     '✅ ACTIVE';
-      const type = coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` :
-                   coupon.discount_type === 'fixed_amount' ? `${coupon.discount_value.toLocaleString()} VND` :
-                   'Free Shipping';
-      
-      console.log(`${status} ${coupon.code.padEnd(15)} - ${type.padEnd(15)} - ${coupon.description}`);
+      const status = !coupon.is_active
+        ? '❌ INACTIVE'
+        : new Date(coupon.valid_until) < new Date()
+          ? '⏰ EXPIRED'
+          : '✅ ACTIVE';
+      const type =
+        coupon.discount_type === 'percentage'
+          ? `${coupon.discount_value}%`
+          : coupon.discount_type === 'fixed_amount'
+            ? `${coupon.discount_value.toLocaleString()} VND`
+            : 'Free Shipping';
+
+      console.log(
+        `${status} ${coupon.code.padEnd(15)} - ${type.padEnd(15)} - ${coupon.description}`,
+      );
     });
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 

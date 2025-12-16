@@ -136,7 +136,7 @@ export const applyCoupon = async (req, res) => {
 
     // Get current cart to calculate subtotal
     const cart = await cartService.getUserCart(userId);
-    
+
     const result = await couponService.applyCouponToCart(userId, code, {
       subtotal: cart.subtotal,
       shipping_fee: cart.shipping_fee || 0,

@@ -7,6 +7,10 @@
   background-color: white;
 }
 
+.sidebar button {
+  cursor: pointer;
+}
+
 .sidebar header {
   font-size: 2rem;
   font-weight: bold;
@@ -48,30 +52,39 @@
   font-size: 1.1rem;
 }
 
-.sidebar footer {
+.sidebar footer > div:first-child {
   border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.sidebar footer > div:first-child button {
+  width: 100%;
+  padding: 0.25rem 1ch;
+}
+
+.sidebar footer > div:last-child {
   display: flex;
   padding: 1rem;
   gap: 1rem;
   align-items: center;
 }
 
-.sidebar footer > div:first-child {
+.sidebar footer > div:last-child > div:first-child {
   border-radius: 50%;
   padding: 0.5rem;
   background-color: hsl(0, 0%, 5%);
   color: white;
 }
 
-.sidebar footer > div:nth-child(2) {
+.sidebar footer > div:last-child > div:nth-child(2) {
   flex: 1;
 }
 
-.sidebar footer > div:nth-child(2) > div:first-child {
+.sidebar footer > div:last-child > div:nth-child(2) > div:first-child {
   font-weight: bold;
 }
 
-.sidebar footer > div:nth-child(2) > div:last-child {
+.sidebar footer > div:last-child > div:nth-child(2) > div:last-child {
   font-size: 0.85rem;
   color: grey;
 }

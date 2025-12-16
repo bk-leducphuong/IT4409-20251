@@ -119,7 +119,8 @@ export const forgotPassword = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    if (!email || !otp) return res.status(400).json({ success: false, message: 'Email và OTP là bắt buộc' });
+    if (!email || !otp)
+      return res.status(400).json({ success: false, message: 'Email và OTP là bắt buộc' });
 
     const result = await authService.verifyOtp(email, otp);
     res.json({ success: true, message: 'OTP hợp lệ', data: result });
@@ -132,7 +133,9 @@ export const resetPassword = async (req, res) => {
   try {
     const { token, newPassword, confirmPassword } = req.body;
     if (!token || !newPassword || !confirmPassword) {
-      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp đầy đủ thông tin' });
+      return res
+        .status(400)
+        .json({ success: false, message: 'Vui lòng cung cấp đầy đủ thông tin' });
     }
 
     if (newPassword !== confirmPassword) {

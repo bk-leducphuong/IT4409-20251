@@ -18,6 +18,10 @@ import {
   createCategory,
   deleteCategory,
   updateCategory,
+  getOrders,
+  getOrderById,
+  getOrdersStatistics,
+  updateOrderStatus,
 } from '../services/adminServices';
 
 export const useAdminStore = create((set) => ({
@@ -177,6 +181,40 @@ export const useAdminStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await deleteCategory(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* ORDER */
+  getOrders: async (queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getOrders(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getOrderById: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await getOrderById(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getOrdersStatistics: async () => {
+    set({ isLoading: true });
+    try {
+      return await getOrdersStatistics();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateOrderStatus: async (id, status) => {
+    set({ isLoading: true });
+    try {
+      return await updateOrderStatus(id, status);
     } finally {
       set({ isLoading: false });
     }

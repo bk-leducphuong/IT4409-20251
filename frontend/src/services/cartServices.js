@@ -25,3 +25,16 @@ export const updateQuantity = async (itemId, quantity) => {
 export const deleteItem = async (itemId) => {
   return await apiFetch(`/cart/items/${itemId}`, { method: 'DELETE' });
 };
+
+export const clearCart = async () => {
+  return await apiFetch('/cart', { method: 'DELETE' });
+};
+
+export const applyCoupon = async (code) => {
+  if (!code) throw new Error('All feilds are required');
+
+  return await apiFetch('/cart/apply-coupon', {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+  });
+};

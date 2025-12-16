@@ -145,9 +145,7 @@ describe('Admin Dashboard Controller', () => {
             total_items_sold: 12,
           },
         ],
-        payment_methods: [
-          { method: 'cod', count: 60, total_amount: 6000000 },
-        ],
+        payment_methods: [{ method: 'cod', count: 60, total_amount: 6000000 }],
       };
 
       dashboardService.getSalesAnalytics.mockResolvedValue(mockAnalytics);

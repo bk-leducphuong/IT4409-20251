@@ -1,0 +1,97 @@
+.orderReport main div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1ch;
+  margin: 1rem 0;
+}
+
+.orderReport main div:first-child i {
+  font-size: 1rem;
+  margin-right: 1ch;
+}
+
+.orderReport input,
+.orderReport select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+}
+
+.orderReport input {
+  width: clamp(250px, 50%, 500px);
+}
+
+.orderReport button {
+  font-size: 1rem;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 2ch;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+  width: fit-content !important;
+  justify-self: center;
+}
+
+.orderReport header i {
+  font-size: 1rem;
+  margin-right: 1ch;
+}
+
+.orderReport table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.orderReport table thead {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.orderReport table thead * {
+  padding: 0.5rem 0;
+}
+
+.orderReport table tbody {
+  text-align: center;
+}
+
+.orderReport table tbody tr {
+  border: 1px solid #edf2f7;
+}
+
+.orderReport table tbody tr td {
+  padding: 0.5rem 0;
+}
+
+.orderReport table tbody tr:nth-child(even) {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.pagination {
+  text-align: center;
+}
+
+.pagination button {
+  background-color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

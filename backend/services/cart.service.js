@@ -4,7 +4,7 @@ import ProductVariant from '../models/productVariant.js';
 // Calculate cart totals including coupon discount
 export const calculateCartTotals = (cart) => {
   let subtotal = 0;
-  
+
   // Calculate subtotal from items
   if (cart.items && cart.items.length > 0) {
     cart.items.forEach((item) => {
@@ -13,19 +13,19 @@ export const calculateCartTotals = (cart) => {
       }
     });
   }
-  
+
   // Calculate discount from applied coupon
   let discount = 0;
   if (cart.applied_coupon && cart.applied_coupon.discount_amount) {
     discount = cart.applied_coupon.discount_amount;
   }
-  
+
   // Assume flat shipping fee (can be customized)
   const shipping_fee = subtotal > 0 ? 30000 : 0; // 30,000 VND flat rate
-  
+
   // Calculate total
   const total = Math.max(0, subtotal + shipping_fee - discount);
-  
+
   return {
     subtotal,
     discount,
@@ -52,10 +52,10 @@ export const getUserCart = async (userId) => {
     if (!cart) {
       cart = await Cart.create({ user_id: userId, items: [] });
     }
-    
+
     // Calculate totals
     const totals = calculateCartTotals(cart);
-    
+
     // Return cart with totals as plain object
     const cartObj = cart.toObject();
     cartObj.subtotal = totals.subtotal;
@@ -124,7 +124,7 @@ export const addItemToCart = async (userId, productVariantId, quantity = 1) => {
         ],
       },
     });
-    
+
     // Calculate totals
     const totals = calculateCartTotals(cart);
     const cartObj = cart.toObject();
@@ -184,7 +184,7 @@ export const updateItemQuantity = async (userId, productVariantId, quantity) => 
         ],
       },
     });
-    
+
     // Calculate totals
     const totals = calculateCartTotals(updatedCart);
     const cartObj = updatedCart.toObject();
@@ -229,7 +229,7 @@ export const removeItemFromCart = async (userId, productVariantId) => {
         ],
       },
     });
-    
+
     // Calculate totals
     const totals = calculateCartTotals(updatedCart);
     const cartObj = updatedCart.toObject();

@@ -7,11 +7,13 @@ A comprehensive coupon and discount management system with support for percentag
 ## Features
 
 ✅ **Coupon Types:**
+
 - Percentage discount (with optional maximum discount cap)
 - Fixed amount discount
 - Free shipping
 
 ✅ **Coupon Management:**
+
 - Usage limits (total and per user)
 - Expiration dates
 - Minimum order value requirements
@@ -19,11 +21,13 @@ A comprehensive coupon and discount management system with support for percentag
 - Usage tracking and statistics
 
 ✅ **User Features:**
+
 - Apply/remove coupons from cart
 - Real-time discount calculation
 - Validation with clear error messages
 
 ✅ **Admin Features:**
+
 - Create, read, update, delete coupons
 - View coupon statistics
 - Filter and search coupons
@@ -34,6 +38,7 @@ A comprehensive coupon and discount management system with support for percentag
 ### User Routes
 
 #### Apply Coupon to Cart
+
 ```http
 POST /api/cart/apply-coupon
 Authorization: Bearer {token}
@@ -69,6 +74,7 @@ Response:
 ```
 
 #### Remove Coupon from Cart
+
 ```http
 DELETE /api/cart/remove-coupon
 Authorization: Bearer {token}
@@ -86,6 +92,7 @@ Response:
 ### Admin Routes
 
 #### Create Coupon
+
 ```http
 POST /api/admin/coupons
 Authorization: Bearer {admin_token}
@@ -116,6 +123,7 @@ Response:
 ```
 
 #### Get All Coupons (with filters)
+
 ```http
 GET /api/admin/coupons?page=1&limit=20&is_active=true&discount_type=percentage&search=summer
 Authorization: Bearer {admin_token}
@@ -144,6 +152,7 @@ Response:
 ```
 
 #### Get Coupon by ID
+
 ```http
 GET /api/admin/coupons/:id
 Authorization: Bearer {admin_token}
@@ -158,6 +167,7 @@ Response:
 ```
 
 #### Get Coupon Statistics
+
 ```http
 GET /api/admin/coupons/:id/stats
 Authorization: Bearer {admin_token}
@@ -186,6 +196,7 @@ Response:
 ```
 
 #### Update Coupon
+
 ```http
 PUT /api/admin/coupons/:id
 Authorization: Bearer {admin_token}
@@ -207,6 +218,7 @@ Response:
 ```
 
 #### Delete Coupon
+
 ```http
 DELETE /api/admin/coupons/:id
 Authorization: Bearer {admin_token}
@@ -221,13 +233,16 @@ Response:
 ## Coupon Types
 
 ### 1. Percentage Discount
+
 Applies a percentage discount to the cart subtotal.
 
 **Fields:**
+
 - `discount_value`: Percentage (0-100)
 - `max_discount_amount`: Optional maximum discount cap
 
 **Example:**
+
 ```json
 {
   "discount_type": "percentage",
@@ -237,17 +252,21 @@ Applies a percentage discount to the cart subtotal.
 ```
 
 If cart subtotal is 600,000 VND:
+
 - 20% discount = 120,000 VND
 - Capped at 100,000 VND
 - **Final discount: 100,000 VND**
 
 ### 2. Fixed Amount Discount
+
 Applies a fixed amount discount to the cart subtotal.
 
 **Fields:**
+
 - `discount_value`: Amount in VND
 
 **Example:**
+
 ```json
 {
   "discount_type": "fixed_amount",
@@ -258,12 +277,15 @@ Applies a fixed amount discount to the cart subtotal.
 **Discount: 50,000 VND** (regardless of cart total)
 
 ### 3. Free Shipping
+
 Removes shipping fees from the order.
 
 **Fields:**
+
 - `discount_value`: Not used (set to 0)
 
 **Example:**
+
 ```json
 {
   "discount_type": "free_shipping",
@@ -276,7 +298,9 @@ Removes shipping fees from the order.
 ## Validation Rules
 
 ### Coupon Validity
+
 A coupon is valid when ALL conditions are met:
+
 - ✅ `is_active` is `true`
 - ✅ Current date is between `valid_from` and `valid_until`
 - ✅ `usage_limit` not exceeded (if set)
@@ -284,6 +308,7 @@ A coupon is valid when ALL conditions are met:
 - ✅ Cart subtotal meets `min_order_value` requirement
 
 ### Error Messages
+
 - **"Invalid coupon code"** - Coupon doesn't exist
 - **"This coupon has expired"** - Current date > valid_until
 - **"This coupon is no longer active"** - is_active = false
@@ -294,6 +319,7 @@ A coupon is valid when ALL conditions are met:
 ## Usage Flow
 
 ### 1. User Applies Coupon
+
 ```
 User → POST /api/cart/apply-coupon → Validation → Calculate Discount → Save to Cart
 ```
@@ -306,6 +332,7 @@ User → POST /api/cart/apply-coupon → Validation → Calculate Discount → S
 6. Returns updated cart with discount
 
 ### 2. User Completes Order
+
 ```
 User → POST /api/orders → Record Coupon Usage → Clear Cart → Create Order
 ```
@@ -316,6 +343,7 @@ User → POST /api/orders → Record Coupon Usage → Clear Cart → Create Orde
 4. Order includes discount in total calculation
 
 ### 3. User Cancels Order
+
 ```
 User → DELETE /api/orders/:id/cancel → Restore Coupon Usage → Update Order
 ```
@@ -327,6 +355,7 @@ User → DELETE /api/orders/:id/cancel → Restore Coupon Usage → Update Order
 ## Database Schema
 
 ### Coupon Model
+
 ```javascript
 {
   code: String,              // Unique, uppercase (e.g., "SUMMER2024")
@@ -353,6 +382,7 @@ User → DELETE /api/orders/:id/cancel → Restore Coupon Usage → Update Order
 ```
 
 ### Cart Model (Updated)
+
 ```javascript
 {
   user_id: ObjectId,
@@ -371,6 +401,7 @@ User → DELETE /api/orders/:id/cancel → Restore Coupon Usage → Update Order
 ```
 
 ### Order Model (Updated)
+
 ```javascript
 {
   // ... existing fields
@@ -389,30 +420,34 @@ User → DELETE /api/orders/:id/cancel → Restore Coupon Usage → Update Order
 ## Seeding Data
 
 ### Seed Coupons Only
+
 ```bash
 node seeds/seedCoupons.js
 ```
 
 ### Seed All Data (including coupons)
+
 ```bash
 node seeds/seedAll.js
 ```
 
 ### Sample Coupons Created
-| Code | Type | Value | Min Order | Limit | Status |
-|------|------|-------|-----------|-------|--------|
-| WELCOME10 | Percentage | 10% (max 50k) | 0 | Unlimited | Active |
-| SUMMER2024 | Percentage | 20% (max 100k) | 500k | 1000 | Active |
-| SAVE50K | Fixed | 50,000 VND | 300k | 500 | Active |
-| FREESHIP | Free Shipping | - | 200k | Unlimited | Active |
-| MEGA50 | Percentage | 50% (max 200k) | 1M | 100 | Active |
-| VIP100K | Fixed | 100,000 VND | 1.5M | 50 | Active |
+
+| Code       | Type          | Value          | Min Order | Limit     | Status |
+| ---------- | ------------- | -------------- | --------- | --------- | ------ |
+| WELCOME10  | Percentage    | 10% (max 50k)  | 0         | Unlimited | Active |
+| SUMMER2024 | Percentage    | 20% (max 100k) | 500k      | 1000      | Active |
+| SAVE50K    | Fixed         | 50,000 VND     | 300k      | 500       | Active |
+| FREESHIP   | Free Shipping | -              | 200k      | Unlimited | Active |
+| MEGA50     | Percentage    | 50% (max 200k) | 1M        | 100       | Active |
+| VIP100K    | Fixed         | 100,000 VND    | 1.5M      | 50        | Active |
 
 ## Testing
 
 ### Test Scenarios
 
 #### 1. Apply Valid Coupon
+
 ```bash
 # Login as user
 POST /api/auth/login
@@ -424,6 +459,7 @@ Body: { "code": "WELCOME10" }
 ```
 
 #### 2. Apply Expired Coupon
+
 ```bash
 POST /api/cart/apply-coupon
 Body: { "code": "EXPIRED" }
@@ -431,6 +467,7 @@ Body: { "code": "EXPIRED" }
 ```
 
 #### 3. Apply Coupon with Insufficient Order Value
+
 ```bash
 # Cart subtotal: 100,000 VND
 POST /api/cart/apply-coupon
@@ -439,6 +476,7 @@ Body: { "code": "SUMMER2024" }  # Requires min 500,000 VND
 ```
 
 #### 4. Apply Coupon After Usage Limit
+
 ```bash
 # Use coupon and complete order
 POST /api/orders
@@ -449,6 +487,7 @@ Body: { "code": "WELCOME10" }
 ```
 
 #### 5. Remove Coupon
+
 ```bash
 DELETE /api/cart/remove-coupon
 # Expected: Coupon removed, discount cleared
@@ -517,23 +556,27 @@ DELETE /api/cart/remove-coupon
 ## Troubleshooting
 
 ### Coupon Not Applying
+
 - Check if coupon is active (`is_active: true`)
 - Verify current date is within valid range
 - Ensure cart meets minimum order value
 - Check if user has exceeded usage limit
 
 ### Discount Amount Wrong
+
 - Verify discount_type matches expected calculation
 - Check if max_discount_amount is capping the discount
 - Ensure cart subtotal is calculated correctly
 - For free_shipping, verify shipping fee is set
 
 ### Usage Count Not Updating
+
 - Usage is only recorded when order is created
 - Applying coupon to cart does NOT increment usage
 - Check if order was successfully created
 
 ### Coupon Still Valid After Expiration
+
 - Verify system time is correct
 - Check `valid_until` date format
 - Ensure coupon validation is running on each request
@@ -556,6 +599,7 @@ Potential features to add:
 ## Support
 
 For issues or questions:
+
 - Check error messages in API responses
 - Review validation rules above
 - Check server logs for detailed errors

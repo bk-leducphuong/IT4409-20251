@@ -1,50 +1,32 @@
-.user {
-  width: 90%;
-  max-width: var(--max-content-width);
-  padding: 3rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.container {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1rem;
+  width: min(90%, var(--max-content-width));
   justify-self: center;
 }
 
-.user h2 {
-  color: red;
-}
-
-.user input {
-  width: 100%;
-  padding: 0.5rem 2ch;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  margin: 0.5rem 0;
-  background-color: hsl(0, 0%, 95%);
-  font-size: 1rem;
-}
-
-.user input::-ms-reveal,
-.user input::-ms-clear,
-.user input::-webkit-credentials-auto-fill-button {
-  display: none !important;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 0.5rem 3ch;
-  margin: 1rem 0;
-}
-
-.label {
-  font-weight: bold;
-}
-
-.btnContainer {
+.left {
   display: flex;
-  justify-content: end;
-  align-items: center;
-  gap: 1ch;
-  margin-top: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  padding: 2rem;
+  padding-left: 0;
+}
+
+.left button {
+  border: none;
+  outline: none;
+  background-color: white;
+  text-align: start;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.left button:not(.red) {
+  color: grey;
+}
+
+.red {
+  font-weight: bold;
+  color: red;
 }

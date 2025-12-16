@@ -39,13 +39,18 @@
   font-size: 0.85rem;
 }
 
-.input > input {
+.input > input,
+.input > textarea {
   width: 100%;
   padding: 0.5rem 1rem;
   background-color: hsl(0, 0%, 95%);
   outline: none;
   border: none;
   border-radius: 5px;
+}
+
+.input > textarea {
+  height: 4rem;
 }
 
 .checkbox {

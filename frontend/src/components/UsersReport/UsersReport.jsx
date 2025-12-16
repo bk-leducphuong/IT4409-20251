@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAdminStore } from '../../stores/adminStore';
 import styles from './UsersReport.module.css';
 
@@ -21,14 +22,16 @@ function UsersReport() {
   const updateUser = useAdminStore((state) => state.updateUser);
 
   const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const [limit, setLimit] = useState(20);
 
   async function fetchUsers() {
     try {
       const res = await getUsers(page);
       setUsers(res.data.users);
+      setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -37,8 +40,7 @@ function UsersReport() {
       const res = await getAdmins();
       setAdmins(res.data.admins);
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -54,9 +56,9 @@ function UsersReport() {
       );
       await fetchUsers();
       setNewUser(null);
+      toast.success('User created successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -67,9 +69,9 @@ function UsersReport() {
       await fetchUsers();
       await fetchAdmins();
       setDeletingUser(null);
+      toast.success('User deleted successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -79,9 +81,9 @@ function UsersReport() {
       await fetchUsers();
       await fetchAdmins();
       setEditingUser(null);
+      toast.success('User updated successfully');
     } catch (error) {
-      console.error(error);
-      alert(error);
+      toast.error(error.message);
     }
   }
 
@@ -91,7 +93,7 @@ function UsersReport() {
         await fetchUsers();
         await fetchAdmins();
       } catch {
-        // intentionally ignored
+        toast.error('Something went wrong');
       }
     })();
   }, []);
@@ -107,19 +109,7 @@ function UsersReport() {
           <h1>Users management</h1>
           <p>Manage access, roles and users status.</p>
         </div>
-        <button
-          onClick={() =>
-            setNewUser({
-              fullName: '',
-              email: '',
-              password: '',
-              phone: '',
-              address: '',
-              status: 'active',
-            })
-          }
-          className={styles.blackBtn}
-        >
+        <button onClick={() => setNewUser({ status: 'active' })} className={styles.blackBtn}>
           + Add new user
         </button>
       </header>
@@ -182,24 +172,43 @@ function UsersReport() {
             </tbody>
           </table>
 
-          <div className={styles.buttonsContainer}>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) setPage((p) => p - 1);
-              }}
-            >
-              &lt;
-            </button>
-            <span>{page}</span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setPage((p) => p + 1);
-              }}
-            >
-              &gt;
-            </button>
+          <div className={styles.pagination}>
+            <div className={styles.buttonsContainer}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page > 1) setPage((p) => p - 1);
+                }}
+              >
+                &lt;
+              </button>
+              <span>
+                {page} / {totalPage}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage((p) => p + 1);
+                }}
+              >
+                &gt;
+              </button>
+            </div>
+            <div>
+              Users per page:
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
           </div>
         </section>
 
@@ -319,12 +328,13 @@ function UsersReport() {
 
             <div>
               <div>State:</div>
-              <input
-                type="text"
-                placeholder="Enter user's state active or inactive"
-                value={newUser.status}
+              <select
+                value={newUser.status || 'active'}
                 onChange={(e) => setNewUser({ ...newUser, status: e.target.value })}
-              />
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
 
             <div className={styles.buttonsContainer}>
@@ -396,12 +406,13 @@ function UsersReport() {
 
             <div>
               <div>State:</div>
-              <input
-                type="text"
-                placeholder="Enter user's state active or inactive"
+              <select
                 value={editingUser.status}
                 onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
-              />
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
 
             <div className={styles.buttonsContainer}>

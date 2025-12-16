@@ -20,22 +20,26 @@ console.log('📧 Email configuration:', {
 
 const transporter = nodemailer.createTransport({
   service,
-  auth: smtpUser && smtpPass ? { 
-    user: smtpUser, 
-    pass: smtpPass 
-  } : undefined,
+  auth:
+    smtpUser && smtpPass
+      ? {
+          user: smtpUser,
+          pass: smtpPass,
+        }
+      : undefined,
   // Thêm config cho Gmail
   ...(service === 'gmail' && {
     host: 'smtp.gmail.com',
     port: 587,
     secure: false, // true cho port 465, false cho 587
-  })
+  }),
 });
 
 // Verify connection at startup
-transporter.verify()
+transporter
+  .verify()
   .then(() => console.log('✅ Email transporter verified for user:', smtpUser))
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ Email transporter verification failed:', err?.message || err);
     console.error('💡 Tip: Make sure to use App Password from Google Account settings');
   });
@@ -54,7 +58,7 @@ export const sendEmail = async (to, subject, html, text) => {
       text: text || undefined,
       html: html || undefined,
     });
-    
+
     console.log('✅ Email sent successfully:', info.messageId);
     return info;
   } catch (err) {
@@ -64,9 +68,10 @@ export const sendEmail = async (to, subject, html, text) => {
 };
 
 export const sendResetPasswordEmail = async (to, fullName, otp, resetToken) => {
-  const link = process.env.FRONTEND_URL && resetToken
-    ? `${process.env.FRONTEND_URL.replace(/\/$/, '')}/reset-password?token=${encodeURIComponent(resetToken)}`
-    : null;
+  const link =
+    process.env.FRONTEND_URL && resetToken
+      ? `${process.env.FRONTEND_URL.replace(/\/$/, '')}/reset-password?token=${encodeURIComponent(resetToken)}`
+      : null;
 
   const html = `
     <div style="font-family: Arial, sans-serif; padding: 20px;">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from './SignUpForm.module.css';
@@ -17,10 +18,10 @@ function SignUpForm({ toggleState = () => console.log('button clicked') }) {
     try {
       await signUp(name, email, password, phoneNumber);
       await loadUserData();
+      toast.success('Account created successfully');
       navigate('/');
     } catch (err) {
-      alert(err);
-      console.error(err);
+      toast.error(err.message);
       setPassword('');
     }
   };
