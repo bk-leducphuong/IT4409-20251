@@ -1,5 +1,6 @@
 import Sidebar from '../../components/Sidebar/Sidebar';
 import UsersReport from '../../components/UsersReport/UsersReport';
+import OrderReport from '../../components/OrderReport/OrderReport';
 import BrandReport from '../../components/BrandReport/BrandReport';
 import CategoryReport from '../../components/CategoryReport/CategoryReport';
 import ProductReport from '../../components/ProductReport/ProductReport';
@@ -16,6 +17,7 @@ function Admin() {
       </section>
       <section className={styles.right}>
         {state === 'users' && <UsersReport />}
+        {state === 'orders' && <OrderReport />}
         {state === 'brands' && <BrandReport />}
         {state === 'categories' && <CategoryReport />}
         {state === 'products' && <ProductReport />}

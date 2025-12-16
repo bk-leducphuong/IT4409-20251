@@ -21,11 +21,14 @@ function UsersReport() {
   const updateUser = useAdminStore((state) => state.updateUser);
 
   const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const [limit, setLimit] = useState(20);
 
   async function fetchUsers() {
     try {
       const res = await getUsers(page);
       setUsers(res.data.users);
+      setTotalPage(res.data.pagination.totalPages);
     } catch (error) {
       console.error(error);
       alert(error);
@@ -182,24 +185,43 @@ function UsersReport() {
             </tbody>
           </table>
 
-          <div className={styles.buttonsContainer}>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) setPage((p) => p - 1);
-              }}
-            >
-              &lt;
-            </button>
-            <span>{page}</span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setPage((p) => p + 1);
-              }}
-            >
-              &gt;
-            </button>
+          <div className={styles.pagination}>
+            <div className={styles.buttonsContainer}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (page > 1) setPage((p) => p - 1);
+                }}
+              >
+                &lt;
+              </button>
+              <span>
+                {page} / {totalPage}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage((p) => p + 1);
+                }}
+              >
+                &gt;
+              </button>
+            </div>
+            <div>
+              Users per page:
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
           </div>
         </section>
 

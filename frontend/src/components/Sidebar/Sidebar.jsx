@@ -36,6 +36,11 @@ function Sidebar({ setState }) {
             </button>
           </li>
           <li>
+            <button onClick={() => setState('orders')}>
+              <i className="fa-solid fa-basket-shopping"></i> Orders
+            </button>
+          </li>
+          <li>
             <button onClick={() => setState('products')}>
               <i className="fa-solid fa-box"></i> Products
             </button>
@@ -53,14 +58,19 @@ function Sidebar({ setState }) {
         </ul>
       </nav>
       <footer>
-        <div>AD</div>
         <div>
-          <div>{userData.fullName}</div>
-          <div>Hello Admin</div>
+          <button onClick={() => navigate('/')}>Return to Shop</button>
         </div>
-        <button onClick={handleLogout}>
-          <i className="fa-solid fa-arrow-right-from-bracket"></i>
-        </button>
+        <div>
+          <div>AD</div>
+          <div>
+            <div>{userData.fullName}</div>
+            <div>Hello Admin</div>
+          </div>
+          <button onClick={handleLogout}>
+            <i className="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
       </footer>
     </div>
   );
