@@ -174,7 +174,7 @@ export const verifyOtp = async (email, otp) => {
 
   // Tạo reset session token (dùng để xác thực việc đổi mật khẩu) - ngắn hạn
   const resetSessionToken = jwt.sign({ id: user._id, purpose: 'password-reset' }, process.env.JWT_SECRET, {
-    expiresIn: process.env.RESET_SESSION_EXPIRE || '15m',
+    expiresIn: process.env.JWT_EXPIRE || '15m',
   });
 
   // Optionally clear resetPasswordToken to prevent reuse (or keep until reset)

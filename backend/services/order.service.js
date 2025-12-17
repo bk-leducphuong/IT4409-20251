@@ -4,20 +4,27 @@ import ProductVariant from '../models/productVariant.js';
 import Product from '../models/product.js';
 import User from '../models/user.js';
 import emailService from '../libs/email.js';
+import { generateVietQR } from '../libs/vietqr.js';
+import { emitToAdmin } from '../utils/socketHelper.js';
+
+import mongoose from 'mongoose';
 
 // Tax rate (10% VAT in Vietnam)
 const TAX_RATE = 0.1;
 
-// Shipping fee calculation (can be made more sophisticated)
+// Shipping fee calculation
 const calculateShippingFee = (subtotal) => {
   if (subtotal >= 500000) return 0; // Free shipping over 500k VND
-  return 30000; // Flat 30k VND shipping fee
+  return 1; // Flat 30k VND shipping fee
 };
 
 // Create order from cart (checkout)
 export const createOrderFromCart = async (userId, orderData) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { shipping_address, payment_method, customer_note } = orderData;
+    let qrDataUrl = null;
 
     // Validate shipping address
     if (
@@ -29,61 +36,60 @@ export const createOrderFromCart = async (userId, orderData) => {
       throw new Error('Vui lòng cung cấp đầy đủ thông tin giao hàng');
     }
 
-    // Get user's cart
+    // Load cart with session
     const cart = await Cart.findOne({ user_id: userId }).populate({
       path: 'items.product_variant_id',
-      populate: {
-        path: 'product_id',
-      },
-    });
+      populate: { path: 'product_id' },
+    }).session(session);
 
     if (!cart || cart.items.length === 0) {
       throw new Error('Giỏ hàng trống');
     }
 
-    // Prepare order items with product snapshots
+    // Prepare order items and reserve stock
     const orderItems = [];
     let subtotal = 0;
 
     for (const cartItem of cart.items) {
-      const variant = cartItem.product_variant_id;
-      const product = variant.product_id;
+      const variantId = cartItem.product_variant_id._id;
+      const needQty = cartItem.quantity;
 
-      // Verify stock availability
-      if (variant.stock_quantity < cartItem.quantity) {
-        throw new Error(`Sản phẩm ${product.name} không đủ số lượng trong kho`);
+      // Atomically decrement stock
+      const updated = await ProductVariant.findOneAndUpdate(
+        { _id: variantId, stock_quantity: { $gte: needQty } },
+        { $inc: { stock_quantity: -needQty } },
+        { new: true, session }
+      ).populate('product_id');
+
+      if (!updated) {
+        throw new Error(`Sản phẩm không đủ số lượng hoặc đã hết kho`);
       }
 
-      // Calculate item subtotal
-      const itemSubtotal = variant.price * cartItem.quantity;
+      const product = updated.product_id;
+      const itemSubtotal = updated.price * needQty;
       subtotal += itemSubtotal;
 
-      // Create order item with snapshot
       orderItems.push({
-        product_variant_id: variant._id,
-        product_name: product.name,
-        product_slug: product.slug,
-        sku: variant.sku,
-        image_url: variant.main_image_url,
-        attributes: variant.attributes,
-        unit_price: variant.price,
-        quantity: cartItem.quantity,
+        product_variant_id: updated._id,
+        product_name: product?.name || '',
+        product_slug: product?.slug || '',
+        sku: updated.sku,
+        image_url: updated.main_image_url,
+        attributes: updated.attributes,
+        unit_price: updated.price,
+        quantity: needQty,
         subtotal: itemSubtotal,
       });
-
-      // Reduce stock quantity
-      variant.stock_quantity -= cartItem.quantity;
-      await variant.save();
     }
 
     // Calculate totals
     const tax = Math.round(subtotal * TAX_RATE);
     const shipping_fee = calculateShippingFee(subtotal);
-    const discount = 0; // TODO: Implement discount/coupon logic
+    const discount = 0;
     const total = subtotal + tax + shipping_fee - discount;
 
-    // Create order
-    const order = await Order.create({
+    // Create order document
+    const orderDoc = new Order({
       user_id: userId,
       items: orderItems,
       status: 'pending',
@@ -94,22 +100,75 @@ export const createOrderFromCart = async (userId, orderData) => {
       discount,
       total,
       payment_method: payment_method || 'cod',
-      payment_status: payment_method === 'cod' ? 'pending' : 'pending',
+      payment_status: 'pending',
       customer_note,
     });
 
-    // Clear cart after successful order
+    await orderDoc.save({ session });
+
+    // Generate QR for bank transfer
+    if ((orderDoc.payment_method || '').toLowerCase() === 'bank_transfer') {
+      const expiresMinutes = parseInt(process.env.BANK_TRANSFER_EXPIRES_MINUTES || '1440', 10);
+      const expiresAt = new Date(Date.now() + expiresMinutes * 60000);
+      orderDoc.reserved_until = expiresAt;
+
+      // Lấy thông tin từ env
+      const payeeName = process.env.BANK_PAYEE_NAME || 'Merchant';
+      const accountNumber = process.env.BANK_ACCOUNT_NUMBER || '0000000000';
+      const bankBin = process.env.BANK_BIN || '970422'; // MB Bank default
+      const bankName = process.env.BANK_NAME || 'MB Bank';
+      const amount = total;
+      const reference = `DH${orderDoc._id.toString().slice(-8).toUpperCase()}`;
+
+      try {
+        // ===== SỬ DỤNG VIETQR API =====
+        const qrResult = await generateVietQR({
+          accountNo: accountNumber,
+          accountName: payeeName,
+          acqId: bankBin,
+          amount: amount,
+          addInfo: reference,
+          template: 'compact' // 'compact', 'qr_only', 'print'
+        });
+
+        qrDataUrl = qrResult.qrDataURL; // Base64 image
+
+        console.log('✅ VietQR generated successfully for order:', orderDoc._id);
+
+      } catch (qrErr) {
+        console.error('❌ VietQR generation error:', qrErr?.message || qrErr);
+        qrDataUrl = null;
+      }
+
+      // Lưu thông tin chuyển khoản
+      orderDoc.bank_transfer = {
+        bank_name: bankName,
+        account_name: payeeName,
+        account_number: accountNumber,
+        amount,
+        reference,
+        receipt_url: qrDataUrl || '',
+      };
+
+      await orderDoc.save({ session });
+    }
+
+    // Clear cart
     cart.items = [];
-    await cart.save();
+    await cart.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     // Populate order for return
-    const populatedOrder = await Order.findById(order._id).populate(
-      'user_id',
-      'fullName email phone',
-    );
+    const populatedOrder = await Order.findById(orderDoc._id)
+      .populate('user_id', 'fullName email phone');
 
-    return populatedOrder;
+    return { order: populatedOrder, qr: qrDataUrl };
+
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     throw new Error(error.message || 'Không thể tạo đơn hàng');
   }
 };
@@ -336,6 +395,298 @@ export const getOrderStatistics = async () => {
   }
 };
 
+/**
+ * Tự động xác nhận thanh toán (được gọi bởi cron job hoặc webhook)
+ */
+export const autoConfirmPayment = async (transactionData) => {
+  const { transactionId, amount, description, transactionDate, bankCode = 'MB' } = transactionData;
+
+  try {
+    const referenceMatch = description.match(/DH([A-Z0-9]{8})/i);
+    
+    if (!referenceMatch) {
+      return { success: false, reason: 'No reference found' };
+    }
+
+    const orderReference = referenceMatch[0];
+
+    const order = await Order.findOne({
+      'bank_transfer.reference': orderReference,
+      payment_method: 'bank_transfer',
+      payment_status: 'pending'
+    }).populate('user_id', 'email fullName phone');
+
+    if (!order) {
+      return { success: false, reason: 'Order not found' };
+    }
+
+    if (order.bank_transfer.transaction_id === transactionId) {
+      return { success: false, reason: 'Already processed' };
+    }
+
+    const expectedAmount = order.total;
+    const receivedAmount = parseFloat(amount);
+    const amountDiff = Math.abs(receivedAmount - expectedAmount);
+
+          if (amountDiff > 1) {
+      // Thông báo admin về sai số tiền
+      emitToAdmin('payment:mismatch', {
+        orderId: order._id,
+        orderNumber: order.order_number,
+        expected: expectedAmount,
+        received: receivedAmount,
+        transactionId
+      });
+
+      return { success: false, reason: 'Amount mismatch' };
+    }
+
+    const oldStatus = order.status;
+    
+    order.payment_status = 'paid';
+    order.status = 'processing';
+    order.paid_at = new Date(transactionDate);
+    order.bank_transfer.transaction_id = transactionId;
+    order.bank_transfer.paid_at = new Date(transactionDate);
+    order.bank_transfer.paid_amount = receivedAmount;
+    order.bank_transfer.bank_code = bankCode;
+
+    order.status_history.push({
+      status: 'processing',
+      changed_at: new Date(),
+      note: `✅ Thanh toán tự động xác nhận. Mã GD: ${transactionId}`
+    });
+
+    await order.save();
+
+    // Gửi thông báo real-time cho admin
+    emitToAdmin('order:paid', {
+      orderId: order._id,
+      orderNumber: order.order_number,
+      oldStatus,
+      newStatus: 'processing',
+      amount: receivedAmount,
+      transactionId,
+      customerName: order.user_id.fullName,
+      timestamp: new Date()
+    });
+
+    return {
+      success: true,
+      order: order.toObject(),
+      message: 'Payment confirmed successfully'
+    };
+
+  } catch (error) {
+    console.error('❌ Auto confirm payment error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Lấy danh sách đơn hàng chờ thanh toán
+ */
+export const getPendingPaymentOrders = async () => {
+  try {
+    const orders = await Order.find({
+      payment_method: 'bank_transfer',
+      payment_status: 'pending',
+      status: 'pending'
+    })
+      .populate('user_id', 'fullName email phone')
+      .sort('-createdAt')
+      .limit(50);
+
+    const ordersWithTimeLeft = orders.map(order => {
+      const timeLeft = order.reserved_until 
+        ? Math.max(0, order.reserved_until - Date.now())
+        : 0;
+      
+      return {
+        ...order.toObject(),
+        timeLeftMinutes: Math.floor(timeLeft / 60000),
+        isExpired: timeLeft === 0
+      };
+    });
+
+    return ordersWithTimeLeft;
+  } catch (error) {
+    throw new Error('Không thể lấy danh sách đơn chờ thanh toán: ' + error.message);
+  }
+};
+
+/**
+ * Xác nhận thanh toán thủ công (admin)
+ */
+export const confirmPaymentManually = async (orderId, confirmData) => {
+  try {
+    const { transactionId, amount, note, confirmedBy } = confirmData;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error('Không tìm thấy đơn hàng');
+    }
+
+    if (order.payment_status === 'paid') {
+      throw new Error('Đơn hàng đã được thanh toán');
+    }
+
+    if (order.payment_method !== 'bank_transfer') {
+      throw new Error('Đơn hàng không phải thanh toán chuyển khoản');
+    }
+
+    order.payment_status = 'paid';
+    order.status = 'processing';
+    order.paid_at = new Date();
+    
+    if (transactionId) {
+      order.bank_transfer.transaction_id = transactionId;
+    }
+    if (amount) {
+      order.bank_transfer.paid_amount = amount;
+    }
+
+    order.status_history.push({
+      status: 'processing',
+      changed_at: new Date(),
+      note: `✅ Admin xác nhận thanh toán thủ công${note ? ': ' + note : ''}`
+    });
+
+    await order.save();
+
+    // Thông báo admin
+    emitToAdmin('order:paid', {
+      orderId: order._id,
+      orderNumber: order.order_number,
+      amount: amount || order.total,
+      manual: true,
+      timestamp: new Date()
+    });
+
+    return order;
+  } catch (error) {
+    throw new Error(error.message || 'Không thể xác nhận thanh toán');
+  }
+};
+
+/**
+ * Hủy đơn hàng hết hạn (thủ công hoặc tự động)
+ */
+export const cancelExpiredOrder = async (orderId, cancelData = {}) => {
+  try {
+    const { note, cancelledBy } = cancelData;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error('Không tìm thấy đơn hàng');
+    }
+
+    if (order.status !== 'pending') {
+      throw new Error('Chỉ có thể hủy đơn hàng ở trạng thái pending');
+    }
+
+    // Hoàn lại stock
+    for (const item of order.items) {
+      await ProductVariant.findByIdAndUpdate(
+        item.product_variant_id,
+        { $inc: { stock_quantity: item.quantity } }
+      );
+    }
+
+    order.status = 'cancelled';
+    order.payment_status = 'expired';
+    order.status_history.push({
+      status: 'cancelled',
+      changed_at: new Date(),
+      note: note || '⏰ Hết hạn thanh toán'
+    });
+
+    await order.save();
+
+    // Thông báo admin
+    emitToAdmin('order:expired', {
+      orderId: order._id,
+      orderNumber: order.order_number,
+      timestamp: new Date()
+    });
+
+    return order;
+  } catch (error) {
+    throw new Error(error.message || 'Không thể hủy đơn hàng');
+  }
+};
+
+/**
+ * Hủy tất cả đơn hàng hết hạn (cron job)
+ */
+export const cancelExpiredOrders = async () => {
+  try {
+    const now = new Date();
+
+    const expiredOrders = await Order.find({
+      payment_method: 'bank_transfer',
+      payment_status: 'pending',
+      reserved_until: { $lt: now }
+    });
+
+    let cancelledCount = 0;
+
+    for (const order of expiredOrders) {
+      try {
+        await cancelExpiredOrder(order._id);
+        cancelledCount++;
+      } catch (error) {
+        console.error(`Failed to cancel order ${order.order_number}:`, error);
+      }
+    }
+
+    return { cancelled: cancelledCount };
+  } catch (error) {
+    throw new Error('Không thể hủy đơn hàng hết hạn: ' + error.message);
+  }
+};
+
+/**
+ * Lấy thống kê theo dõi thanh toán (dashboard)
+ */
+export const getPaymentMonitoring = async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [pendingOrders, expiredToday, paidToday] = await Promise.all([
+      // Đơn chờ thanh toán
+      Order.find({
+        payment_method: 'bank_transfer',
+        payment_status: 'pending',
+        status: 'pending'
+      }),
+      
+      // Đơn hết hạn hôm nay
+      Order.countDocuments({
+        payment_status: 'expired',
+        updatedAt: { $gte: today }
+      }),
+      
+      // Đơn thanh toán hôm nay
+      Order.find({
+        payment_status: 'paid',
+        paid_at: { $gte: today }
+      })
+    ]);
+
+    return {
+      pending_count: pendingOrders.length,
+      pending_amount: pendingOrders.reduce((sum, o) => sum + o.total, 0),
+      expired_today: expiredToday,
+      paid_today: paidToday.length,
+      paid_amount_today: paidToday.reduce((sum, o) => sum + o.total, 0)
+    };
+  } catch (error) {
+    throw new Error('Không thể lấy thống kê thanh toán: ' + error.message);
+  }
+};
+
 export default {
   createOrderFromCart,
   getUserOrders,
@@ -344,4 +695,10 @@ export default {
   getAllOrders,
   updateOrderStatus,
   getOrderStatistics,
+  autoConfirmPayment,
+  getPendingPaymentOrders,
+  confirmPaymentManually,
+  cancelExpiredOrder,
+  cancelExpiredOrders,
+  getPaymentMonitoring,
 };
