@@ -88,9 +88,12 @@ export const createOrderFromCart = async (userId, orderData) => {
     const discount = 0;
     const total = subtotal + tax + shipping_fee - discount;
 
+    const orderNumber = `DH${new mongoose.Types.ObjectId().toString().slice(-8).toUpperCase()}`;
+
     // Create order document
     const orderDoc = new Order({
       user_id: userId,
+      order_number: orderNumber,
       items: orderItems,
       status: 'pending',
       shipping_address,
@@ -118,7 +121,7 @@ export const createOrderFromCart = async (userId, orderData) => {
       const bankBin = process.env.BANK_BIN || '970422'; // MB Bank default
       const bankName = process.env.BANK_NAME || 'MB Bank';
       const amount = total;
-      const reference = `DH${orderDoc._id.toString().slice(-8).toUpperCase()}`;
+      const reference = orderDoc.order_number;
 
       try {
         // ===== SỬ DỤNG VIETQR API =====
@@ -408,13 +411,13 @@ export const autoConfirmPayment = async (transactionData) => {
       return { success: false, reason: 'No reference found' };
     }
 
-    const orderReference = referenceMatch[0];
+    const orderNumber = referenceMatch[0].toUpperCase();
 
     const order = await Order.findOne({
-      'bank_transfer.reference': orderReference,
+      order_number: orderNumber,
       payment_method: 'bank_transfer',
       payment_status: 'pending'
-    }).populate('user_id', 'email fullName phone');
+    });
 
     if (!order) {
       return { success: false, reason: 'Order not found' };
