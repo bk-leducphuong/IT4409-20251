@@ -22,6 +22,12 @@ import {
   getOrderById,
   getOrdersStatistics,
   updateOrderStatus,
+  createCoupon,
+  getCoupons,
+  getCouponById,
+  updateCoupon,
+  deleteCoupon,
+  getCouponStatistics,
 } from '../services/adminServices';
 
 export const useAdminStore = create((set) => ({
@@ -187,6 +193,7 @@ export const useAdminStore = create((set) => ({
   },
 
   /* ORDER */
+
   getOrders: async (queryObject) => {
     set({ isLoading: true });
     try {
@@ -215,6 +222,57 @@ export const useAdminStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await updateOrderStatus(id, status);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* COUPON */
+
+  createCoupon: async (couponObject) => {
+    set({ isLoading: true });
+    try {
+      return await createCoupon(couponObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getCoupons: async (queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getCoupons(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getCouponById: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await getCouponById(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateCoupon: async (id, couponObject) => {
+    set({ isLoading: true });
+    try {
+      return await updateCoupon(id, couponObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  deleteCoupon: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await deleteCoupon(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getCouponStatistics: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await getCouponStatistics(id);
     } finally {
       set({ isLoading: false });
     }

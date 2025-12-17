@@ -64,9 +64,9 @@ function Order({ order, done, refresh }) {
                           </div>
                         </div>
                       </td>
-                      <td>{item.unit_price}</td>
+                      <td>{`$${item.unit_price}`}</td>
                       <td>{item.quantity}</td>
-                      <td>{item.subtotal}</td>
+                      <td>{`$${item.subtotal}`}</td>
                     </tr>
                   ))}
                 </tbody>

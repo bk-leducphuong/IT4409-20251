@@ -23,6 +23,8 @@ function OrderReport() {
     }
   }
 
+  /* TODO: order searchbar */
+
   useEffect(() => {
     (async () => await fetchOrders())();
   }, [limit, page]);
@@ -31,7 +33,7 @@ function OrderReport() {
     <div className={styles.orderReport}>
       <header>
         <h1>Order Management</h1>
-        <p>Manage stores order</p>
+        <p>Manage store&apos;s order</p>
       </header>
 
       <main>
@@ -46,7 +48,7 @@ function OrderReport() {
             <button>
               <i className="fa-solid fa-magnifying-glass"></i>Find
             </button>
-            <button>
+            <button onClick={fetchOrders}>
               <i className="fa-solid fa-arrows-rotate"></i>Refresh
             </button>
           </div>

@@ -33,9 +33,10 @@ function CheckOut() {
   const [coupon, setCoupon] = useState('');
 
   const cart = useCartStore((state) => state.data);
+  const subTotal = useCartStore((state) => state.subTotal);
+  const shippingFee = useCartStore((state) => state.shippingFee);
+  const total = useCartStore((state) => state.total);
   const applyCoupon = useCartStore((state) => state.applyCoupon);
-  const total =
-    cart?.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0) ?? 0;
 
   const createOrder = useOrderStore((state) => state.createOrder);
 
@@ -45,7 +46,7 @@ function CheckOut() {
     try {
       await createOrder(fullName, phone, street, city, postalCode, country, paymentMethod, note);
       toast.success('Order placed successfully');
-      navigate('/user');
+      navigate('/user', { replace: true });
     } catch (error) {
       toast.error(error.message);
     }
@@ -120,11 +121,11 @@ function CheckOut() {
             <div className={styles.width08}>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Subtotal:</div>
-                <div>{`$${total}`}</div>
+                <div>{`$${subTotal}`}</div>
               </div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Shipping:</div>
-                <div>Free</div>
+                <div>{`$${shippingFee}`}</div>
               </div>
               <div className={styles.detail}>
                 <div>Total:</div>

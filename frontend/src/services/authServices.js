@@ -57,10 +57,15 @@ export const forgotPassword = async (email) => {
   if (!email) throw new Error('All feilds are required!');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Please enter valid email!');
 
-  return await apiFetch('/auth/forgot-password', {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-  });
+  return await apiFetch(
+    '/auth/forgot-password',
+    {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    },
+    3,
+    10000,
+  ); // expectionally 10s timeout
 };
 
 export const verifyOtp = async (email, otp) => {

@@ -153,6 +153,7 @@ export const deleteCategory = async (id) => {
 };
 
 /* ORDER */
+
 export const getOrders = async (queryObject) => {
   const param = new URLSearchParams(queryObject).toString();
   return await apiFetch(`/admin/orders?${param}`, { method: 'GET' });
@@ -175,4 +176,43 @@ export const updateOrderStatus = async (id, status) => {
     method: 'PUT',
     body: JSON.stringify({ status }),
   });
+};
+
+/* COUPON */
+
+export const createCoupon = async (couponObject) => {
+  return await apiFetch('/admin/coupons', {
+    method: 'POST',
+    body: JSON.stringify(couponObject),
+  });
+};
+
+export const getCoupons = async (queryObject) => {
+  const query = new URLSearchParams(queryObject).toString();
+  return await apiFetch(`/admin/coupons?${query}`, { method: 'GET' });
+};
+
+export const getCouponById = async (id) => {
+  if (!id) throw new Error('All feilds are required!');
+
+  return await apiFetch(`/admin/coupons/${id}`, { method: 'GET' });
+};
+
+export const updateCoupon = async (id, couponObject) => {
+  if (!id) throw new Error('All feilds are required!');
+
+  return await apiFetch(`/admin/coupons/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(couponObject),
+  });
+};
+
+export const deleteCoupon = async (id) => {
+  if (!id) throw new Error('All feilds are required!');
+
+  return await apiFetch(`/admin/coupons/${id}`, { method: 'DELETE' });
+};
+
+export const getCouponStatistics = async (id) => {
+  return await apiFetch(`/admin/coupons/${id}/stats`, { method: 'GET' });
 };

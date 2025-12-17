@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/authStore';
 import styles from './ForgotPassword.module.css';
 
-export default function ForgotPassword() {
+function ForgotPassword() {
   const [step, setStep] = useState('enterEmail'); // enterEmail | enterOTP | resetPassword | success
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
@@ -220,3 +220,5 @@ export default function ForgotPassword() {
     </div>
   );
 }
+
+export default ForgotPassword;

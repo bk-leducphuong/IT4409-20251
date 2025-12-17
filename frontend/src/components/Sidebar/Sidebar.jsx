@@ -42,6 +42,11 @@ function Sidebar({ setState }) {
             </button>
           </li>
           <li>
+            <button onClick={() => setState('coupons')}>
+              <i className="fa-solid fa-tags"></i> Coupons
+            </button>
+          </li>
+          <li>
             <button onClick={() => setState('products')}>
               <i className="fa-solid fa-box"></i> Products
             </button>
