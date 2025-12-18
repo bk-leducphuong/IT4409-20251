@@ -36,7 +36,9 @@ function CheckOut() {
   const subTotal = useCartStore((state) => state.subTotal);
   const shippingFee = useCartStore((state) => state.shippingFee);
   const total = useCartStore((state) => state.total);
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
   const applyCoupon = useCartStore((state) => state.applyCoupon);
+  const removeCoupon = useCartStore((state) => state.removeCoupon);
 
   const createOrder = useOrderStore((state) => state.createOrder);
 
@@ -117,6 +119,24 @@ function CheckOut() {
                   );
                 })}
             </div>
+
+            {appliedCoupon && (
+              <div className={`${styles.appliedCoupon} ${styles.width08}`}>
+                <strong>Applied Coupon: </strong>
+                <div className={styles.couponCode}>
+                  {appliedCoupon.code}
+                  <button
+                    onClick={() =>
+                      removeCoupon()
+                        .then(() => toast.success('Coupon removed'))
+                        .catch((err) => toast.error(err.message))
+                    }
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className={styles.width08}>
               <div className={`${styles.detail} ${styles.underline}`}>

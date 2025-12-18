@@ -109,6 +109,37 @@
   width: 15vw;
 }
 
+.appliedCoupon {
+  margin-top: 1rem;
+}
+
+.couponCode {
+  padding: 0.5rem 2ch;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  position: relative;
+}
+
+.couponCode > button {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+}
+
+.couponCode:hover > button {
+  display: inline;
+}
+
 .checkoutDetails {
   display: flex;
   flex-direction: column;

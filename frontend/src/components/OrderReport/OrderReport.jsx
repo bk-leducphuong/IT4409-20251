@@ -8,14 +8,23 @@ function OrderReport() {
   const getOrders = useAdminStore((state) => state.getOrders);
   const updateOrderStatus = useAdminStore((state) => state.updateOrderStatus);
 
-  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [limit, setLimit] = useState(20);
 
+  /* For searching */
+  const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
+
   async function fetchOrders() {
     try {
-      const res = await getOrders({ limit, page });
+      const queryObject = {
+        page,
+        limit,
+        search,
+      };
+      if (status !== '') queryObject.status = status;
+      const res = await getOrders(queryObject);
       setTotalPage(res.data.pagination.pages);
       setOrders(res.data.orders);
     } catch (err) {
@@ -23,7 +32,10 @@ function OrderReport() {
     }
   }
 
-  /* TODO: order searchbar */
+  async function handleSearch() {
+    if (page !== 1) return setPage(1);
+    else await fetchOrders();
+  }
 
   useEffect(() => {
     (async () => await fetchOrders())();
@@ -44,8 +56,18 @@ function OrderReport() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          Status:
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
           <div className={styles.buttonsContainer}>
-            <button>
+            <button onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass"></i>Find
             </button>
             <button onClick={fetchOrders}>
