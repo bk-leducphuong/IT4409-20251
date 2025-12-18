@@ -1,4 +1,4 @@
-import meiliClient from '../configs/meilisearch.js';
+import meiliClient, { client } from '../configs/meilisearch.js';
 import Product from '../models/product.js';
 import ProductVariant from '../models/productVariant.js';
 import Category from '../models/category.js';
@@ -43,7 +43,7 @@ export const configureIndex = async () => {
       'price:asc',
     ]);
 
-    logger.info('Meilisearch index configured successfully');
+    logger.info('Meilisearch index configuration tasks queued successfully');
   } catch (error) {
     logger.error(`Failed to configure Meilisearch index: ${error.message}`);
     throw error;
