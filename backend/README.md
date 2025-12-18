@@ -642,6 +642,59 @@ ISC
 
 ---
 
+## 🐳 Docker Deployment
+
+The backend is fully containerized and ready for deployment on Google Cloud VM or any Docker-enabled hosting platform!
+
+### Quick Docker Start
+
+```bash
+# Local development with Docker
+docker-compose -f docker-compose.dev.yml up -d
+
+# Production deployment
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Comprehensive Docker Documentation
+
+- 🚀 **[Docker Quick Start](./DOCKER_QUICK_START.md)** - Get started in minutes
+- 📘 **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Complete Google Cloud VM deployment
+- 📗 **[Docker Documentation](./README.Docker.md)** - Architecture and configuration
+- 📊 **[Docker Summary](./DOCKER_SUMMARY.md)** - Overview of all Docker features
+
+### What's Included in Docker Setup
+
+✅ Multi-container orchestration (Backend + MongoDB + Meilisearch + Nginx)
+✅ Production-ready Dockerfile with security best practices
+✅ Development environment with hot-reload
+✅ Automated deployment scripts
+✅ SSL/HTTPS configuration
+✅ Health checks and auto-restart
+✅ Backup and recovery procedures
+✅ CI/CD pipeline (GitHub Actions)
+
+**Quick Deploy to Google Cloud:**
+
+```bash
+# 1. Create GCP VM and SSH into it
+gcloud compute ssh your-vm-name
+
+# 2. Run setup script
+curl -o setup.sh https://raw.githubusercontent.com/YOUR_REPO/master/backend/scripts/gcp-setup.sh
+chmod +x setup.sh && ./setup.sh
+
+# 3. Clone repo and deploy
+cd ~/apps && git clone YOUR_REPO_URL
+cd YOUR_REPO/backend
+cp .env.docker .env && nano .env  # Configure environment
+./scripts/deploy.sh deploy
+```
+
+See **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** for detailed instructions.
+
+---
+
 ## 📖 Additional Documentation
 
 ### Meilisearch Integration
