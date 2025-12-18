@@ -74,18 +74,18 @@ gcloud compute firewall-rules create allow-backend \
 
 ```bash
 # Reserve a static IP
-gcloud compute addresses create ecommerce-ip --region=us-central1
+gcloud compute addresses create ecommerce-ip --region=asia-east1
 
 # Get the IP address
-gcloud compute addresses describe ecommerce-ip --region=us-central1
+gcloud compute addresses describe ecommerce-ip --region=aisa-east1
 
 # Attach to your VM
-gcloud compute instances delete-access-config ecommerce-backend \
+gcloud compute instances delete-access-config ecommerce-server-it4409-vm \
   --access-config-name="external-nat"
 
-gcloud compute instances add-access-config ecommerce-backend \
-  --access-config-name="external-nat" \
-  --address=STATIC_IP_HERE
+gcloud compute instances add-access-config ecommerce-server-it4409-vm \
+  --access-config-name="External NAT" \
+  --address=35.234.53.145
 ```
 
 ### 4. Connect to Your VM
