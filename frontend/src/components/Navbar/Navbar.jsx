@@ -67,19 +67,30 @@ function Navbar() {
         </div>
 
         <div className={styles.inputContainer}>
-          <input
-            type="text"
-            placeholder="What are you looking for?"
-            className={styles.input}
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-          <button
-            className={styles.searchIcon}
-            onClick={() => navigate(`/products?product=${productName}`)}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (productName.trim()) {
+                navigate(`/products?product=${encodeURIComponent(productName.trim())}`);
+              } else {
+                toast.error('Please enter a product name to search');
+              }
+            }}
           >
-            <i className="fa-solid fa-magnifying-glass"></i>
-          </button>
+            <input
+              type="text"
+              placeholder="What are you looking for?"
+              className={styles.input}
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+            />
+            <button
+              type="submit"
+              className={styles.searchIcon}
+            >
+              <i className="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </form>
         </div>
 
         <div className={styles.iconContainer}>
