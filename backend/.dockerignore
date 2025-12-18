@@ -43,11 +43,5 @@ uploads/*
 # Meilisearch data
 meilisearch/meili_data
 
-# Scripts
-scripts/
-
-# Seeds
-seeds/
-
 # Development
 nodemon.json
