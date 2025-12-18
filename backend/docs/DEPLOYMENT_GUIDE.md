@@ -3,6 +3,7 @@
 This guide will help you deploy your E-commerce backend application on a Google Cloud VM using Docker and Docker Compose.
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Google Cloud VM Setup](#google-cloud-vm-setup)
 3. [Install Docker and Docker Compose](#install-docker-and-docker-compose)
@@ -32,9 +33,10 @@ This guide will help you deploy your E-commerce backend application on a Google 
 3. Click **Create Instance**
 
 **Recommended configuration:**
+
 - **Name:** ecommerce-backend
 - **Region:** Choose closest to your users (e.g., us-central1, asia-southeast1)
-- **Machine type:** 
+- **Machine type:**
   - Development: e2-medium (2 vCPU, 4 GB memory)
   - Production: e2-standard-2 (2 vCPU, 8 GB memory) or higher
 - **Boot disk:**
@@ -656,6 +658,7 @@ docker cp ecommerce-backend-prod:/app/logs ./logs
 ## Support
 
 For issues or questions:
+
 - Check the logs first
 - Review the troubleshooting section
 - Consult Docker documentation

@@ -8,13 +8,13 @@ This is a quick reference for common Docker operations with your E-commerce back
 
 ```bash
 # Start all services (development mode with hot-reload)
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d
 
 # View logs
-docker-compose -f docker-compose.dev.yml logs -f
+docker compose -f docker-compose.dev.yml logs -f
 
 # Stop services
-docker-compose -f docker-compose.dev.yml down
+docker compose -f docker-compose.dev.yml down
 ```
 
 ### Production Deployment
