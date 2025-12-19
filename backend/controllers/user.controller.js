@@ -1,5 +1,6 @@
 import userService from '../services/user.service.js';
 import { errorHandler } from '../middlewares/error.middleware.js';
+import bcrypt from 'bcryptjs';
 
 // GET /api/user/profile - Lấy thông tin profile người dùng
 export const getProfile = async (req, res) => {
