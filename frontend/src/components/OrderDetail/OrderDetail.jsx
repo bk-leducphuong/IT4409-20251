@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useOrderStore } from '../../stores/orderStore';
 import styles from './OrderDetail.module.css';
@@ -6,6 +8,7 @@ import styles from './OrderDetail.module.css';
 function Order({ order, done, refresh }) {
   const cancelOrder = useOrderStore((state) => state.cancelOrder);
   const [reason, setReason] = useState(null);
+  const navigate = useNavigate();
 
   async function handleCancelOrder() {
     try {
@@ -93,8 +96,13 @@ function Order({ order, done, refresh }) {
 
             <div className={styles.buttons}>
               <button onClick={done}>Done</button>
-              {order.status != 'cancelled' && (
+              {order.status === 'pending' && (
                 <button onClick={() => setReason('')}>Cancel Order</button>
+              )}
+              {order.status === 'delivered' && (
+                <button onClick={() => navigate('/review', { state: { products: order.items } })}>
+                  Give us feedback
+                </button>
               )}
             </div>
           </>

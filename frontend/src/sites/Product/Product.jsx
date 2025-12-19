@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useCartStore } from '../../stores/cartStore';
 import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
+import { useUserStore } from '../../stores/userStore';
 import styles from './Product.module.css';
 
 function Product() {
@@ -17,19 +18,54 @@ function Product() {
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState(null);
 
+  const [reviews, setReviews] = useState(null);
+  const [statistics, setStatistics] = useState(null);
+  const getReviews = useProductStore((state) => state.getReviews);
+  const deleteReview = useProductStore((state) => state.deleteReview);
+  const toggleHelpful = useProductStore((state) => state.toggleHelpful);
+
   const addItemToCart = useCartStore((state) => state.addItemToCart);
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
   const navigate = useNavigate();
 
+  const userData = useUserStore((state) => state.data);
+
+  /* FOR SEARCHING & PAGINATION */
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [rating, setRating] = useState('');
+  const [sort, setSort] = useState('newest');
+
+  async function handleSearch() {
+    try {
+      const queryObject = { page, limit, sort };
+      if (rating) queryObject.rating = rating;
+      const reviews = await getReviews(slug, queryObject);
+      setReviews(reviews.data.reviews);
+      setStatistics(reviews.data.statistics);
+      setTotalPage(Number(reviews.data.pagination.totalPages));
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   useEffect(() => {
     (async () => {
       try {
+        const queryObject = { page, limit, sort };
+        if (rating) queryObject.rating = rating;
         const data = (await useProductStore.getState().getProductBySlug(slug)).data.product;
-        const category = data.category_id.slug;
-        const related = (await useProductStore.getState().getProducts({ category })).data.products;
+        const [related, reviews] = await Promise.all([
+          useProductStore.getState().getProducts({ category: data.category_id._id }),
+          getReviews(slug, queryObject),
+        ]);
         setProduct(data);
         setSelectedVariant(data.variants[0]);
-        setRelatedProducts(related);
+        setRelatedProducts(related.data.products);
+        setReviews(reviews.data.reviews);
+        setStatistics(reviews.data.statistics);
+        setTotalPage(Number(reviews.data.pagination.totalPages));
         window.scrollTo({ top: 0 });
       } catch (error) {
         toast.error(error.message);
@@ -37,6 +73,10 @@ function Product() {
       }
     })();
   }, [slug]);
+
+  useEffect(() => {
+    (async () => await handleSearch())();
+  }, [page, limit, rating, sort]);
 
   return (
     <>
@@ -65,7 +105,19 @@ function Product() {
 
         <div className={styles.right}>
           <h2>{product?.name}</h2>
-          <div>Rating</div>
+          {statistics?.totalReviews > 0 && (
+            <div>
+              {[...Array(Math.round(statistics?.averageRating))].map((_, i) => (
+                <i key={`filled-${i}`} className={`fa-solid fa-star ${styles.yellow}`}></i>
+              ))}
+              {[...Array(5 - Math.round(statistics?.averageRating))].map((_, i) => (
+                <i
+                  key={`empty-${i}`}
+                  className={`fa-solid fa-star ${styles.yellow} ${styles.grey}`}
+                ></i>
+              ))}
+            </div>
+          )}
           <div className={styles.price}>{`$${selectedVariant?.price}`}</div>
           <p>{product?.description}</p>
           <hr />
@@ -179,6 +231,149 @@ function Product() {
             />
           ))}
         </Shelf>
+      )}
+
+      {reviews && (
+        <div className={styles.reviews}>
+          <h2>Reviews</h2>
+          {statistics?.totalReviews > 0 ? (
+            <>
+              <div>
+                <div>
+                  {statistics.averageRating > 0 ? (
+                    <i className={`fa-solid fa-star ${styles.yellow}`}></i>
+                  ) : (
+                    <i className={`fa-solid fa-star ${styles.grey}`}></i>
+                  )}
+                  <strong>{Math.round(statistics.averageRating * 10) / 10}</strong>
+                  {` (${statistics.totalReviews} reviews)`}
+                </div>
+                <div className={styles.filter}>
+                  <strong>Filter By:</strong>
+                  <div>
+                    Rating:
+                    <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
+                      <option value="">All</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div>
+                    Sort By:
+                    <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                      <option value="newest">Newest</option>
+                      <option value="helpful">Helpful</option>
+                      <option value="rating_high">Highest Rating</option>
+                      <option value="rating_low">Lowest Rating</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.reviewList}>
+                {reviews.map((review) => (
+                  <div key={review._id} className={styles.reviewItem}>
+                    <div>
+                      <div>
+                        {review.user_id.fullName}
+                        <br />
+                        {[...Array(Math.round(review.rating))].map((_, i) => (
+                          <i
+                            key={`filled-${i}`}
+                            className={`fa-solid fa-star ${styles.yellow}`}
+                          ></i>
+                        ))}
+                        {[...Array(5 - Math.round(review.rating))].map((_, i) => (
+                          <i
+                            key={`empty-${i}`}
+                            className={`fa-solid fa-star ${styles.yellow} ${styles.grey}`}
+                          ></i>
+                        ))}
+                      </div>
+                      <div>
+                        Mark as helpful {review.helpful_count + ' '}
+                        <button
+                          onClick={() =>
+                            toggleHelpful(review._id)
+                              .then(() => getReviews(slug, { page, limit, rating, sort }))
+                              .then((res) => setReviews(res.data.reviews))
+                              .catch((err) => toast.error(err.message))
+                          }
+                        >
+                          <i className="fa-solid fa-thumbs-up"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <strong>{review.title}</strong>
+                      <br />
+                      {review.comment}
+                    </div>
+
+                    {review.images.length > 0 && (
+                      <div className={styles.reviewImages}>
+                        {review.images.map((image) => (
+                          <img key={image} src={image} alt="review" />
+                        ))}
+                      </div>
+                    )}
+
+                    {userData && review.user_id._id == userData._id && (
+                      <button
+                        onClick={() =>
+                          deleteReview(review._id)
+                            .then(() => {
+                              if (page != 1) setPage(1);
+                              else handleSearch();
+                            })
+                            .catch((err) => toast.error(err.message))
+                        }
+                      >
+                        <i className="fa-solid fa-x"></i>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {reviews.length > 0 && (
+                <div className={styles.pagination}>
+                  <button
+                    onClick={() => {
+                      if (page > 1) setPage((p) => p - 1);
+                    }}
+                  >
+                    &lt;
+                  </button>
+                  <span>
+                    {page} / {totalPage}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (page < totalPage) setPage((p) => p + 1);
+                    }}
+                  >
+                    &gt;
+                  </button>
+                  <br />
+                  Reviews per page:
+                  <select value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
+              )}
+            </>
+          ) : (
+            <div>No reviews data</div>
+          )}
+        </div>
       )}
 
       <Footer />

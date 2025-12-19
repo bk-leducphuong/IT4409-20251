@@ -8,6 +8,7 @@ import Home from './sites/Home/Home';
 import Login from './sites/Login/Login';
 import NotFoundPage from './sites/NotFound/NotFound';
 import Product from './sites/Product/Product';
+import Review from './sites/Review/Review';
 import Searching from './sites/Searching/Searching';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
@@ -63,6 +64,7 @@ function App() {
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>
+            <Route path="/review" element={<Review />}></Route>
             <Route path="/user" element={<User />}></Route>
             <Route path="/wistlist" element={<WistList />}></Route>
           </Route>
