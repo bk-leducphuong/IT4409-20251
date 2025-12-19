@@ -7,9 +7,31 @@ node_modules/
 
 # File môi trường (chứa API key, DB URL,...)
 .env
+.env.local
+.env.production
 
 # Uploaded files (but keep directory structure)
 uploads/**/*
 !uploads/.gitkeep
 !uploads/**/
 !uploads/**/.gitkeep
+
+# =========================
+# Docker ignore
+# =========================
+
+# Docker volumes and data
+**/meili_data/
+**/mongo_data/
+nginx/ssl/*.pem
+nginx/ssl/*.key
+
+# Backups
+backups/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

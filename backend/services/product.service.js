@@ -2,11 +2,62 @@ import Product from '../models/product.js';
 import ProductVariant from '../models/productVariant.js';
 import Category from '../models/category.js';
 import Brand from '../models/brand.js';
+import meilisearchService from './meilisearch.service.js';
+import logger from '../logger.js';
 
 // Lấy danh sách sản phẩm với filters và pagination
 export const getProducts = async (filters) => {
   try {
     const { category, brand, search, sort_by = 'newest', page = 1, limit = 20 } = filters;
+
+    // If there's a search query, use Meilisearch
+    if (search && search.trim() !== '') {
+      logger.info(`Using Meilisearch for search query: "${search}"`);
+      try {
+        const results = await meilisearchService.searchProducts(search, {
+          category,
+          brand,
+          sort_by,
+          page,
+          limit,
+        });
+
+        // Fetch full product details with variants from MongoDB
+        const productIds = results.products.map((p) => p.id);
+        const products = await Product.find({ _id: { $in: productIds } })
+          .populate('category_id', 'name slug')
+          .populate('brand_id', 'name logo_url');
+
+        // Get variants for each product and maintain Meilisearch order
+        const productsMap = {};
+        await Promise.all(
+          products.map(async (product) => {
+            const variants = await ProductVariant.find({ product_id: product._id });
+            productsMap[product._id.toString()] = {
+              ...product.toJSON(),
+              variants,
+            };
+          }),
+        );
+
+        // Maintain the order from Meilisearch results
+        const productsWithVariants = productIds
+          .map((id) => productsMap[id])
+          .filter((p) => p !== undefined);
+
+        return {
+          products: productsWithVariants,
+          pagination: results.pagination,
+          searchTimeMs: results.processingTimeMs,
+        };
+      } catch (meiliError) {
+        logger.error(`Meilisearch error: ${meiliError.message}, falling back to MongoDB`);
+        // Fall through to MongoDB search if Meilisearch fails
+      }
+    }
+
+    // Use MongoDB for filtering without search or as fallback
+    logger.info('Using MongoDB for product filtering');
 
     // Build query
     const query = {};
@@ -27,8 +78,8 @@ export const getProducts = async (filters) => {
       }
     }
 
-    // Search by product name
-    if (search) {
+    // Search by product name (MongoDB fallback)
+    if (search && search.trim() !== '') {
       query.name = { $regex: search, $options: 'i' };
     }
 

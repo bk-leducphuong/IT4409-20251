@@ -1,0 +1,53 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Test files
+__test__
+*.test.js
+jest.config.js
+coverage/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Uploads (will be managed via volumes)
+uploads/*
+!uploads/.gitkeep
+
+# Meilisearch data
+meilisearch/meili_data
+
+# Scripts
+scripts/
+
+# Seeds
+seeds/
+
+# Development
+nodemon.json

@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 export const getProfile = async (userId) => {
   try {
@@ -12,8 +13,9 @@ export const getProfile = async (userId) => {
 
 export const updateProfile = async (userId, updateData) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate
-      (userId, updateData, { new: true }).select('-password');
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true }).select(
+      '-password',
+    );
     return updatedUser;
   } catch (error) {
     throw new Error('Không thể cập nhật thông tin người dùng');
@@ -25,8 +27,8 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
     if (!currentPassword || !newPassword) {
       throw new Error('Vui lòng cung cấp mật khẩu hiện tại và mật khẩu mới');
     }
-    if(!newPassword || newPassword.length < 6) {
-      throw new Error('Mật khẩu mới phải có ít nhất 6 ký tự'); 
+    if (!newPassword || newPassword.length < 6) {
+      throw new Error('Mật khẩu mới phải có ít nhất 6 ký tự');
     }
     const user = await User.findById(userId);
     const isMatch = await user.comparePassword(currentPassword);
@@ -35,21 +37,14 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
     }
     user.password = newPassword;
     await user.save();
-
   } catch (error) {
     throw new Error('Không thể đổi mật khẩu');
   }
 };
 
-// Lấy tất cả users 
+// Lấy tất cả users
 export const getAllUsers = async (query) => {
-  const {
-    page = 1,
-    limit = 10,
-    search = '',
-    role = '',
-    status = ''
-  } = query;
+  const { page = 1, limit = 10, search = '', role = '', status = '' } = query;
 
   // Build filter
   const filter = { deleted: false, role: 'customer' };
@@ -58,7 +53,7 @@ export const getAllUsers = async (query) => {
     filter.$or = [
       { fullName: { $regex: search, $options: 'i' } },
       { email: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } }
+      { phone: { $regex: search, $options: 'i' } },
     ];
   }
 
@@ -88,18 +83,17 @@ export const getAllUsers = async (query) => {
       currentPage: Number(page),
       totalPages: Math.ceil(total / limit),
       totalItems: total,
-      itemsPerPage: Number(limit)
-    }
+      itemsPerPage: Number(limit),
+    },
   };
 };
 
 export const getAdmins = async () => {
-  const admins = await User.find({ role: 'admin', deleted: false })
-    .select('-password -token');
+  const admins = await User.find({ role: 'admin', deleted: false }).select('-password -token');
   return admins;
 };
 
-// Tạo user mới 
+// Tạo user mới
 export const createUser = async (userData) => {
   const { fullName, email, password, phone, role } = userData;
 
@@ -116,6 +110,8 @@ export const createUser = async (userData) => {
     throw new Error('Mật khẩu phải có ít nhất 6 ký tự!');
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   // Kiểm tra email đã tồn tại
   const existingUser = await User.findOne({ email, deleted: false });
   if (existingUser) {
@@ -126,19 +122,19 @@ export const createUser = async (userData) => {
   const user = await User.create({
     fullName,
     email,
-    password,
+    password: hashedPassword,
     phone,
     role: role || 'customer',
   });
-
+  user.password = undefined;
   return user;
 };
 
-// Lấy user theo ID 
+// Lấy user theo ID
 export const getUserById = async (userId) => {
-  const user = await User.findOne({ 
-    _id: userId, 
-    deleted: false 
+  const user = await User.findOne({
+    _id: userId,
+    deleted: false,
   }).select('-password -token');
 
   if (!user) {
@@ -170,7 +166,7 @@ export const updateUserById = async (userId, updateData) => {
   return user;
 };
 
-// Xóa user theo ID - Soft delete 
+// Xóa user theo ID - Soft delete
 export const deleteUserById = async (userId) => {
   const user = await User.findOne({ _id: userId, deleted: false });
   if (!user) {
@@ -195,5 +191,5 @@ export default {
   getUserById,
   updateUserById,
   deleteUserById,
-  getAdmins
+  getAdmins,
 };

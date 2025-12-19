@@ -1,0 +1,51 @@
+{
+  "results": [
+    {
+      "name": "Default Search API Key",
+      "description": "Use it to search from the frontend",
+      "key": "b1dbba03986addaaa4b2cad0ad681ed7d3a8b87451ae9da860f964e4f1482e0b",
+      "uid": "f83fa2b1-013e-4cb9-9b32-5f96f0591e82",
+      "actions": ["search"],
+      "indexes": ["*"],
+      "expiresAt": null,
+      "createdAt": "2025-12-16T03:04:50.574276305Z",
+      "updatedAt": "2025-12-16T03:04:50.574276305Z"
+    },
+    {
+      "name": "Default Admin API Key",
+      "description": "Use it for anything that is not a search operation. Caution! Do not expose it on a public frontend",
+      "key": "6ff585eeb9e670a6d2150bc65fdc6fb49db6c0139c18a634fc191407ee6224d5",
+      "uid": "cad1bb05-1bc4-4a2c-af94-f24c1a41012c",
+      "actions": ["*"],
+      "indexes": ["*"],
+      "expiresAt": null,
+      "createdAt": "2025-12-16T03:04:50.572918409Z",
+      "updatedAt": "2025-12-16T03:04:50.572918409Z"
+    },
+    {
+      "name": "Default Read-Only Admin API Key",
+      "description": "Use it to read information across the whole database. Caution! Do not expose this key on a public frontend",
+      "key": "fad4d24a545d4e066054fc7a10120bb74487acc092a1f52bca55e3e2bf46ccdf",
+      "uid": "5e3fe0da-d6c1-4c86-92ae-a4b87ce74532",
+      "actions": ["*.get", "keys.get"],
+      "indexes": ["*"],
+      "expiresAt": null,
+      "createdAt": "2025-12-16T03:04:50.571861716Z",
+      "updatedAt": "2025-12-16T03:04:50.571861716Z"
+    },
+    {
+      "name": "Default Chat API Key",
+      "description": "Use it to chat and search from the frontend",
+      "key": "404c95eb2a6d44f0b55da3470def61b42eb4606f5561981fcc9cb4726c2113f5",
+      "uid": "6bb038ff-e064-4b46-acf2-07187306968f",
+      "actions": ["chatCompletions", "search"],
+      "indexes": ["*"],
+      "expiresAt": null,
+      "createdAt": "2025-12-16T03:04:50.570786322Z",
+      "updatedAt": "2025-12-16T03:04:50.570786322Z"
+    }
+  ],
+  "offset": 0,
+  "limit": 20,
+  "total": 4
+}
