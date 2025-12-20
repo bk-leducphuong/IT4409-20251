@@ -15,6 +15,13 @@ const calculateShippingFee = (subtotal) => {
   return 30000;
 };
 
+// Generate unique order number based on creation date
+const generateOrderNumber = (createdAt, index) => {
+  const dateStr = createdAt.toISOString().slice(0, 10).replace(/-/g, '');
+  const orderNum = String(index + 1).padStart(5, '0');
+  return `ORD-${dateStr}-${orderNum}`;
+};
+
 const seedOrders = async () => {
   try {
     await connectDB();
@@ -194,8 +201,34 @@ const seedOrders = async () => {
       });
     }
 
+    // Sort orders by creation date to ensure sequential order numbers per day
+    orders.sort((a, b) => a.createdAt - b.createdAt);
+
+    // Group orders by date and assign order numbers
+    const ordersByDate = new Map();
+
+    orders.forEach((order) => {
+      const dateKey = order.createdAt.toISOString().slice(0, 10);
+      if (!ordersByDate.has(dateKey)) {
+        ordersByDate.set(dateKey, []);
+      }
+      ordersByDate.get(dateKey).push(order);
+    });
+
+    // Assign order numbers for each date group
+    ordersByDate.forEach((dailyOrders, dateKey) => {
+      dailyOrders.forEach((order, index) => {
+        order.order_number = generateOrderNumber(order.createdAt, index);
+      });
+    });
+
     const createdOrders = await Order.insertMany(orders);
     console.log(`✅ Đã seed ${createdOrders.length} orders thành công!`);
+    console.log('');
+    console.log('📝 Sample order numbers:');
+    createdOrders.slice(0, 5).forEach((order) => {
+      console.log(`   - ${order.order_number} (${order.status})`);
+    });
     console.log('');
     console.log('📊 Thống kê orders:');
 

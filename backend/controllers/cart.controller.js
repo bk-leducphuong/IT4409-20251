@@ -1,4 +1,5 @@
 import cartService from '../services/cart.service.js';
+import couponService from '../services/coupon.service.js';
 import { errorHandler } from '../middlewares/error.middleware.js';
 
 // GET /api/cart - Get user's current cart
@@ -119,10 +120,65 @@ export const clearCart = async (req, res) => {
   }
 };
 
+// POST /api/cart/apply-coupon - Apply coupon to cart
+export const applyCoupon = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { code } = req.body;
+
+    // Validation
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp mã giảm giá',
+      });
+    }
+
+    // Get current cart to calculate subtotal
+    const cart = await cartService.getUserCart(userId);
+
+    const result = await couponService.applyCouponToCart(userId, code, {
+      subtotal: cart.subtotal,
+      shipping_fee: cart.shipping_fee || 0,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      data: {
+        coupon: result.coupon,
+        cart: result.cart,
+      },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+// DELETE /api/cart/remove-coupon - Remove coupon from cart
+export const removeCoupon = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const result = await couponService.removeCouponFromCart(userId);
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      data: {
+        cart: result.cart,
+      },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 export default {
   getCart,
   addItem,
   updateItemQuantity,
   removeItem,
   clearCart,
+  applyCoupon,
+  removeCoupon,
 };

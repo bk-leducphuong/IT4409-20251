@@ -1,0 +1,15 @@
+.notice {
+  padding: 2rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notice > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}

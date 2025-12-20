@@ -56,6 +56,11 @@
   align-items: center;
 }
 
+.categoryReport header p {
+  font-size: 0.8rem;
+  color: grey;
+}
+
 .categoryReport main > div:first-child {
   display: flex;
   justify-content: space-between;

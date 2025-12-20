@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema(
     avatar: String,
     status: {
       type: String,
-      enum: ["active", "inactive", "suspended"],
-      default: "active",
+      enum: ['active', 'inactive', 'suspended'],
+      default: 'active',
     },
     role: {
       type: String,
@@ -22,19 +22,19 @@ const userSchema = new mongoose.Schema(
     },
     deleted: { type: Boolean, default: false },
     resetPasswordToken: {
-    type: String,
-    default: null,
-  },
-  resetPasswordExpires: {
-    type: Date,
-    default: null,
-  },
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const User = mongoose.model("User", userSchema, "users");
+const User = mongoose.model('User', userSchema, 'users');
 
 export default User;

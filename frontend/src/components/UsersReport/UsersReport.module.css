@@ -79,7 +79,8 @@
   background-color: transparent;
 }
 
-.usersReport input {
+.usersReport input,
+.usersReport select {
   padding: 0.5rem 1rem;
   border: 1px solid #edf2f7;
   border-radius: 5px;
@@ -157,6 +158,32 @@
   gap: 1ch;
   width: fit-content !important;
   justify-self: center;
+}
+
+.pagination {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.pagination button {
+  background-color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.pagination button:hover {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.pagination select {
+  width: auto !important;
 }
 
 .confirmOverlay {

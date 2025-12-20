@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 import styles from './LoginForm.module.css';
@@ -15,10 +16,10 @@ function LoginForm({ toggleState = () => console.log('button clicked') }) {
     try {
       await login(email, password);
       await loadUserData();
+      toast.success('Login successful');
       navigate('/');
     } catch (err) {
-      alert(err);
-      console.error(err);
+      toast.error(err.message);
       setPassword('');
     }
   };

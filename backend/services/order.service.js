@@ -3,6 +3,7 @@ import Cart from '../models/cart.js';
 import ProductVariant from '../models/productVariant.js';
 import Product from '../models/product.js';
 import User from '../models/user.js';
+import Coupon from '../models/coupon.js';
 import emailService from '../libs/email.js';
 import { generateVietQR } from '../libs/vietqr.js';
 import { emitToAdmin } from '../utils/socketHelper.js';
@@ -37,10 +38,12 @@ export const createOrderFromCart = async (userId, orderData) => {
     }
 
     // Load cart with session
-    const cart = await Cart.findOne({ user_id: userId }).populate({
-      path: 'items.product_variant_id',
-      populate: { path: 'product_id' },
-    }).session(session);
+    const cart = await Cart.findOne({ user_id: userId })
+      .populate({
+        path: 'items.product_variant_id',
+        populate: { path: 'product_id' },
+      })
+      .session(session);
 
     if (!cart || cart.items.length === 0) {
       throw new Error('Giỏ hàng trống');
@@ -58,7 +61,7 @@ export const createOrderFromCart = async (userId, orderData) => {
       const updated = await ProductVariant.findOneAndUpdate(
         { _id: variantId, stock_quantity: { $gte: needQty } },
         { $inc: { stock_quantity: -needQty } },
-        { new: true, session }
+        { new: true, session },
       ).populate('product_id');
 
       if (!updated) {
@@ -84,8 +87,42 @@ export const createOrderFromCart = async (userId, orderData) => {
 
     // Calculate totals
     const tax = Math.round(subtotal * TAX_RATE);
-    const shipping_fee = calculateShippingFee(subtotal);
-    const discount = 0;
+    let shipping_fee = calculateShippingFee(subtotal);
+    let discount = 0;
+    let couponData = null;
+
+    // Handle coupon if applied
+    if (cart.applied_coupon && cart.applied_coupon.coupon_id) {
+      const coupon = await Coupon.findById(cart.applied_coupon.coupon_id);
+
+      if (coupon && coupon.is_valid) {
+        // Verify user can still use this coupon
+        const canUse = coupon.canBeUsedBy(userId);
+        if (canUse.valid) {
+          // Calculate discount with current subtotal
+          discount = coupon.calculateDiscount(subtotal, shipping_fee);
+
+          // If coupon is free_shipping, set shipping_fee to 0
+          if (coupon.discount_type === 'free_shipping') {
+            discount = shipping_fee;
+            shipping_fee = 0;
+          }
+
+          // Record coupon usage
+          await coupon.recordUsage(userId);
+
+          // Save coupon data for order
+          couponData = {
+            coupon_id: coupon._id,
+            code: coupon.code,
+            discount_type: coupon.discount_type,
+            discount_value: coupon.discount_value,
+            discount_amount: discount,
+          };
+        }
+      }
+    }
+
     const total = subtotal + tax + shipping_fee - discount;
 
     const orderNumber = `DH${new mongoose.Types.ObjectId().toString().slice(-8).toUpperCase()}`;
@@ -101,6 +138,7 @@ export const createOrderFromCart = async (userId, orderData) => {
       tax,
       shipping_fee,
       discount,
+      coupon: couponData,
       total,
       payment_method: payment_method || 'cod',
       payment_status: 'pending',
@@ -131,13 +169,12 @@ export const createOrderFromCart = async (userId, orderData) => {
           acqId: bankBin,
           amount: amount,
           addInfo: reference,
-          template: 'compact' // 'compact', 'qr_only', 'print'
+          template: 'compact', // 'compact', 'qr_only', 'print'
         });
 
         qrDataUrl = qrResult.qrDataURL; // Base64 image
 
         console.log('✅ VietQR generated successfully for order:', orderDoc._id);
-
       } catch (qrErr) {
         console.error('❌ VietQR generation error:', qrErr?.message || qrErr);
         qrDataUrl = null;
@@ -164,11 +201,12 @@ export const createOrderFromCart = async (userId, orderData) => {
     session.endSession();
 
     // Populate order for return
-    const populatedOrder = await Order.findById(orderDoc._id)
-      .populate('user_id', 'fullName email phone');
+    const populatedOrder = await Order.findById(orderDoc._id).populate(
+      'user_id',
+      'fullName email phone',
+    );
 
     return { order: populatedOrder, qr: qrDataUrl };
-
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -252,6 +290,31 @@ export const cancelOrder = async (orderId, userId, reason = '') => {
       await ProductVariant.findByIdAndUpdate(item.product_variant_id, {
         $inc: { stock_quantity: item.quantity },
       });
+    }
+
+    // Restore coupon usage if coupon was used
+    if (order.coupon && order.coupon.coupon_id) {
+      const coupon = await Coupon.findById(order.coupon.coupon_id);
+      if (coupon) {
+        // Decrease total usage count
+        coupon.usage_count = Math.max(0, coupon.usage_count - 1);
+
+        // Decrease user's usage count
+        const userUsage = coupon.used_by.find(
+          (usage) => usage.user_id.toString() === userId.toString(),
+        );
+        if (userUsage && userUsage.usage_count > 0) {
+          userUsage.usage_count -= 1;
+          // Remove user from used_by if usage_count is 0
+          if (userUsage.usage_count === 0) {
+            coupon.used_by = coupon.used_by.filter(
+              (usage) => usage.user_id.toString() !== userId.toString(),
+            );
+          }
+        }
+
+        await coupon.save();
+      }
     }
 
     await order.save();
@@ -341,13 +404,36 @@ export const updateOrderStatus = async (orderId, statusData) => {
     if (tracking_number) order.tracking_number = tracking_number;
     if (carrier) order.carrier = carrier;
 
-    // Handle refund - restore stock
+    // Handle refund - restore stock and coupon usage
     if (status === 'refunded') {
       for (const item of order.items) {
         await ProductVariant.findByIdAndUpdate(item.product_variant_id, {
           $inc: { stock_quantity: item.quantity },
         });
       }
+
+      // Restore coupon usage if coupon was used
+      if (order.coupon && order.coupon.coupon_id) {
+        const coupon = await Coupon.findById(order.coupon.coupon_id);
+        if (coupon) {
+          coupon.usage_count = Math.max(0, coupon.usage_count - 1);
+
+          const userUsage = coupon.used_by.find(
+            (usage) => usage.user_id.toString() === order.user_id.toString(),
+          );
+          if (userUsage && userUsage.usage_count > 0) {
+            userUsage.usage_count -= 1;
+            if (userUsage.usage_count === 0) {
+              coupon.used_by = coupon.used_by.filter(
+                (usage) => usage.user_id.toString() !== order.user_id.toString(),
+              );
+            }
+          }
+
+          await coupon.save();
+        }
+      }
+
       order.payment_status = 'refunded';
     }
 
@@ -406,7 +492,7 @@ export const autoConfirmPayment = async (transactionData) => {
 
   try {
     const referenceMatch = description.match(/DH([A-Z0-9]{8})/i);
-    
+
     if (!referenceMatch) {
       return { success: false, reason: 'No reference found' };
     }
@@ -416,7 +502,7 @@ export const autoConfirmPayment = async (transactionData) => {
     const order = await Order.findOne({
       order_number: orderNumber,
       payment_method: 'bank_transfer',
-      payment_status: 'pending'
+      payment_status: 'pending',
     });
 
     if (!order) {
@@ -431,21 +517,21 @@ export const autoConfirmPayment = async (transactionData) => {
     const receivedAmount = parseFloat(amount);
     const amountDiff = Math.abs(receivedAmount - expectedAmount);
 
-          if (amountDiff > 1) {
+    if (amountDiff > 1) {
       // Thông báo admin về sai số tiền
       emitToAdmin('payment:mismatch', {
         orderId: order._id,
         orderNumber: order.order_number,
         expected: expectedAmount,
         received: receivedAmount,
-        transactionId
+        transactionId,
       });
 
       return { success: false, reason: 'Amount mismatch' };
     }
 
     const oldStatus = order.status;
-    
+
     order.payment_status = 'paid';
     order.status = 'processing';
     order.paid_at = new Date(transactionDate);
@@ -457,7 +543,7 @@ export const autoConfirmPayment = async (transactionData) => {
     order.status_history.push({
       status: 'processing',
       changed_at: new Date(),
-      note: `✅ Thanh toán tự động xác nhận. Mã GD: ${transactionId}`
+      note: `✅ Thanh toán tự động xác nhận. Mã GD: ${transactionId}`,
     });
 
     await order.save();
@@ -471,15 +557,14 @@ export const autoConfirmPayment = async (transactionData) => {
       amount: receivedAmount,
       transactionId,
       customerName: order.user_id.fullName,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return {
       success: true,
       order: order.toObject(),
-      message: 'Payment confirmed successfully'
+      message: 'Payment confirmed successfully',
     };
-
   } catch (error) {
     console.error('❌ Auto confirm payment error:', error);
     throw error;
@@ -494,21 +579,19 @@ export const getPendingPaymentOrders = async () => {
     const orders = await Order.find({
       payment_method: 'bank_transfer',
       payment_status: 'pending',
-      status: 'pending'
+      status: 'pending',
     })
       .populate('user_id', 'fullName email phone')
       .sort('-createdAt')
       .limit(50);
 
-    const ordersWithTimeLeft = orders.map(order => {
-      const timeLeft = order.reserved_until 
-        ? Math.max(0, order.reserved_until - Date.now())
-        : 0;
-      
+    const ordersWithTimeLeft = orders.map((order) => {
+      const timeLeft = order.reserved_until ? Math.max(0, order.reserved_until - Date.now()) : 0;
+
       return {
         ...order.toObject(),
         timeLeftMinutes: Math.floor(timeLeft / 60000),
-        isExpired: timeLeft === 0
+        isExpired: timeLeft === 0,
       };
     });
 
@@ -541,7 +624,7 @@ export const confirmPaymentManually = async (orderId, confirmData) => {
     order.payment_status = 'paid';
     order.status = 'processing';
     order.paid_at = new Date();
-    
+
     if (transactionId) {
       order.bank_transfer.transaction_id = transactionId;
     }
@@ -552,7 +635,7 @@ export const confirmPaymentManually = async (orderId, confirmData) => {
     order.status_history.push({
       status: 'processing',
       changed_at: new Date(),
-      note: `✅ Admin xác nhận thanh toán thủ công${note ? ': ' + note : ''}`
+      note: `✅ Admin xác nhận thanh toán thủ công${note ? ': ' + note : ''}`,
     });
 
     await order.save();
@@ -563,7 +646,7 @@ export const confirmPaymentManually = async (orderId, confirmData) => {
       orderNumber: order.order_number,
       amount: amount || order.total,
       manual: true,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return order;
@@ -590,10 +673,9 @@ export const cancelExpiredOrder = async (orderId, cancelData = {}) => {
 
     // Hoàn lại stock
     for (const item of order.items) {
-      await ProductVariant.findByIdAndUpdate(
-        item.product_variant_id,
-        { $inc: { stock_quantity: item.quantity } }
-      );
+      await ProductVariant.findByIdAndUpdate(item.product_variant_id, {
+        $inc: { stock_quantity: item.quantity },
+      });
     }
 
     order.status = 'cancelled';
@@ -601,7 +683,7 @@ export const cancelExpiredOrder = async (orderId, cancelData = {}) => {
     order.status_history.push({
       status: 'cancelled',
       changed_at: new Date(),
-      note: note || '⏰ Hết hạn thanh toán'
+      note: note || '⏰ Hết hạn thanh toán',
     });
 
     await order.save();
@@ -610,7 +692,7 @@ export const cancelExpiredOrder = async (orderId, cancelData = {}) => {
     emitToAdmin('order:expired', {
       orderId: order._id,
       orderNumber: order.order_number,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return order;
@@ -629,7 +711,7 @@ export const cancelExpiredOrders = async () => {
     const expiredOrders = await Order.find({
       payment_method: 'bank_transfer',
       payment_status: 'pending',
-      reserved_until: { $lt: now }
+      reserved_until: { $lt: now },
     });
 
     let cancelledCount = 0;
@@ -662,20 +744,20 @@ export const getPaymentMonitoring = async () => {
       Order.find({
         payment_method: 'bank_transfer',
         payment_status: 'pending',
-        status: 'pending'
+        status: 'pending',
       }),
-      
+
       // Đơn hết hạn hôm nay
       Order.countDocuments({
         payment_status: 'expired',
-        updatedAt: { $gte: today }
+        updatedAt: { $gte: today },
       }),
-      
+
       // Đơn thanh toán hôm nay
       Order.find({
         payment_status: 'paid',
-        paid_at: { $gte: today }
-      })
+        paid_at: { $gte: today },
+      }),
     ]);
 
     return {
@@ -683,7 +765,7 @@ export const getPaymentMonitoring = async () => {
       pending_amount: pendingOrders.reduce((sum, o) => sum + o.total, 0),
       expired_today: expiredToday,
       paid_today: paidToday.length,
-      paid_amount_today: paidToday.reduce((sum, o) => sum + o.total, 0)
+      paid_amount_today: paidToday.reduce((sum, o) => sum + o.total, 0),
     };
   } catch (error) {
     throw new Error('Không thể lấy thống kê thanh toán: ' + error.message);

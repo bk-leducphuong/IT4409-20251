@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { getCategories, getCategoryBySlug } from '../services/categoryServices';
 
 export const useCategoryStore = create((set) => ({
-  data: [],
+  data: null,
   isLoading: false,
   loadCategories: async () => {
     set({ isLoading: true });

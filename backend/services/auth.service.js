@@ -142,14 +142,12 @@ export const forgotPassword = async (email) => {
 
   // Lưu OTP hash vào database (hết hạn trong 5 phút)
   user.resetPasswordToken = otpHash;
-  user.resetPasswordExpires = new Date(Date.now() + 60 * 5 * 1000)
+  user.resetPasswordExpires = new Date(Date.now() + 60 * 5 * 1000);
   await user.save();
 
-  const resetToken = jwt.sign(
-    { id: user._id, purpose: 'password-reset' },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || '5m' }
-  );
+  const resetToken = jwt.sign({ id: user._id, purpose: 'password-reset' }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '5m',
+  });
 
   // Gửi email chứa OTP (plain + html)
   await emailService.sendResetPasswordEmail(user.email, user.fullName, otp, resetToken);
@@ -163,7 +161,11 @@ export const verifyOtp = async (email, otp) => {
   if (!user) {
     throw new Error('Email không tồn tại');
   }
-  if (!user.resetPasswordToken || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+  if (
+    !user.resetPasswordToken ||
+    !user.resetPasswordExpires ||
+    user.resetPasswordExpires < new Date()
+  ) {
     throw new Error('OTP đã hết hạn hoặc không tồn tại. Vui lòng gửi lại yêu cầu.');
   }
 
@@ -173,9 +175,13 @@ export const verifyOtp = async (email, otp) => {
   }
 
   // Tạo reset session token (dùng để xác thực việc đổi mật khẩu) - ngắn hạn
-  const resetSessionToken = jwt.sign({ id: user._id, purpose: 'password-reset' }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '15m',
-  });
+  const resetSessionToken = jwt.sign(
+    { id: user._id, purpose: 'password-reset' },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.RESET_SESSION_EXPIRE || '15m',
+    },
+  );
 
   // Optionally clear resetPasswordToken to prevent reuse (or keep until reset)
   // user.resetPasswordToken = null;
