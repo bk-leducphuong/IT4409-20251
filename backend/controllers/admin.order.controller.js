@@ -95,9 +95,97 @@ export const getOrderStatistics = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/admin/orders/pending-payment
+ * Lấy danh sách đơn hàng chờ thanh toán
+ */
+export const getPendingPaymentOrders = async (req, res) => {
+  try {
+    const orders = await orderService.getPendingPaymentOrders();
+
+    res.status(200).json({
+      success: true,
+      data: { orders },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
+ * POST /api/admin/orders/:orderId/confirm-payment
+ * Xác nhận thanh toán thủ công (khi cron job chưa chạy hoặc cần xác nhận ngay)
+ */
+export const confirmPaymentManually = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { transactionId, amount, note } = req.body;
+
+    const order = await orderService.confirmPaymentManually(orderId, {
+      transactionId,
+      amount,
+      note,
+      confirmedBy: req.user._id, // Admin ID
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Đã xác nhận thanh toán thành công',
+      data: { order },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
+ * POST /api/admin/orders/:orderId/cancel-expired
+ * Hủy đơn hàng hết hạn thanh toán (thủ công)
+ */
+export const cancelExpiredOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { note } = req.body;
+
+    const order = await orderService.cancelExpiredOrder(orderId, {
+      note,
+      cancelledBy: req.user._id, // Admin ID
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Đã hủy đơn hàng hết hạn',
+      data: { order },
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
+ * GET /api/admin/orders/payment-monitoring
+ * Dashboard theo dõi thanh toán real-time
+ */
+export const getPaymentMonitoring = async (req, res) => {
+  try {
+    const monitoring = await orderService.getPaymentMonitoring();
+
+    res.status(200).json({
+      success: true,
+      data: monitoring,
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 export default {
   getAllOrders,
   getOrderDetails,
   updateOrderStatus,
   getOrderStatistics,
+  getPendingPaymentOrders,
+  confirmPaymentManually,
+  cancelExpiredOrder,
+  getPaymentMonitoring,
 };
