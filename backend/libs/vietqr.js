@@ -20,7 +20,7 @@ export const generateVietQR = async ({
   acqId,
   amount,
   addInfo = '',
-  template = 'compact'
+  template = 'compact',
 }) => {
   try {
     const response = await fetch(`${VIETQR_API_URL}/generate`, {
@@ -28,7 +28,7 @@ export const generateVietQR = async ({
       headers: {
         'Content-Type': 'application/json',
         'x-client-id': process.env.VIETQR_CLIENT_ID || '',
-        'x-api-key': process.env.VIETQR_API_KEY || ''
+        'x-api-key': process.env.VIETQR_API_KEY || '',
       },
       body: JSON.stringify({
         accountNo,
@@ -37,8 +37,8 @@ export const generateVietQR = async ({
         amount: Math.round(amount), // VietQR yêu cầu số nguyên
         addInfo,
         format: 'text',
-        template
-      })
+        template,
+      }),
     });
 
     const result = await response.json();
@@ -49,9 +49,8 @@ export const generateVietQR = async ({
 
     return {
       qrCode: result.data.qrCode, // EMV string
-      qrDataURL: result.data.qrDataURL // Base64 image
+      qrDataURL: result.data.qrDataURL, // Base64 image
     };
-
   } catch (error) {
     console.error('VietQR API error:', error.message);
     throw new Error(`Không thể tạo mã QR: ${error.message}`);
@@ -66,11 +65,11 @@ export const getBankList = async () => {
   try {
     const response = await fetch(`${VIETQR_API_URL}/banks`);
     const result = await response.json();
-    
+
     if (result.code !== '00') {
       throw new Error(result.desc || 'Cannot get bank list');
     }
-    
+
     return result.data;
   } catch (error) {
     console.error('Get bank list error:', error.message);
@@ -91,12 +90,12 @@ export const lookupAccount = async (bin, accountNumber) => {
       headers: {
         'Content-Type': 'application/json',
         'x-client-id': process.env.VIETQR_CLIENT_ID || '',
-        'x-api-key': process.env.VIETQR_API_KEY || ''
+        'x-api-key': process.env.VIETQR_API_KEY || '',
       },
       body: JSON.stringify({
         bin,
-        accountNumber
-      })
+        accountNumber,
+      }),
     });
 
     const result = await response.json();
@@ -115,5 +114,5 @@ export const lookupAccount = async (bin, accountNumber) => {
 export default {
   generateVietQR,
   getBankList,
-  lookupAccount
+  lookupAccount,
 };

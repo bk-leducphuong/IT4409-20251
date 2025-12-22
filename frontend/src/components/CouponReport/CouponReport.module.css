@@ -1,0 +1,169 @@
+.couponReport header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.couponReport header p {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+.couponReport button {
+  padding: 0.5rem 2ch;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  font-size: 1rem;
+}
+
+.couponReport button:hover {
+  background-color: hsl(0, 0%, 85%);
+}
+
+.blackBtn {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.blackBtn:hover {
+  background-color: hsl(0, 0%, 25%) !important;
+}
+
+.redBtn {
+  color: white;
+  background-color: red;
+}
+
+.redBtn:hover {
+  background-color: hsl(0, 100%, 60%) !important;
+}
+
+.couponReport i {
+  margin-right: 1ch;
+}
+
+.search {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.search > div:first-child * {
+  white-space: nowrap;
+}
+
+.search > div:first-child {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(2, auto);
+  gap: 0.5rem;
+}
+
+.search > div:first-child > *:first-child {
+  grid-column: span 3 / span 3;
+}
+
+.couponReport input,
+.couponReport select,
+.couponReport textarea {
+  padding: 0.5rem 1ch;
+  border: 1px solid #edf2f7;
+  outline: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1ch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: hsl(0, 0%, 5%);
+  color: white;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0;
+}
+
+.table th:last-child,
+.table td:last-child {
+  width: 1%;
+}
+
+.table tbody {
+  text-align: center;
+}
+
+.table tbody tr {
+  border: 1px solid #edf2f7;
+}
+
+.table tr:nth-child(even) {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.pagination {
+  margin-top: 0.5rem;
+}
+
+.pagination button {
+  background-color: white;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  transition: background-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.overlay > div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.overlay h2 {
+  text-align: center;
+  white-space: nowrap;
+  margin-bottom: 1rem;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}

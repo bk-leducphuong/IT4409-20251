@@ -1,5 +1,14 @@
 import { create } from 'zustand';
-import { login, signUp, getToken, resetToken, logout } from '../services/authServices';
+import {
+  login,
+  signUp,
+  getToken,
+  resetToken,
+  logout,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
+} from '../services/authServices';
 
 export const useAuthStore = create((set) => ({
   token: getToken(),
@@ -28,6 +37,30 @@ export const useAuthStore = create((set) => ({
       await logout();
       resetToken();
       set({ token: null });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  sendOtp: async (email) => {
+    set({ isLoading: true });
+    try {
+      return await forgotPassword(email);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  verifyOtp: async (email, otp) => {
+    set({ isLoading: true });
+    try {
+      return await verifyOtp(email, otp);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  resetPassword: async (token, newPassword, confirmPassword) => {
+    set({ isLoading: true });
+    try {
+      return await resetPassword(token, newPassword, confirmPassword);
     } finally {
       set({ isLoading: false });
     }

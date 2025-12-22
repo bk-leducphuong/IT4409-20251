@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
+import { getLoginAttempts, setLoginAttempts, clearLoginAttempts } from '../../libs/storage';
 import styles from './LoginForm.module.css';
 
 function LoginForm({ toggleState = () => console.log('button clicked') }) {
@@ -11,16 +12,23 @@ function LoginForm({ toggleState = () => console.log('button clicked') }) {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
   const loadUserData = useUserStore((state) => state.loadUserData);
+  const exceedMaxLoginAttemp = getLoginAttempts() >= 3;
 
   const componentLogin = async () => {
     try {
+      if (exceedMaxLoginAttemp)
+        throw new Error(
+          'You have exceeded the maximum number of login attempts. Please try again later.',
+        );
       await login(email, password);
       await loadUserData();
       toast.success('Login successful');
+      clearLoginAttempts();
       navigate('/');
     } catch (err) {
       toast.error(err.message);
       setPassword('');
+      setLoginAttempts(getLoginAttempts() + 1);
     }
   };
 
@@ -68,7 +76,9 @@ function LoginForm({ toggleState = () => console.log('button clicked') }) {
           <input type="checkbox" className={styles.checkBox} />
           Remember me
         </label>
-        <button className={styles.a}>Forgot password?</button>
+        <button className={styles.a} onClick={() => navigate('/forgot-password')}>
+          Forgot password?
+        </button>
       </div>
       <div className={styles.formFooter}>
         Don&apos;t have an account?{' '}

@@ -181,9 +181,7 @@ describe('Meilisearch Integration Tests', () => {
       // Check if sorted (if multiple results)
       if (results.products.length > 1) {
         for (let i = 1; i < results.products.length; i++) {
-          expect(results.products[i].price).toBeGreaterThanOrEqual(
-            results.products[i - 1].price,
-          );
+          expect(results.products[i].price).toBeGreaterThanOrEqual(results.products[i - 1].price);
         }
       }
     });

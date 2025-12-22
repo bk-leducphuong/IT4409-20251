@@ -1,10 +1,16 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
+import { setPreviousSite } from '../../libs/storage';
 
 function UserProtectedRoute() {
   const userData = useUserStore((state) => state.data);
 
-  return userData ? <Outlet /> : <Navigate to="/login" />;
+  if (!userData) {
+    setPreviousSite(window.location.pathname);
+    return <Navigate to="/login" />;
+  }
+
+  return <Outlet />;
 }
 
 export default UserProtectedRoute;
