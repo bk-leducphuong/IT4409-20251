@@ -86,7 +86,7 @@ function Dashboard() {
 
   async function fetchMeilisearchStatistics() {
     try {
-      const res = await fetch('meilistats.json').then((res) => res.json());
+      const res = await getMeilisearchStatistics();
       setMeiliStats(res.data);
     } catch (error) {
       toast.error(error.message);
