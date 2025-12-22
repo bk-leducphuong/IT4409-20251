@@ -145,6 +145,14 @@ export const createOrderFromCart = async (userId, orderData) => {
       customer_note,
     });
 
+    // Copy shipping info to top-level required fields to satisfy model validation
+    orderDoc.phone = shipping_address.phone;
+    orderDoc.address_line = shipping_address.address_line;
+    if (shipping_address.city) orderDoc.city = shipping_address.city;
+    if (shipping_address.province) orderDoc.province = shipping_address.province;
+    if (shipping_address.postal_code) orderDoc.postal_code = shipping_address.postal_code;
+    if (shipping_address.country) orderDoc.country = shipping_address.country;
+
     await orderDoc.save({ session });
 
     // Generate QR for bank transfer
