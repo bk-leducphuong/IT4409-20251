@@ -1,0 +1,135 @@
+.devider {
+  border: 1px solid hsl(0, 0%, 5%);
+  margin: 1rem 0;
+}
+
+.dashboard p {
+  color: grey;
+  font-size: 0.8rem;
+}
+
+.dashboard h2 {
+  margin: 0.5rem 0;
+}
+
+.dashboard section > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard section > div:first-child > *:first-child {
+  flex: 1;
+}
+
+.blackBtn,
+.redBtn {
+  color: white;
+  padding: 0.5rem 1ch;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.blackBtn {
+  background-color: hsl(0, 0%, 5%);
+}
+
+.blackBtn:hover {
+  background-color: hsl(0, 0%, 25%);
+}
+
+.redBtn {
+  background-color: hsl(0, 100%, 50%);
+}
+
+.redBtn:hover {
+  background-color: hsl(0, 100%, 40%);
+}
+
+.dashboard select {
+  padding: 0.5rem 1ch;
+  border: 1px solid #edf2f7;
+  border-radius: 5px;
+  outline: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.grid > div {
+  padding: 1rem;
+  border: 2px solid hsl(0, 0%, 5%);
+  position: relative;
+  background-color: white;
+}
+
+.grid > div::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(0, 0%, 5%);
+  z-index: -1;
+  transition:
+    top 0.25s,
+    left 0.25s;
+}
+
+.grid > div:hover::after {
+  top: 5px;
+  left: 5px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.products > div {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #edf2f7;
+  border-radius: 10px;
+}
+
+.products img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.meiliStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.green {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.red {
+  background-color: #fdecea;
+  color: #b71c1c;
+}
+
+.green,
+.red {
+  padding: 0.5rem 1.5ch;
+  border-radius: 3rem;
+}

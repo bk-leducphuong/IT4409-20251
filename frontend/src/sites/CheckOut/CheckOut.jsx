@@ -41,14 +41,28 @@ function CheckOut() {
   const removeCoupon = useCartStore((state) => state.removeCoupon);
 
   const createOrder = useOrderStore((state) => state.createOrder);
+  const [qr, setQr] = useState(null);
 
   const navigate = useNavigate();
 
   async function handleCreateOrder() {
     try {
-      await createOrder(fullName, phone, street, city, postalCode, country, paymentMethod, note);
-      toast.success('Order placed successfully');
-      navigate('/user', { replace: true });
+      const res = await createOrder(
+        fullName,
+        phone,
+        street,
+        city,
+        postalCode,
+        country,
+        paymentMethod,
+        note,
+      );
+      if (paymentMethod === 'bank_transfer' && res.data.order.qr) {
+        setQr(res.data.order.qr);
+      } else {
+        navigate('/user', { replace: true });
+        toast.success('Order placed successfully');
+      }
     } catch (error) {
       toast.error(error.message);
     }
@@ -202,6 +216,22 @@ function CheckOut() {
           </section>
         </div>
       </div>
+
+      {qr && (
+        <div className={styles.qrContainer}>
+          <div>
+            <img src={qr} alt="QR Code" />
+            <Button
+              onClick={() => {
+                navigate('/user', { replace: true });
+                toast.success('Payment successfully');
+              }}
+            >
+              Check Payment Result
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>

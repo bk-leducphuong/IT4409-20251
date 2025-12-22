@@ -79,7 +79,9 @@ function Order({ order, done, refresh }) {
               <h2>Payment</h2>
               <div className={styles.paymentDetail}>
                 <div>
-                  <div>Method: {order.payment_method}</div>
+                  <div>
+                    Method: {order.payment_method === 'cod' ? 'Cash on delevery' : 'Bank transfer'}
+                  </div>
                   <div>Status: {order.status}</div>
                   <div>Customer Note: {order.customer_note}</div>
                 </div>

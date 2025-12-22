@@ -82,6 +82,7 @@ function OrderReport() {
               <th>ID</th>
               <th>Customer</th>
               <th>Total</th>
+              <th>Payment method</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -92,6 +93,7 @@ function OrderReport() {
                   <td>{order.order_number}</td>
                   <td>{order.shipping_address.full_name}</td>
                   <td>{`$${order.total}`}</td>
+                  <td>{order.payment_method === 'cod' ? 'Cash on delivery' : 'Bank transfer'}</td>
                   <td>
                     <select
                       value={order.status}

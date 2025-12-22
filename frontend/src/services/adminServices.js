@@ -216,3 +216,38 @@ export const deleteCoupon = async (id) => {
 export const getCouponStatistics = async (id) => {
   return await apiFetch(`/admin/coupons/${id}/stats`, { method: 'GET' });
 };
+
+/* DASHBOARD */
+
+export const getDashboardStatistics = async ({ startDate, endDate }) => {
+  const params = new URLSearchParams({ startDate, endDate }).toString();
+  return await apiFetch(`/admin/dashboard/stats?${params}`, { method: 'GET' });
+};
+
+export const getDahsboardSales = async ({ startDate, endDate, groupBy }) => {
+  const params = new URLSearchParams({ startDate, endDate, groupBy }).toString();
+  return await apiFetch(`/admin/dashboard/sales?${params}`, { method: 'GET' });
+};
+
+export const getDashboardTopProducts = async ({ startDate, endDate, limit, sortBy }) => {
+  const params = new URLSearchParams({ startDate, endDate, limit, sortBy }).toString();
+  return await apiFetch(`/admin/dashboard/top-products?${params}`, { method: 'GET' });
+};
+
+/* MEILISEARCH */
+
+export const syncMeilisearch = async () => {
+  return await apiFetch('/admin/meilisearch/sync', { method: 'POST' });
+};
+
+export const configMeilisearch = async () => {
+  return await apiFetch('/admin/meilisearch/configure', { method: 'POST' });
+};
+
+export const getMeilisearchStatistics = async () => {
+  return await apiFetch('/admin/meilisearch/stats', { method: 'GET' });
+};
+
+export const clearMeilisearchIndex = async () => {
+  return await apiFetch('/admin/meilisearch/clear', { method: 'DELETE' });
+};

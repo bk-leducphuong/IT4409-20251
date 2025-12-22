@@ -28,6 +28,13 @@ import {
   updateCoupon,
   deleteCoupon,
   getCouponStatistics,
+  getDashboardStatistics,
+  getDahsboardSales,
+  getDashboardTopProducts,
+  syncMeilisearch,
+  configMeilisearch,
+  getMeilisearchStatistics,
+  clearMeilisearchIndex,
 } from '../services/adminServices';
 
 export const useAdminStore = create((set) => ({
@@ -273,6 +280,67 @@ export const useAdminStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await getCouponStatistics(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* DASHBOARD */
+  getDashboardStatistics: async (queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getDashboardStatistics(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getDahsboardSales: async (queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getDahsboardSales(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getDashboardTopProducts: async (queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getDashboardTopProducts(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* MEILISEARCH */
+
+  syncMeilisearch: async () => {
+    set({ isLoading: true });
+    try {
+      return await syncMeilisearch();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  configMeilisearch: async () => {
+    set({ isLoading: true });
+    try {
+      return await configMeilisearch();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getMeilisearchStatistics: async () => {
+    set({ isLoading: true });
+    try {
+      return await getMeilisearchStatistics();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  clearMeilisearchIndex: async () => {
+    set({ isLoading: true });
+    try {
+      return await clearMeilisearchIndex();
     } finally {
       set({ isLoading: false });
     }
