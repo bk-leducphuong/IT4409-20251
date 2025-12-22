@@ -173,17 +173,54 @@ const orderSchema = new mongoose.Schema(
     },
 
     // Payment information
+    phone: {
+      type: String,
+      required: true,
+    },
+    address_line: {
+      type: String,
+      required: true,
+    },
+    city: String,
+    province: String,
+    postal_code: String,
+    country: {
+      type: String,
+      default: 'Vietnam',
+    },
+
     payment_method: {
       type: String,
-      enum: ['cod', 'credit_card', 'bank_transfer', 'momo', 'zalopay'],
+      enum: ['cod', 'bank_transfer', 'momo', 'zalopay'],
       default: 'cod',
     },
+
     payment_status: {
       type: String,
-      enum: ['pending', 'paid', 'failed', 'refunded'],
+      enum: ['pending', 'paid', 'failed', 'refunded', 'expired'],
       default: 'pending',
     },
     paid_at: Date,
+
+    // 🆕 Bank transfer information
+    bank_transfer: {
+      bank_name: String,
+      account_name: String,
+      account_number: String,
+      amount: Number,
+      transfer_date: Date,
+      reference: String,
+      receipt_url: String,
+      transaction_id: String, // Mã giao dịch từ bank
+      paid_at: Date, // Thời gian thanh toán
+      paid_amount: Number, // Số tiền thực tế nhận
+      bank_code: String, // Mã ngân hàng (VD: MB, VCB)
+    },
+
+    // 🆕 Thời hạn thanh toán cho bank_transfer
+    reserved_until: {
+      type: Date,
+    },
 
     // Shipping tracking
     tracking_number: String,
@@ -205,10 +242,28 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Indexes for faster queries
-orderSchema.index({ user_id: 1, createdAt: -1 });
-orderSchema.index({ order_number: 1 });
-orderSchema.index({ status: 1 });
-orderSchema.index({ createdAt: -1 });
+orderSchema.index({
+  user_id: 1,
+  createdAt: -1,
+});
+orderSchema.index({
+  order_number: 1,
+});
+orderSchema.index({
+  status: 1,
+});
+orderSchema.index({
+  createdAt: -1,
+});
+// 🆕 Index cho auto payment confirmation
+orderSchema.index({
+  payment_method: 1,
+  payment_status: 1,
+  reserved_until: 1,
+});
+orderSchema.index({
+  'bank_transfer.reference': 1,
+});
 
 // Generate order number before saving
 orderSchema.pre('save', async function (next) {
@@ -276,6 +331,12 @@ orderSchema.virtual('can_cancel').get(function () {
 // Virtual for checking if order is modifiable
 orderSchema.virtual('is_modifiable').get(function () {
   return ['pending'].includes(this.status);
+});
+
+// 🆕 Virtual for checking if payment is expired
+orderSchema.virtual('is_payment_expired').get(function () {
+  if (!this.reserved_until) return false;
+  return this.payment_status === 'pending' && new Date() > this.reserved_until;
 });
 
 const Order = mongoose.model('Order', orderSchema, 'orders');

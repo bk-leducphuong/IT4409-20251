@@ -228,4 +228,162 @@ router.get('/orders/:orderId', adminOrderController.getOrderDetails);
  */
 router.put('/orders/:orderId/status', adminOrderController.updateOrderStatus);
 
+/**
+ * @swagger
+ * /api/admin/orders/pending-payment:
+ *   get:
+ *     summary: Get orders pending payment (admin)
+ *     tags: [Admin - Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Pending payment orders retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     orders:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           order_number:
+ *                             type: string
+ *                           total:
+ *                             type: number
+ *                           reserved_until:
+ *                             type: string
+ *                             format: date-time
+ *                           timeLeftMinutes:
+ *                             type: integer
+ *                           isExpired:
+ *                             type: boolean
+ *                           bank_transfer:
+ *                             type: object
+ *                             properties:
+ *                               reference:
+ *                                 type: string
+ *                               amount:
+ *                                 type: number
+ */
+router.get('/orders/pending-payment', adminOrderController.getPendingPaymentOrders);
+
+/**
+ * @swagger
+ * /api/admin/orders/payment-monitoring:
+ *   get:
+ *     summary: Get payment monitoring dashboard data
+ *     tags: [Admin - Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment monitoring data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     pending_count:
+ *                       type: integer
+ *                     pending_amount:
+ *                       type: number
+ *                     expired_today:
+ *                       type: integer
+ *                     paid_today:
+ *                       type: integer
+ *                     paid_amount_today:
+ *                       type: number
+ */
+router.get('/orders/payment-monitoring', adminOrderController.getPaymentMonitoring);
+
+/**
+ * @swagger
+ * /api/admin/orders/{orderId}/confirm-payment:
+ *   post:
+ *     summary: Manually confirm payment (admin)
+ *     tags: [Admin - Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               transactionId:
+ *                 type: string
+ *                 example: MB123456789
+ *               amount:
+ *                 type: number
+ *                 example: 52000
+ *               note:
+ *                 type: string
+ *                 example: Xác nhận thanh toán từ screenshot
+ *     responses:
+ *       200:
+ *         description: Payment confirmed successfully
+ *       400:
+ *         description: Order already paid or invalid status
+ *       404:
+ *         description: Order not found
+ */
+router.post('/orders/:orderId/confirm-payment', adminOrderController.confirmPaymentManually);
+
+/**
+ * @swagger
+ * /api/admin/orders/{orderId}/cancel-expired:
+ *   post:
+ *     summary: Cancel expired order (admin)
+ *     tags: [Admin - Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               note:
+ *                 type: string
+ *                 example: Hủy do hết hạn thanh toán
+ *     responses:
+ *       200:
+ *         description: Order cancelled successfully
+ *       400:
+ *         description: Invalid order status
+ *       404:
+ *         description: Order not found
+ */
+router.post('/orders/:orderId/cancel-expired', adminOrderController.cancelExpiredOrder);
+
+
 export default router;
