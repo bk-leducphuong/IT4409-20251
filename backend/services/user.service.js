@@ -126,11 +126,9 @@ export const createUser = async (userData) => {
   const user = await User.create({
     fullName,
     email,
-    password,
     phone,
     role: role || 'customer',
   });
-
   return user;
 };
 
