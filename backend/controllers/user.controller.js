@@ -1,5 +1,6 @@
 import userService from '../services/user.service.js';
 import { errorHandler } from '../middlewares/error.middleware.js';
+import bcrypt from 'bcryptjs';
 
 // GET /api/user/profile - Lấy thông tin profile người dùng
 export const getProfile = async (req, res) => {
@@ -30,18 +31,18 @@ export const updateProfile = async (req, res) => {
     const allowedFields = ['fullName', 'email', 'phone', 'address', 'avatar'];
 
     const bodyKeys = Object.keys(req.body);
-    const invalidFields = bodyKeys.filter(key => !allowedFields.includes(key));
+    const invalidFields = bodyKeys.filter((key) => !allowedFields.includes(key));
 
     // Nếu có trường không hợp lệ → báo lỗi
     if (invalidFields.length > 0) {
       return res.status(400).json({
         success: false,
-        message: `Các trường không được phép cập nhật: ${invalidFields.join(', ')}`
+        message: `Các trường không được phép cập nhật: ${invalidFields.join(', ')}`,
       });
     }
 
     const updateData = Object.fromEntries(
-      Object.entries(req.body).filter(([key]) => allowedFields.includes(key))
+      Object.entries(req.body).filter(([key]) => allowedFields.includes(key)),
     );
 
     const updatedUser = await userService.updateProfile(userId, updateData);
@@ -71,14 +72,14 @@ export const changePassword = async (req, res) => {
     await userService.changePassword(userId, currentPassword, newPassword);
     res.status(200).json({
       success: true,
-      message: 'Đổi mật khẩu thành công'
+      message: 'Đổi mật khẩu thành công',
     });
   } catch (error) {
     errorHandler(error, req, res);
   }
-}
+};
 
-// GET /api/user - Lấy tất cả users 
+// GET /api/user - Lấy tất cả users
 export const getAllUsers = async (req, res, next) => {
   try {
     const result = await userService.getAllUsers(req.query);
@@ -86,9 +87,8 @@ export const getAllUsers = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Lấy danh sách users thành công!',
-      data: result
+      data: result,
     });
-
   } catch (error) {
     errorHandler(error, req, res);
   }
@@ -101,7 +101,7 @@ export const getAdmins = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Lấy danh sách admin thành công!',
-      data: { admins }
+      data: { admins },
     });
   } catch (error) {
     errorHandler(error, req, res);
@@ -111,31 +111,30 @@ export const getAdmins = async (req, res, next) => {
 // POST /api/users/ - Tạo user mới
 export const createUser = async (req, res, next) => {
   try {
-    const { fullName, email, password, phone, role} = req.body;
+    const { fullName, email, password, phone, role } = req.body;
 
     const user = await userService.createUser({
       fullName,
       email,
       password,
       phone,
-      role
+      role,
     });
 
     res.status(201).json({
       success: true,
       message: 'Tạo user thành công!',
-      data: { user }
+      data: { user },
     });
-
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
-// GET /api/users/:id - Lấy user theo ID 
+// GET /api/users/:id - Lấy user theo ID
 export const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -145,22 +144,21 @@ export const getUserById = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Lấy thông tin user thành công!',
-      data: { user }
+      data: { user },
     });
-
   } catch (error) {
     res.status(404).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
-// PUT /api/users/:id - Cập nhật user theo ID 
+// PUT /api/users/:id - Cập nhật user theo ID
 export const updateUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const { fullName, phone, avatar, status, role, address} = req.body;
+    const { fullName, phone, avatar, status, role, address } = req.body;
 
     const user = await userService.updateUserById(userId, {
       fullName,
@@ -168,19 +166,18 @@ export const updateUserById = async (req, res, next) => {
       avatar,
       status,
       role,
-      address
+      address,
     });
 
     res.status(200).json({
       success: true,
       message: 'Cập nhật user thành công!',
-      data: { user }
+      data: { user },
     });
-
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -194,7 +191,7 @@ export const deleteUserById = async (req, res, next) => {
     if (userId === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
-        message: 'Bạn không thể xóa chính mình!'
+        message: 'Bạn không thể xóa chính mình!',
       });
     }
 
@@ -202,13 +199,12 @@ export const deleteUserById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Xóa user thành công!'
+      message: 'Xóa user thành công!',
     });
-
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -222,5 +218,5 @@ export default {
   getUserById,
   updateUserById,
   deleteUserById,
-  getAdmins
+  getAdmins,
 };

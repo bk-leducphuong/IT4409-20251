@@ -1,6 +1,5 @@
 import User from '../models/user.js';
 import validator from 'validator';
-import bcrypt from 'bcryptjs';
 
 export const getProfile = async (userId) => {
   try {
@@ -110,8 +109,6 @@ export const createUser = async (userData) => {
     throw new Error('Mật khẩu phải có ít nhất 6 ký tự!');
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   // Kiểm tra email đã tồn tại
   const existingUser = await User.findOne({ email, deleted: false });
   if (existingUser) {
@@ -122,11 +119,9 @@ export const createUser = async (userData) => {
   const user = await User.create({
     fullName,
     email,
-    password: hashedPassword,
     phone,
     role: role || 'customer',
   });
-  user.password = undefined;
   return user;
 };
 
