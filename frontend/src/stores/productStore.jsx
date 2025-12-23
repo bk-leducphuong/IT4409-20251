@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import {
   getProductBySlug,
+  getTrendingProducts,
   getProducts,
   getReviews,
   createReview,
@@ -15,6 +16,14 @@ export const useProductStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await getProducts(queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getTrendingProducts: async () => {
+    set({ isLoading: true });
+    try {
+      return await getTrendingProducts();
     } finally {
       set({ isLoading: false });
     }

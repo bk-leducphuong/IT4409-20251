@@ -92,7 +92,7 @@ function OrderReport() {
                 <tr key={order._id}>
                   <td>{order.order_number}</td>
                   <td>{order.shipping_address.full_name}</td>
-                  <td>{`$${order.total}`}</td>
+                  <td>{`${order.total}đ`}</td>
                   <td>{order.payment_method === 'cod' ? 'Cash on delivery' : 'Bank transfer'}</td>
                   <td>
                     <select

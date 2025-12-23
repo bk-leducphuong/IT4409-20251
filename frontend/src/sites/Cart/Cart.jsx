@@ -47,7 +47,7 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
           <div>{productName}</div>
         </div>
       </td>
-      <td>{`$${newPrice}`}</td>
+      <td>{`${newPrice}đ`}</td>
       <td>
         <input
           type="number"
@@ -60,7 +60,7 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
           className={styles.numberInput}
         />
       </td>
-      <td>{`$${subtotal}`}</td>
+      <td>{`${subtotal}đ`}</td>
     </tr>
   );
 }
@@ -202,15 +202,15 @@ function Cart() {
               <div className={styles.header}>Cart Total</div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Subtotal:</div>
-                <div>{`$${subTotal}`}</div>
+                <div>{`${subTotal}đ`}</div>
               </div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Shipping:</div>
-                <div>{`$${shippingFee}`}</div>
+                <div>{`${shippingFee}đ`}</div>
               </div>
               <div className={styles.detail}>
                 <div>Total:</div>
-                <div>{`$${total}`}</div>
+                <div>{`${total}đ`}</div>
               </div>
               <Button
                 onClick={(e) => {

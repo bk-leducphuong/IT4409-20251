@@ -5,6 +5,10 @@ export const getProducts = async (queryObject) => {
   return await apiFetch(`/products?${param}`, { method: 'GET' });
 };
 
+export const getTrendingProducts = async (number = 20) => {
+  return await apiFetch(`/products/trending?limit=${number}`, { method: 'GET' });
+};
+
 export const getProductBySlug = async (slug) => {
   if (!slug) throw new Error('All feilds are required!');
 
