@@ -103,6 +103,9 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-5242880}
       ALLOWED_FILE_TYPES: ${ALLOWED_FILE_TYPES:-image/jpeg,image/png,image/webp}
+      ENABLE_TRENDING_CRON: ${ENABLE_TRENDING_CRON:-true}
+      TRENDING_CRON_EXPRESSION: ${TRENDING_CRON_EXPRESSION:-*/15 * * * *}
+      ENABLE_BANKING_CRON: ${ENABLE_BANKING_CRON:-true}
     volumes:
       - ./uploads:/app/uploads
     networks:
