@@ -21,12 +21,11 @@ const calculateShippingFee = (subtotal) => {
 
 // Create order from cart (checkout)
 export const createOrderFromCart = async (userId, orderData) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const { shipping_address, payment_method, customer_note } = orderData;
-    let qrDataUrl = null;
+  const { shipping_address, payment_method, customer_note } = orderData;
+  let qrDataUrl = null;
+  const stockRestored = []; // Track stock changes for rollback
 
+  try {
     // Validate shipping address
     if (
       !shipping_address ||
@@ -37,13 +36,11 @@ export const createOrderFromCart = async (userId, orderData) => {
       throw new Error('Vui lòng cung cấp đầy đủ thông tin giao hàng');
     }
 
-    // Load cart with session
-    const cart = await Cart.findOne({ user_id: userId })
-      .populate({
-        path: 'items.product_variant_id',
-        populate: { path: 'product_id' },
-      })
-      .session(session);
+    // Load cart
+    const cart = await Cart.findOne({ user_id: userId }).populate({
+      path: 'items.product_variant_id',
+      populate: { path: 'product_id' },
+    });
 
     if (!cart || cart.items.length === 0) {
       throw new Error('Giỏ hàng trống');
@@ -57,16 +54,25 @@ export const createOrderFromCart = async (userId, orderData) => {
       const variantId = cartItem.product_variant_id._id;
       const needQty = cartItem.quantity;
 
-      // Atomically decrement stock
+      // Atomically decrement stock (without transaction)
       const updated = await ProductVariant.findOneAndUpdate(
         { _id: variantId, stock_quantity: { $gte: needQty } },
         { $inc: { stock_quantity: -needQty } },
-        { new: true, session },
+        { new: true },
       ).populate('product_id');
 
       if (!updated) {
+        // Rollback any stock changes we've made so far
+        for (const restore of stockRestored) {
+          await ProductVariant.findByIdAndUpdate(restore.variantId, {
+            $inc: { stock_quantity: restore.quantity },
+          });
+        }
         throw new Error(`Sản phẩm không đủ số lượng hoặc đã hết kho`);
       }
+
+      // Track for potential rollback
+      stockRestored.push({ variantId: updated._id, quantity: needQty });
 
       const product = updated.product_id;
       const itemSubtotal = updated.price * needQty;
@@ -153,7 +159,7 @@ export const createOrderFromCart = async (userId, orderData) => {
     if (shipping_address.postal_code) orderDoc.postal_code = shipping_address.postal_code;
     if (shipping_address.country) orderDoc.country = shipping_address.country;
 
-    await orderDoc.save({ session });
+    await orderDoc.save();
 
     // Generate QR for bank transfer
     if ((orderDoc.payment_method || '').toLowerCase() === 'bank_transfer') {
@@ -198,15 +204,12 @@ export const createOrderFromCart = async (userId, orderData) => {
         receipt_url: qrDataUrl || '',
       };
 
-      await orderDoc.save({ session });
+      await orderDoc.save();
     }
 
     // Clear cart
     cart.items = [];
-    await cart.save({ session });
-
-    await session.commitTransaction();
-    session.endSession();
+    await cart.save();
 
     // Populate order for return
     const populatedOrder = await Order.findById(orderDoc._id).populate(
@@ -216,8 +219,16 @@ export const createOrderFromCart = async (userId, orderData) => {
 
     return { order: populatedOrder, qr: qrDataUrl };
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    // Rollback stock changes on error
+    for (const restore of stockRestored) {
+      try {
+        await ProductVariant.findByIdAndUpdate(restore.variantId, {
+          $inc: { stock_quantity: restore.quantity },
+        });
+      } catch (rollbackError) {
+        console.error(`Failed to rollback stock for variant ${restore.variantId}:`, rollbackError);
+      }
+    }
     throw new Error(error.message || 'Không thể tạo đơn hàng');
   }
 };
