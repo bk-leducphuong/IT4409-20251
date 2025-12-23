@@ -46,13 +46,34 @@ export const createOrderFromCart = async (userId, orderData) => {
       throw new Error('Giỏ hàng trống');
     }
 
+    // Validate cart items before processing
+    const validItems = cart.items.filter((item) => {
+      const variantId = item.product_variant_id?._id || item.product_variant_id;
+      return variantId && item.quantity > 0;
+    });
+
+    if (validItems.length === 0) {
+      throw new Error('Giỏ hàng không có sản phẩm hợp lệ');
+    }
+
     // Prepare order items and reserve stock
     const orderItems = [];
     let subtotal = 0;
 
-    for (const cartItem of cart.items) {
-      const variantId = cartItem.product_variant_id._id;
+    for (const cartItem of validItems) {
+      // Handle both populated and unpopulated product_variant_id
+      const variantId = cartItem.product_variant_id?._id || cartItem.product_variant_id;
       const needQty = cartItem.quantity;
+
+      if (!variantId) {
+        // Rollback any stock changes we've made so far
+        for (const restore of stockRestored) {
+          await ProductVariant.findByIdAndUpdate(restore.variantId, {
+            $inc: { stock_quantity: restore.quantity },
+          });
+        }
+        throw new Error('Sản phẩm trong giỏ hàng không hợp lệ hoặc đã bị xóa');
+      }
 
       // Atomically decrement stock (without transaction)
       const updated = await ProductVariant.findOneAndUpdate(
@@ -75,13 +96,23 @@ export const createOrderFromCart = async (userId, orderData) => {
       stockRestored.push({ variantId: updated._id, quantity: needQty });
 
       const product = updated.product_id;
+      if (!product) {
+        // Rollback any stock changes we've made so far
+        for (const restore of stockRestored) {
+          await ProductVariant.findByIdAndUpdate(restore.variantId, {
+            $inc: { stock_quantity: restore.quantity },
+          });
+        }
+        throw new Error(`Sản phẩm không tồn tại hoặc đã bị xóa`);
+      }
+
       const itemSubtotal = updated.price * needQty;
       subtotal += itemSubtotal;
 
       orderItems.push({
         product_variant_id: updated._id,
-        product_name: product?.name || '',
-        product_slug: product?.slug || '',
+        product_name: product.name || '',
+        product_slug: product.slug || '',
         sku: updated.sku,
         image_url: updated.main_image_url,
         attributes: updated.attributes,
