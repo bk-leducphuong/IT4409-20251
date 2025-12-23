@@ -18,7 +18,7 @@ const calculateShippingFee = (subtotal) => {
 // Generate unique order number based on creation date
 const generateOrderNumber = (createdAt, index) => {
   const dateStr = createdAt.toISOString().slice(0, 10).replace(/-/g, '');
-  const orderNum = String(index + 1).padStart(5, '0');
+  const orderNum = Math.floor(10000 + Math.random() * 90000); // Only use for seeding
   return `ORD-${dateStr}-${orderNum}`;
 };
 
@@ -27,8 +27,8 @@ const seedOrders = async () => {
     await connectDB();
 
     // Clear existing orders
-    await Order.deleteMany({});
-    console.log('🗑️  Đã xóa dữ liệu orders cũ');
+    // await Order.deleteMany({});
+    // console.log('🗑️  Đã xóa dữ liệu orders cũ');
 
     // Get users (excluding admin)
     const users = await User.find({ role: { $ne: 'admin' } }).limit(15);
@@ -46,7 +46,8 @@ const seedOrders = async () => {
 
     const orders = [];
     const statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-    const paymentMethods = ['cod', 'credit_card', 'bank_transfer', 'momo', 'zalopay'];
+    // Must match enum in order model: ['cod', 'bank_transfer', 'momo', 'zalopay']
+    const paymentMethods = ['cod', 'bank_transfer', 'momo', 'zalopay'];
 
     // Create 30-50 orders
     const orderCount = faker.number.int({ min: 30, max: 50 });
@@ -125,6 +126,7 @@ const seedOrders = async () => {
       let cancelled_at = null;
       let tracking_number = null;
       let carrier = null;
+      let reserved_until = null;
 
       if (['processing', 'shipped', 'delivered'].includes(status)) {
         status_history.push({
@@ -176,12 +178,25 @@ const seedOrders = async () => {
         });
       }
 
+      // For bank_transfer and pending payments, set a reserved_until in near future
+      if (payment_method === 'bank_transfer' && payment_status === 'pending') {
+        const expireHours = faker.number.int({ min: 1, max: 48 });
+        reserved_until = new Date(createdAt.getTime() + expireHours * 60 * 60 * 1000);
+      }
+
       orders.push({
         user_id: user._id,
         items: orderItems,
         status,
         status_history,
         shipping_address,
+        // Root-level contact/address fields (required in schema)
+        phone: shipping_address.phone,
+        address_line: shipping_address.address_line,
+        city: shipping_address.city,
+        province: shipping_address.province,
+        postal_code: shipping_address.postal_code,
+        country: shipping_address.country,
         subtotal,
         tax,
         shipping_fee,
@@ -190,6 +205,7 @@ const seedOrders = async () => {
         payment_method,
         payment_status,
         paid_at,
+        reserved_until,
         tracking_number,
         carrier,
         shipped_at,
