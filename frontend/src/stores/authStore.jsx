@@ -32,14 +32,9 @@ export const useAuthStore = create((set) => ({
     }
   },
   logout: async () => {
-    set({ isLoading: true });
-    try {
-      await logout();
-      resetToken();
-      set({ token: null });
-    } finally {
-      set({ isLoading: false });
-    }
+    resetToken();
+    set({ token: null });
+    await logout();
   },
   sendOtp: async (email) => {
     set({ isLoading: true });

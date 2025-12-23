@@ -1,6 +1,6 @@
 import { getToken } from './storage';
 
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
   /* REQUEST INTERCEPTOR */

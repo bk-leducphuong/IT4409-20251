@@ -17,13 +17,13 @@ function Navbar() {
   const wishlistData = useWishlistStore((state) => state.data);
 
   async function componentLogout() {
+    resetUser();
+    navigate('/');
+    toast.success('Logged out successfully');
     try {
       await logout();
-      resetUser();
-      navigate('/');
-      toast.success('Logged out successfully');
     } catch (err) {
-      toast.error(err.message);
+      console.error(err);
     }
   }
 
@@ -52,17 +52,13 @@ function Navbar() {
               <button onClick={() => navigate('/about')}>About</button>
             </li>
 
-            <li
-              className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
-            >
-              <button
-                onClick={() =>
-                  userData ? toast.error('You have already logged in') : navigate('/login')
-                }
+            {!userData && (
+              <li
+                className={`${styles.li} ${window.location.pathname === '/login' ? styles.underline : ''}`}
               >
-                Sign Up
-              </button>
-            </li>
+                <button onClick={() => navigate('/login')}>Sign Up</button>
+              </li>
+            )}
           </ul>
         </div>
 
