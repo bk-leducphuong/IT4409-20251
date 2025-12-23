@@ -240,15 +240,15 @@ Now you can test any protected endpoint (marked with a lock icon 🔒)
 
 ### Required Environment Variables
 
-| Variable           | Description                | Example                            |
-| ------------------ | -------------------------- | ---------------------------------- |
-| `NODE_ENV`         | Environment mode           | `development` or `production`      |
-| `PORT`             | Server port                | `5000`                             |
-| `MONGODB_URI`      | MongoDB connection string  | `mongodb://localhost:27017/it4409` |
-| `JWT_SECRET`       | Secret key for JWT tokens  | `your_secret_key_here`             |
-| `JWT_EXPIRE`       | JWT token expiration time  | `7d` (7 days)                      |
-| `MEILI_HOST`       | Meilisearch server URL     | `http://localhost:7700`            |
-| `MEILI_MASTER_KEY` | Meilisearch master key     | `myMasterKey123`                   |
+| Variable           | Description               | Example                            |
+| ------------------ | ------------------------- | ---------------------------------- |
+| `NODE_ENV`         | Environment mode          | `development` or `production`      |
+| `PORT`             | Server port               | `5000`                             |
+| `MONGODB_URI`      | MongoDB connection string | `mongodb://localhost:27017/it4409` |
+| `JWT_SECRET`       | Secret key for JWT tokens | `your_secret_key_here`             |
+| `JWT_EXPIRE`       | JWT token expiration time | `7d` (7 days)                      |
+| `MEILI_HOST`       | Meilisearch server URL    | `http://localhost:7700`            |
+| `MEILI_MASTER_KEY` | Meilisearch master key    | `myMasterKey123`                   |
 
 ### MongoDB Connection Strings
 
@@ -342,6 +342,7 @@ http://localhost:5000/api
 - `GET /api/products/:slug` - Get product by slug
 
 **Search & Filters:**
+
 - `?search=laptop` - Full-text search with typo tolerance
 - `?category=electronics` - Filter by category slug
 - `?brand=Apple` - Filter by brand name
@@ -712,6 +713,7 @@ The backend includes a powerful search engine integration using Meilisearch:
 - 🔍 [Meilisearch Integration Guide](./docs/MEILISEARCH_INTEGRATION.md) - Complete setup and usage guide
 
 **Quick Start:**
+
 ```bash
 # Start Meilisearch
 cd meilisearch && docker-compose up -d

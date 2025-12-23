@@ -33,19 +33,36 @@ function CheckOut() {
   const [coupon, setCoupon] = useState('');
 
   const cart = useCartStore((state) => state.data);
+  const subTotal = useCartStore((state) => state.subTotal);
+  const shippingFee = useCartStore((state) => state.shippingFee);
+  const total = useCartStore((state) => state.total);
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
   const applyCoupon = useCartStore((state) => state.applyCoupon);
-  const total =
-    cart?.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0) ?? 0;
+  const removeCoupon = useCartStore((state) => state.removeCoupon);
 
   const createOrder = useOrderStore((state) => state.createOrder);
+  const [qr, setQr] = useState(null);
 
   const navigate = useNavigate();
 
   async function handleCreateOrder() {
     try {
-      await createOrder(fullName, phone, street, city, postalCode, country, paymentMethod, note);
-      toast.success('Order placed successfully');
-      navigate('/user');
+      const res = await createOrder(
+        fullName,
+        phone,
+        street,
+        city,
+        postalCode,
+        country,
+        paymentMethod,
+        note,
+      );
+      if (paymentMethod === 'bank_transfer' && res.data.order.qr) {
+        setQr(res.data.order.qr);
+      } else {
+        navigate('/user', { replace: true });
+        toast.success('Order placed successfully');
+      }
     } catch (error) {
       toast.error(error.message);
     }
@@ -117,14 +134,32 @@ function CheckOut() {
                 })}
             </div>
 
+            {appliedCoupon && (
+              <div className={`${styles.appliedCoupon} ${styles.width08}`}>
+                <strong>Applied Coupon: </strong>
+                <div className={styles.couponCode}>
+                  {appliedCoupon.code}
+                  <button
+                    onClick={() =>
+                      removeCoupon()
+                        .then(() => toast.success('Coupon removed'))
+                        .catch((err) => toast.error(err.message))
+                    }
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className={styles.width08}>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Subtotal:</div>
-                <div>{`$${total}`}</div>
+                <div>{`$${subTotal}`}</div>
               </div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Shipping:</div>
-                <div>Free</div>
+                <div>{`$${shippingFee}`}</div>
               </div>
               <div className={styles.detail}>
                 <div>Total:</div>
@@ -181,6 +216,22 @@ function CheckOut() {
           </section>
         </div>
       </div>
+
+      {qr && (
+        <div className={styles.qrContainer}>
+          <div>
+            <img src={qr} alt="QR Code" />
+            <Button
+              onClick={() => {
+                navigate('/user', { replace: true });
+                toast.success('Payment successfully');
+              }}
+            >
+              Check Payment Result
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>

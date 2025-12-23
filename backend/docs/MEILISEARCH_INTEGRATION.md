@@ -5,6 +5,7 @@ This document explains how Meilisearch is integrated into the backend for fast a
 ## Overview
 
 Meilisearch is a powerful, fast, open-source search engine that provides:
+
 - **Lightning-fast search** (queries in <50ms)
 - **Typo tolerance** (handles spelling mistakes)
 - **Faceted search** (filter by category, brand, price, etc.)
@@ -14,6 +15,7 @@ Meilisearch is a powerful, fast, open-source search engine that provides:
 ## Architecture
 
 The integration follows a dual-storage pattern:
+
 - **MongoDB**: Source of truth for all product data
 - **Meilisearch**: Optimized search index, automatically synchronized
 
@@ -65,6 +67,7 @@ npm run sync:meilisearch
 ```
 
 This will:
+
 1. Configure the Meilisearch index with appropriate settings
 2. Sync all existing products from MongoDB to Meilisearch
 
@@ -141,6 +144,7 @@ Each product in the Meilisearch index contains:
 **Endpoint**: `GET /api/products`
 
 **Query Parameters**:
+
 - `search` (string): Search query (triggers Meilisearch)
 - `category` (string): Filter by category slug
 - `brand` (string): Filter by brand name
@@ -149,6 +153,7 @@ Each product in the Meilisearch index contains:
 - `limit` (number): Items per page (default: 20)
 
 **Example**:
+
 ```bash
 # Search for "laptop"
 GET /api/products?search=laptop
@@ -161,6 +166,7 @@ GET /api/products?brand=Apple&sort_by=price_asc
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -186,6 +192,7 @@ GET /api/products?brand=Apple&sort_by=price_asc
 Manually trigger a full synchronization of all products.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -210,6 +217,7 @@ Reconfigure the Meilisearch index settings.
 Get statistics about the Meilisearch index.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -238,6 +246,7 @@ npm run sync:meilisearch
 ```
 
 This is useful when:
+
 - First setting up Meilisearch
 - After bulk data imports
 - After index configuration changes
@@ -248,24 +257,28 @@ This is useful when:
 ### Typo Tolerance
 
 Meilisearch automatically handles typos:
+
 - "lapto" → finds "laptop"
 - "aple" → finds "apple"
 
 ### Prefix Search
 
 Partial words work out of the box:
+
 - "lap" → finds "laptop"
 - "pho" → finds "phone"
 
 ### Multi-word Search
 
 Searches across all searchable fields:
+
 - "apple laptop" → finds "Apple MacBook Pro"
 - "red nike shoes" → finds Nike shoes with "red" in description
 
 ### Faceted Filtering
 
 Combine search with filters:
+
 ```bash
 GET /api/products?search=laptop&category=electronics&brand=Dell&sort_by=price_asc
 ```
@@ -317,7 +330,7 @@ docker-compose up -d  # Start if not running
 
 1. Check Meilisearch logs: `docker-compose logs -f meilisearch`
 2. Verify index configuration
-3. Try clearing and resyncing: 
+3. Try clearing and resyncing:
    ```bash
    curl -X DELETE http://localhost:5001/api/admin/meilisearch/clear
    npm run sync:meilisearch

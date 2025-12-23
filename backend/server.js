@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { setSocketIO } from './utils/socketHelper.js';
 import cors from 'cors';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
@@ -58,21 +61,76 @@ import adminOrderRoutes from './routes/admin.order.route.js';
 import adminDashboardRoutes from './routes/admin.dashboard.route.js';
 import adminMeilisearchRoutes from './routes/admin.meilisearch.route.js';
 import reviewRoutes from './routes/review.route.js';
+import webHookRoutes from './routes/webhook.route.js';
+
+// 🆕 Import Cron Job
+import startBankingCronJobs from './jobs/bankingCron.js';
+import startTrendingProductsCron from './jobs/trendingProductsCron.js';
 import uploadRoutes from './routes/upload.route.js';
 import addressRoutes from './routes/address.route.js';
 
 const app = express();
+const httpServer = createServer(app); // 🆕 Tạo HTTP server
+
+// ============================================
+// 🆕 SOCKET.IO SETUP
+// ============================================
+export let io = null;
+
+if (process.env.ENABLE_SOCKET === 'true') {
+  io = new Server(httpServer, {
+    cors: {
+      origin: process.env.ADMIN_URL || '*',
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  });
+  setSocketIO(io);
+
+  // Socket.IO Connection Handler
+  io.on('connection', (socket) => {
+    console.log('✅ Admin connected:', socket.id);
+
+    // Tự động join room admin
+    socket.join('admin');
+
+    // Gửi stats khi kết nối
+    socket.emit('connection:success', {
+      message: 'Connected to server',
+      timestamp: new Date(),
+    });
+
+    socket.on('disconnect', () => {
+      console.log('❌ Admin disconnected:', socket.id);
+    });
+
+    socket.on('error', (error) => {
+      console.error('Socket error:', error);
+    });
+  });
+
+  console.log('🔌 Socket.IO enabled');
+}
 
 // Kết nối Database
 connectDB();
 
-// Middleware
+// ============================================
+// MIDDLEWARE
+// ============================================
+// Webhook route
+app.use('/api/webhooks', webHookRoutes);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 // Logger
 app.use(pinoHttp({ logger }));
 
+// ============================================
+// ROUTES
+// ============================================
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -102,10 +160,36 @@ app.use('/api/admin', adminOrderRoutes);
 app.use('/api/admin', adminDashboardRoutes);
 app.use('/api/admin', adminMeilisearchRoutes);
 
+// ============================================
+// 🆕 CRON JOBS
+// ============================================
+if (process.env.ENABLE_BANKING_CRON === 'true') {
+  startBankingCronJobs();
+  console.log('⏰ Banking cron jobs enabled');
+}
+
+if (process.env.ENABLE_TRENDING_CRON === 'true') {
+  startTrendingProductsCron();
+  console.log('⏰ Trending products cron enabled');
+}
+
+// ============================================
+// START SERVER
+// ============================================
 const PORT = process.env.PORT || 5001;
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
-  console.log(`API Docs available at http://localhost:${PORT}/api-docs`);
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log('='.repeat(50));
+  console.log(`✅ Server listening on 0.0.0.0:${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+  console.log(`📡 Webhook: http://localhost:${PORT}/api/webhooks/banking/mb`);
+
+  if (io) console.log(`🔌 Socket.IO: Enabled`);
+  if (process.env.ENABLE_BANKING_CRON === 'true') {
+    console.log(`⏰ Cron Jobs: Enabled`);
+  }
+
+  console.log('='.repeat(50));
 });
+
+export default app;

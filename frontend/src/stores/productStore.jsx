@@ -1,5 +1,13 @@
 import { create } from 'zustand';
-import { getProductBySlug, getProducts } from '../services/productServices';
+import {
+  getProductBySlug,
+  getProducts,
+  getReviews,
+  createReview,
+  updateReview,
+  deleteReview,
+  toggleHeplful,
+} from '../services/productServices';
 
 export const useProductStore = create((set) => ({
   isLoading: false,
@@ -15,6 +23,46 @@ export const useProductStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await getProductBySlug(slug);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  getReviews: async (slug, queryObject) => {
+    set({ isLoading: true });
+    try {
+      return await getReviews(slug, queryObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  createReview: async (slug, rating, title, comment, images = []) => {
+    set({ isLoading: true });
+    try {
+      return await createReview(slug, rating, title, comment, images);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateReview: async (id, rating, title, comment, images = []) => {
+    set({ isLoading: true });
+    try {
+      return await updateReview(id, rating, title, comment, images);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  deleteReview: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await deleteReview(id);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  toggleHelpful: async (id) => {
+    set({ isLoading: true });
+    try {
+      return await toggleHeplful(id);
     } finally {
       set({ isLoading: false });
     }

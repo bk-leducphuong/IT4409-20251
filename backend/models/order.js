@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
 
+const orderCounterSchema = new mongoose.Schema({
+  date: { type: String, required: true, unique: true }, // YYYYMMDD
+  seq: { type: Number, default: 0 },
+});
+const OrderCounter = mongoose.model('OrderCounter', orderCounterSchema, 'order_counters');
+
 // Order Item Schema - stores snapshot of product at time of order
 const orderItemSchema = new mongoose.Schema(
   {
@@ -173,17 +179,54 @@ const orderSchema = new mongoose.Schema(
     },
 
     // Payment information
+    phone: {
+      type: String,
+      required: true,
+    },
+    address_line: {
+      type: String,
+      required: true,
+    },
+    city: String,
+    province: String,
+    postal_code: String,
+    country: {
+      type: String,
+      default: 'Vietnam',
+    },
+
     payment_method: {
       type: String,
-      enum: ['cod', 'credit_card', 'bank_transfer', 'momo', 'zalopay'],
+      enum: ['cod', 'bank_transfer', 'momo', 'zalopay'],
       default: 'cod',
     },
+
     payment_status: {
       type: String,
-      enum: ['pending', 'paid', 'failed', 'refunded'],
+      enum: ['pending', 'paid', 'failed', 'refunded', 'expired'],
       default: 'pending',
     },
     paid_at: Date,
+
+    // 🆕 Bank transfer information
+    bank_transfer: {
+      bank_name: String,
+      account_name: String,
+      account_number: String,
+      amount: Number,
+      transfer_date: Date,
+      reference: String,
+      receipt_url: String,
+      transaction_id: String, // Mã giao dịch từ bank
+      paid_at: Date, // Thời gian thanh toán
+      paid_amount: Number, // Số tiền thực tế nhận
+      bank_code: String, // Mã ngân hàng (VD: MB, VCB)
+    },
+
+    // 🆕 Thời hạn thanh toán cho bank_transfer
+    reserved_until: {
+      type: Date,
+    },
 
     // Shipping tracking
     tracking_number: String,
@@ -205,48 +248,64 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Indexes for faster queries
-orderSchema.index({ user_id: 1, createdAt: -1 });
-orderSchema.index({ order_number: 1 });
-orderSchema.index({ status: 1 });
-orderSchema.index({ createdAt: -1 });
+orderSchema.index({
+  user_id: 1,
+  createdAt: -1,
+});
+orderSchema.index({
+  order_number: 1,
+});
+orderSchema.index({
+  status: 1,
+});
+orderSchema.index({
+  createdAt: -1,
+});
+// 🆕 Index cho auto payment confirmation
+orderSchema.index({
+  payment_method: 1,
+  payment_status: 1,
+  reserved_until: 1,
+});
+orderSchema.index({
+  'bank_transfer.reference': 1,
+});
 
 // Generate order number before saving
 orderSchema.pre('save', async function (next) {
-  if (this.isNew && !this.order_number) {
-    const now = new Date();
-    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+  try {
+    if (this.isNew && !this.order_number) {
+      const now = new Date();
 
-    // Get start and end of today
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
+      // Use UTC to avoid timezone bugs
+      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
 
-    const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
+      // Atomic increment (NO race condition)
+      const counter = await OrderCounter.findOneAndUpdate(
+        { date: dateStr },
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true },
+      );
 
-    // Count orders created today
-    const count = await mongoose.model('Order').countDocuments({
-      createdAt: {
-        $gte: startOfDay,
-        $lt: endOfDay,
-      },
-    });
+      const orderNum = String(counter.seq).padStart(5, '0');
+      this.order_number = `ORD-${dateStr}-${orderNum}`;
+    }
 
-    const orderNum = String(count + 1).padStart(5, '0');
-    this.order_number = `ORD-${dateStr}-${orderNum}`;
+    // Initialize status history
+    if (this.isNew && (!this.status_history || this.status_history.length === 0)) {
+      this.status_history = [
+        {
+          status: this.status,
+          changed_at: new Date(),
+          note: 'Order created',
+        },
+      ];
+    }
+
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  // Initialize status history if not exists
-  if (this.isNew && (!this.status_history || this.status_history.length === 0)) {
-    this.status_history = [
-      {
-        status: this.status,
-        changed_at: new Date(),
-        note: 'Order created',
-      },
-    ];
-  }
-
-  next();
 });
 
 // Method to update status with history tracking
@@ -276,6 +335,12 @@ orderSchema.virtual('can_cancel').get(function () {
 // Virtual for checking if order is modifiable
 orderSchema.virtual('is_modifiable').get(function () {
   return ['pending'].includes(this.status);
+});
+
+// 🆕 Virtual for checking if payment is expired
+orderSchema.virtual('is_payment_expired').get(function () {
+  if (!this.reserved_until) return false;
+  return this.payment_status === 'pending' && new Date() > this.reserved_until;
 });
 
 const Order = mongoose.model('Order', orderSchema, 'orders');

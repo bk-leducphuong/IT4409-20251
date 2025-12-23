@@ -38,3 +38,7 @@ export const applyCoupon = async (code) => {
     body: JSON.stringify({ code }),
   });
 };
+
+export const removeCoupon = async () => {
+  return await apiFetch('/cart/remove-coupon', { method: 'DELETE' });
+};
