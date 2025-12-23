@@ -15,7 +15,7 @@ function CheckOutItem({ image, productName, totalPrice }) {
         <img src={image} alt="Product" />
         <div>{productName || 'Product Name'}</div>
       </div>
-      <div>{`$${totalPrice || 0}`}</div>
+      <div>{`${totalPrice || 0}đ`}</div>
     </div>
   );
 }
@@ -155,15 +155,15 @@ function CheckOut() {
             <div className={styles.width08}>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Subtotal:</div>
-                <div>{`$${subTotal}`}</div>
+                <div>{`${subTotal}đ`}</div>
               </div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Shipping:</div>
-                <div>{`$${shippingFee}`}</div>
+                <div>{`${shippingFee}đ`}</div>
               </div>
               <div className={styles.detail}>
                 <div>Total:</div>
-                <div>{`$${total}`}</div>
+                <div>{`${total}đ`}</div>
               </div>
             </div>
 

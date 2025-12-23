@@ -109,7 +109,7 @@ function Home() {
         </Shelf>
       )}
 
-      {firstCategoryItems && (
+      {firstCategoryItems && firstCategoryItems.length > 0 && (
         <Shelf
           topic={categories?.[0]?.name || "Today's"}
           strong={categories?.[0]?.name || 'Flash Sales'}
@@ -162,7 +162,7 @@ function Home() {
           ))}
       </Shelf>
 
-      {secondCategoryItems && (
+      {secondCategoryItems && secondCategoryItems.length > 0 && (
         <Shelf
           topic={categories?.[1]?.name || 'This Month'}
           strong={categories?.[1]?.name || 'Best Selling Products'}
@@ -200,7 +200,7 @@ function Home() {
         </Shelf>
       )}
 
-      {thirdCategoryItems && (
+      {thirdCategoryItems && thirdCategoryItems.length > 0 && (
         <Shelf
           topic={categories?.[2]?.name || 'Our Products'}
           strong={categories?.[2]?.name || 'Explore Our Products'}

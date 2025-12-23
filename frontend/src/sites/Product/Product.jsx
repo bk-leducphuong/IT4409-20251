@@ -118,7 +118,7 @@ function Product() {
               ))}
             </div>
           )}
-          <div className={styles.price}>{`$${selectedVariant?.price}`}</div>
+          <div className={styles.price}>{`${selectedVariant?.price}đ`}</div>
           <p>{product?.description}</p>
           <hr />
 

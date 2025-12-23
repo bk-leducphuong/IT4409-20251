@@ -33,12 +33,12 @@ function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, add
         {/* PRICES */}
         {(newPrice != null || oldPrice != null) && (
           <div>
-            {newPrice != null && <span className={styles.newPrice}>{`$${newPrice}`}</span>}
+            {newPrice != null && <span className={styles.newPrice}>{`${newPrice}đ`}</span>}
             {oldPrice != null && newPrice != null && (
-              <span className={styles.oldPrice}>{`$${oldPrice}`}</span>
+              <span className={styles.oldPrice}>{`${oldPrice}đ`}</span>
             )}
             {oldPrice != null && newPrice == null && (
-              <span className={styles.oldPrice}>{`$${oldPrice}`}</span>
+              <span className={styles.oldPrice}>{`${oldPrice}đ`}</span>
             )}
           </div>
         )}

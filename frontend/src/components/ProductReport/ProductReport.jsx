@@ -69,10 +69,10 @@ function ProductVariant({ selectingProduct, cancel }) {
                 </td>
                 <td>
                   <div>
-                    {`$${variant.price}`}
+                    {`${variant.price}đ`}
                     <br />
                     {variant.original_price ? (
-                      <span className={styles.grey}>{`$${variant.original_price}`}</span>
+                      <span className={styles.grey}>{`${variant.original_price}đ`}</span>
                     ) : (
                       ''
                     )}

@@ -239,7 +239,7 @@ function UsersReport() {
                   <tr key={user._id}>
                     <td>
                       <div className={styles.avatar}>
-                        <div>{user.fullName.slice(0, 2)}</div>
+                        <div>{user.fullName?.slice(0, 2)}</div>
                         <span>
                           <div className={styles.name}>{user.fullName}</div>
                           <div className={styles.email}>{user.email}</div>

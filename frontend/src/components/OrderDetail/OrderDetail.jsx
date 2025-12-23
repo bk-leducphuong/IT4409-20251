@@ -66,9 +66,9 @@ function Order({ order, done, refresh }) {
                           </div>
                         </div>
                       </td>
-                      <td>{`$${item.unit_price}`}</td>
+                      <td>{`${item.unit_price}đ`}</td>
                       <td>{item.quantity}</td>
-                      <td>{`$${item.subtotal}`}</td>
+                      <td>{`${item.subtotal}đ`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -86,11 +86,11 @@ function Order({ order, done, refresh }) {
                   <div>Customer Note: {order.customer_note}</div>
                 </div>
                 <div>
-                  <div>Subtotal: {`$${order.subtotal}`}</div>
-                  <div>Tax: {`$${order.tax}`}</div>
-                  <div>Shipping: {`$${order.shipping_fee}`}</div>
-                  <div>Discount: {`$${order.discount}`}</div>
-                  <div>Total: {`$${order.total}`}</div>
+                  <div>Subtotal: {`${order.subtotal}đ`}</div>
+                  <div>Tax: {`${order.tax}đ`}</div>
+                  <div>Shipping: {`${order.shipping_fee}đ`}</div>
+                  <div>Discount: {`${order.discount}đ`}</div>
+                  <div>Total: {`${order.total}đ`}</div>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ function OrderDetail() {
             {orders.map((order) => (
               <tr key={order._id}>
                 <td>{order.order_number}</td>
-                <td>{`$${order.total}`}</td>
+                <td>{`${order.total}đ`}</td>
                 <td>{order.status}</td>
                 <td>
                   <button onClick={() => setSelectingOrder(order)}>
