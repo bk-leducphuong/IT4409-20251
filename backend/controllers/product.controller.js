@@ -1,4 +1,5 @@
 import productService from '../services/product.service.js';
+import trendingService from '../services/trending.service.js';
 
 // GET /api/products - Lấy danh sách sản phẩm với filters và pagination
 export const getProducts = async (req, res) => {
@@ -11,6 +12,23 @@ export const getProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getTrendingProducts = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20;
+    const trending = await trendingService.getTrendingProducts(limit);
+
+    res.status(200).json({
+      success: true,
+      data: trending,
     });
   } catch (error) {
     res.status(500).json({
@@ -48,5 +66,6 @@ export const getProductBySlug = async (req, res) => {
 
 export default {
   getProducts,
+  getTrendingProducts,
   getProductBySlug,
 };

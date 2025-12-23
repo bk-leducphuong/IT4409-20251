@@ -156,6 +156,25 @@ router.get('/', productController.getProducts);
 
 /**
  * @swagger
+ * /api/products/trending:
+ *   get:
+ *     summary: Get trending products calculated from recent sales
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *         description: Number of items to return
+ *     responses:
+ *       200:
+ *         description: Trending products with scores
+ */
+router.get('/trending', productController.getTrendingProducts);
+
+/**
+ * @swagger
  * /api/products/{slug}:
  *   get:
  *     summary: Get product details by slug (including all variants)
