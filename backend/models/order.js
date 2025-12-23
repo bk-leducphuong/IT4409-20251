@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
 
+const orderCounterSchema = new mongoose.Schema({
+  date: { type: String, required: true, unique: true }, // YYYYMMDD
+  seq: { type: Number, default: 0 },
+});
+const OrderCounter = mongoose.model('OrderCounter', orderCounterSchema, 'order_counters');
+
 // Order Item Schema - stores snapshot of product at time of order
 const orderItemSchema = new mongoose.Schema(
   {
@@ -267,41 +273,39 @@ orderSchema.index({
 
 // Generate order number before saving
 orderSchema.pre('save', async function (next) {
-  if (this.isNew && !this.order_number) {
-    const now = new Date();
-    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+  try {
+    if (this.isNew && !this.order_number) {
+      const now = new Date();
 
-    // Get start and end of today
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
+      // Use UTC to avoid timezone bugs
+      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
 
-    const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
+      // Atomic increment (NO race condition)
+      const counter = await OrderCounter.findOneAndUpdate(
+        { date: dateStr },
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true },
+      );
 
-    // Count orders created today
-    const count = await mongoose.model('Order').countDocuments({
-      createdAt: {
-        $gte: startOfDay,
-        $lt: endOfDay,
-      },
-    });
+      const orderNum = String(counter.seq).padStart(5, '0');
+      this.order_number = `ORD-${dateStr}-${orderNum}`;
+    }
 
-    const orderNum = String(count + 1).padStart(5, '0');
-    this.order_number = `ORD-${dateStr}-${orderNum}`;
+    // Initialize status history
+    if (this.isNew && (!this.status_history || this.status_history.length === 0)) {
+      this.status_history = [
+        {
+          status: this.status,
+          changed_at: new Date(),
+          note: 'Order created',
+        },
+      ];
+    }
+
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  // Initialize status history if not exists
-  if (this.isNew && (!this.status_history || this.status_history.length === 0)) {
-    this.status_history = [
-      {
-        status: this.status,
-        changed_at: new Date(),
-        note: 'Order created',
-      },
-    ];
-  }
-
-  next();
 });
 
 // Method to update status with history tracking

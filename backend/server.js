@@ -65,6 +65,7 @@ import webHookRoutes from './routes/webhook.route.js';
 
 // 🆕 Import Cron Job
 import startBankingCronJobs from './jobs/bankingCron.js';
+import startTrendingProductsCron from './jobs/trendingProductsCron.js';
 import uploadRoutes from './routes/upload.route.js';
 import addressRoutes from './routes/address.route.js';
 
@@ -165,6 +166,11 @@ app.use('/api/admin', adminMeilisearchRoutes);
 if (process.env.ENABLE_BANKING_CRON === 'true') {
   startBankingCronJobs();
   console.log('⏰ Banking cron jobs enabled');
+}
+
+if (process.env.ENABLE_TRENDING_CRON === 'true') {
+  startTrendingProductsCron();
+  console.log('⏰ Trending products cron enabled');
 }
 
 // ============================================
