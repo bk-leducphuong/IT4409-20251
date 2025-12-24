@@ -154,8 +154,11 @@ function Dashboard() {
 
         <div className={styles.grid}>
           <div>
-            <div>Total Revenue: {`${statistic?.revenue.total}đ`}</div>
-            <p>Average Order Value: {`${statistic?.revenue.average_order_value}đ`}</p>
+            <div>Total Revenue: {`${statistic?.revenue.total.toLocaleString('vi-VN')}đ`}</div>
+            <p>
+              Average Order Value:{' '}
+              {`${statistic?.revenue.average_order_value.toLocaleString('vi-VN')}đ`}
+            </p>
           </div>
           <div>
             <div>Total Orders: {statistic?.orders.total}</div>
@@ -194,12 +197,12 @@ function Dashboard() {
 
         <div className={styles.grid}>
           <div>
-            <div>Total Sales: {`${sales?.summary.total_sales}đ`}</div>
+            <div>Total Sales: {`${sales?.summary.total_sales.toLocaleString('vi-VN')}đ`}</div>
             <p>Items sold: {sales?.summary.total_items_sold}</p>
           </div>
           <div>
             <div>Total Orders: {sales?.summary.total_orders}</div>
-            <p>Average: {`${sales?.summary.average_order_value}đ`}</p>
+            <p>Average: {`${sales?.summary.average_order_value.toLocaleString('vi-VN')}đ`}</p>
           </div>
         </div>
       </section>
@@ -247,7 +250,7 @@ function Dashboard() {
                 </div>
                 {sortBy === 'revenue' ? (
                   <div>
-                    Revenue: {`${product.total_revenue}đ`}
+                    Revenue: {`${product.total_revenue.toLocaleString('vi-VN')}đ`}
                     <br />
                     <p>Quantity: {product.total_quantity_sold}</p>
                   </div>
@@ -255,7 +258,7 @@ function Dashboard() {
                   <div>
                     Quantity: {product.total_quantity_sold}
                     <br />
-                    <p>Revenue: {`${product.total_revenue}đ`}</p>
+                    <p>Revenue: {`${product.total_revenue.toLocaleString('vi-VN')}đ`}</p>
                   </div>
                 )}
               </div>
@@ -278,7 +281,7 @@ function Dashboard() {
                 </div>
                 {sortBy === 'revenue' ? (
                   <div>
-                    Revenue: {`${variant.total_revenue}đ`}
+                    Revenue: {`${variant.total_revenue.toLocaleString('vi-VN')}đ`}
                     <br />
                     <p>Quantity: {variant.total_quantity_sold}</p>
                   </div>
@@ -286,7 +289,7 @@ function Dashboard() {
                   <div>
                     Quantity: {variant.total_quantity_sold}
                     <br />
-                    <p>Revenue: {`${variant.total_revenue}đ`}</p>
+                    <p>Revenue: {`${variant.total_revenue.toLocaleString('vi-VN')}đ`}</p>
                   </div>
                 )}
               </div>
@@ -336,7 +339,11 @@ function Dashboard() {
               {meiliStats.fieldDistribution &&
                 Object.entries(meiliStats.fieldDistribution).map(([key, value]) => (
                   <div key={key}>
-                    {key} : {value}
+                    {key
+                      .split('_')
+                      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(' ')}
+                    : {value}
                   </div>
                 ))}
             </div>

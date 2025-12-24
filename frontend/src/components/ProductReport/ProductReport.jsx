@@ -69,10 +69,12 @@ function ProductVariant({ selectingProduct, cancel }) {
                 </td>
                 <td>
                   <div>
-                    {`${variant.price}đ`}
+                    {`${variant.price.toLocaleString('vi-VN')}đ`}
                     <br />
                     {variant.original_price ? (
-                      <span className={styles.grey}>{`${variant.original_price}đ`}</span>
+                      <span
+                        className={styles.grey}
+                      >{`${variant.original_price.toLocaleString('vi-VN')}đ`}</span>
                     ) : (
                       ''
                     )}
@@ -539,10 +541,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, category_id: e.target.value });
                 }}
               >
-                {brands &&
-                  brands.map((brand) => (
-                    <option key={brand._id} value={brand._id}>
-                      {brand.name}
+                {categories &&
+                  categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
                     </option>
                   ))}
               </select>
@@ -554,10 +556,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, brand_id: e.target.value });
                 }}
               >
-                {categories &&
-                  categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
+                {brands &&
+                  brands.map((brand) => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name}
                     </option>
                   ))}
               </select>
