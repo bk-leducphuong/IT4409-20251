@@ -73,14 +73,14 @@ function SignUpForm({ toggleState = () => console.log('button clicked') }) {
           Create Account
         </button>
       </form>
-      <button className={styles.googleButton}>
+      {/* <button className={styles.googleButton}>
         <img
           src="https://www.svgrepo.com/show/355037/google.svg"
           alt="Google logo"
           className={styles.googleImage}
         />
         Sign up with Google
-      </button>
+      </button> */}
       <div className={styles.formFooter}>
         Already have account?{' '}
         <button

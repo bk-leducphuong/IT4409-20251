@@ -151,6 +151,22 @@
   color: grey;
 }
 
+.green {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.red {
+  background-color: #fdecea;
+  color: #b71c1c;
+}
+
+.green,
+.red {
+  padding: 0.5rem 1.5ch;
+  border-radius: 3rem;
+}
+
 .buttonsContainer {
   display: flex;
   justify-content: center;

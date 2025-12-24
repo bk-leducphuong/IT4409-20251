@@ -4,7 +4,6 @@ import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Services from '../../components/Services/Services';
 import Footer from '../../components/Footer/Footer';
-import { useBrandStore } from '../../stores/brandStore';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
@@ -85,10 +84,14 @@ function Home() {
         </nav>
 
         <div>
-          <img
-            src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
-            alt="decoration"
-          />
+          <button
+            onClick={() => navigate('/product/iphone-17-pro-max-1tb-chinh-hang-mobile-apple')}
+          >
+            <img
+              src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
+              alt="decoration"
+            />
+          </button>
         </div>
       </header>
 

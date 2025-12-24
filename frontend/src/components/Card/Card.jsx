@@ -33,12 +33,14 @@ function Card({ image, oldPrice, newPrice, productName, rating, iconButtons, add
         {/* PRICES */}
         {(newPrice != null || oldPrice != null) && (
           <div>
-            {newPrice != null && <span className={styles.newPrice}>{`${newPrice}đ`}</span>}
+            {newPrice != null && (
+              <span className={styles.newPrice}>{`${newPrice.toLocaleString('vi-VN')}đ`}</span>
+            )}
             {oldPrice != null && newPrice != null && (
-              <span className={styles.oldPrice}>{`${oldPrice}đ`}</span>
+              <span className={styles.oldPrice}>{`${oldPrice.toLocaleString('vi-VN')}đ`}</span>
             )}
             {oldPrice != null && newPrice == null && (
-              <span className={styles.oldPrice}>{`${oldPrice}đ`}</span>
+              <span className={styles.oldPrice}>{`${oldPrice.toLocaleString('vi-VN')}đ`}</span>
             )}
           </div>
         )}

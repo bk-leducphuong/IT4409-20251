@@ -66,9 +66,9 @@ function Order({ order, done, refresh }) {
                           </div>
                         </div>
                       </td>
-                      <td>{`${item.unit_price}đ`}</td>
+                      <td>{`${item.unit_price.toLocaleString('vi-VN')}đ`}</td>
                       <td>{item.quantity}</td>
-                      <td>{`${item.subtotal}đ`}</td>
+                      <td>{`${item.subtotal.toLocaleString('vi-VN')}đ`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -86,11 +86,11 @@ function Order({ order, done, refresh }) {
                   <div>Customer Note: {order.customer_note}</div>
                 </div>
                 <div>
-                  <div>Subtotal: {`${order.subtotal}đ`}</div>
-                  <div>Tax: {`${order.tax}đ`}</div>
-                  <div>Shipping: {`${order.shipping_fee}đ`}</div>
-                  <div>Discount: {`${order.discount}đ`}</div>
-                  <div>Total: {`${order.total}đ`}</div>
+                  <div>Subtotal: {`${order.subtotal.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Tax: {`${order.tax.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Shipping: {`${order.shipping_fee.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Discount: {`${order.discount.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Total: {`${order.total.toLocaleString('vi-VN')}đ`}</div>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ function OrderDetail() {
             {orders.map((order) => (
               <tr key={order._id}>
                 <td>{order.order_number}</td>
-                <td>{`${order.total}đ`}</td>
+                <td>{`${order.total.toLocaleString('vi-VN')}đ`}</td>
                 <td>{order.status}</td>
                 <td>
                   <button onClick={() => setSelectingOrder(order)}>
