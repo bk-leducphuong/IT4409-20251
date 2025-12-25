@@ -14,7 +14,7 @@ env:
   GCP_VM_NAME: ${{ secrets.GCP_VM_NAME }}
   GCP_VM_ZONE: ${{ secrets.GCP_VM_ZONE }}
   SERVER_URL: ${{ vars.SERVER_URL }}
-  REPO_NAME: ${{ vars.REPO_NAME }}
+  REPO_PATH: ${{ vars.REPO_PATH }}
 
 jobs:
   deploy:
@@ -38,7 +38,7 @@ jobs:
       - name: Deploy to VM
         run: |
           gcloud compute ssh $GCP_VM_NAME --zone=$GCP_VM_ZONE --command "
-            cd ~/apps/$REPO_NAME/backend &&
+            cd $REPO_PATH/backend &&
             git fetch origin &&
             git reset --hard origin/master &&
             docker compose -f docker-compose.prod.yml build &&
