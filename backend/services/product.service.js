@@ -83,45 +83,127 @@ export const getProducts = async (filters) => {
       query.name = { $regex: search, $options: 'i' };
     }
 
-    // Sorting
-    let sort = {};
-    switch (sort_by) {
-      case 'price_asc':
-        sort = { 'variants.price': 1 };
-        break;
-      case 'price_desc':
-        sort = { 'variants.price': -1 };
-        break;
-      case 'newest':
-      default:
-        sort = { createdAt: -1 };
-        break;
-    }
-
     // Pagination
     const skip = (page - 1) * limit;
+    const limitNum = parseInt(limit);
 
-    // Get products
-    const products = await Product.find(query)
-      .populate('category_id', 'name slug')
-      .populate('brand_id', 'name logo_url')
-      .sort(sort)
-      .limit(parseInt(limit))
-      .skip(skip);
+    let products = [];
+    let total = 0;
+
+    // If sorting by price, use aggregation pipeline to join with variants
+    if (sort_by === 'price_asc' || sort_by === 'price_desc') {
+      // Build aggregation pipeline
+      const pipeline = [
+        // Match products based on filters
+        { $match: query },
+        // Lookup variants
+        {
+          $lookup: {
+            from: 'product_variants',
+            localField: '_id',
+            foreignField: 'product_id',
+            as: 'variants',
+          },
+        },
+        // Calculate minimum price from variants
+        {
+          $addFields: {
+            minPrice: {
+              $cond: {
+                if: { $gt: [{ $size: '$variants' }, 0] },
+                then: { $min: '$variants.price' },
+                else: Number.MAX_SAFE_INTEGER,
+              },
+            },
+          },
+        },
+        // Sort by minPrice
+        {
+          $sort: {
+            minPrice: sort_by === 'price_asc' ? 1 : -1,
+          },
+        },
+        // Remove temporary fields
+        {
+          $project: {
+            variants: 0,
+            minPrice: 0,
+          },
+        },
+        // Pagination
+        { $skip: skip },
+        { $limit: limitNum },
+      ];
+
+      // Execute aggregation
+      products = await Product.aggregate(pipeline);
+
+      // Get total count (for price sorting, we need to count after aggregation)
+      const countPipeline = [
+        { $match: query },
+        {
+          $lookup: {
+            from: 'product_variants',
+            localField: '_id',
+            foreignField: 'product_id',
+            as: 'variants',
+          },
+        },
+        {
+          $addFields: {
+            minPrice: {
+              $cond: {
+                if: { $gt: [{ $size: '$variants' }, 0] },
+                then: { $min: '$variants.price' },
+                else: Number.MAX_SAFE_INTEGER,
+              },
+            },
+          },
+        },
+      ];
+      const countResult = await Product.aggregate([...countPipeline, { $count: 'total' }]);
+      total = countResult.length > 0 ? countResult[0].total : 0;
+
+      // Populate category and brand for aggregated results
+      products = await Product.populate(products, [
+        { path: 'category_id', select: 'name slug' },
+        { path: 'brand_id', select: 'name logo_url' },
+      ]);
+    } else {
+      // For non-price sorting, use regular find query
+      let sort = {};
+      switch (sort_by) {
+        case 'newest':
+        default:
+          sort = { createdAt: -1 };
+          break;
+      }
+
+      // Get products
+      products = await Product.find(query)
+        .populate('category_id', 'name slug')
+        .populate('brand_id', 'name logo_url')
+        .sort(sort)
+        .limit(limitNum)
+        .skip(skip);
+
+      // Get total count
+      total = await Product.countDocuments(query);
+    }
 
     // Get variants for each product
     const productsWithVariants = await Promise.all(
       products.map(async (product) => {
-        const variants = await ProductVariant.find({ product_id: product._id });
+        // Handle both Mongoose documents and plain objects from aggregation
+        const productId = product._id || product.id;
+        const variants = await ProductVariant.find({ product_id: productId });
+        const productData = product.toJSON ? product.toJSON() : product;
         return {
-          ...product.toJSON(),
+          ...productData,
           variants,
         };
       }),
     );
-
-    // Get total count
-    const total = await Product.countDocuments(query);
 
     return {
       products: productsWithVariants,
