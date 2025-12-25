@@ -117,6 +117,7 @@
   border-radius: 5px;
   outline: none;
   width: clamp(250px, 50%, 500px);
+  width: 100%;
 }
 
 .table {
@@ -223,7 +224,6 @@
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  width: fit-content;
   gap: 0.5rem;
   justify-content: center;
   align-items: center;
@@ -237,7 +237,7 @@
   text-align: center;
 }
 
-.form > div:not(:last-child) {
+.form {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.5rem;
@@ -249,8 +249,15 @@
   border: 1px solid #edf2f7;
   border-radius: 5px;
   outline: none;
+  width: 100%;
 }
 
 .form textarea {
   height: 5rem;
+}
+
+.imageInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
