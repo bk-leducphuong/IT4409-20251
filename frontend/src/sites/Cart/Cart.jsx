@@ -47,7 +47,7 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
           <div>{productName}</div>
         </div>
       </td>
-      <td>{`$${newPrice}`}</td>
+      <td>{`${newPrice.toLocaleString('vi-VN')}đ`}</td>
       <td>
         <input
           type="number"
@@ -60,23 +60,26 @@ function CartItem({ id, image, productName, newPrice, quantity }) {
           className={styles.numberInput}
         />
       </td>
-      <td>{`$${subtotal}`}</td>
+      <td>{`${subtotal.toLocaleString('vi-VN')}đ`}</td>
     </tr>
   );
 }
 
 function Cart() {
   const cart = useCartStore((state) => state.data);
+  const appliedCoupon = useCartStore((state) => state.appliedCoupon);
   const loadCart = useCartStore((state) => state.loadCart);
   const clearCart = useCartStore((state) => state.clearCart);
 
   const [coupon, setCoupon] = useState('');
   const applyCoupon = useCartStore((state) => state.applyCoupon);
+  const removeCoupon = useCartStore((state) => state.removeCoupon);
 
   const navigate = useNavigate();
   const haveItem = cart && cart.length > 0;
-  const total =
-    cart?.reduce((sum, item) => sum + item.product_variant_id.price * item.quantity, 0) ?? 0;
+  const subTotal = useCartStore((state) => state.subTotal);
+  const shippingFee = useCartStore((state) => state.shippingFee);
+  const total = useCartStore((state) => state.total);
 
   useEffect(() => {
     loadCart();
@@ -158,37 +161,56 @@ function Cart() {
 
         {haveItem && (
           <div className={styles.checkout}>
-            <div className={styles.coupon}>
-              <input
-                type="text"
-                placeholder="Coupon code"
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-              />
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  applyCoupon(coupon)
-                    .then(() => toast.success('Coupon applied'))
-                    .catch((err) => toast.error(err.message));
-                }}
-              >
-                Apply Coupon
-              </Button>
+            <div>
+              <div className={styles.coupon}>
+                <input
+                  type="text"
+                  placeholder="Coupon code"
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value)}
+                />
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    applyCoupon(coupon)
+                      .then(() => toast.success('Coupon applied'))
+                      .catch((err) => toast.error(err.message));
+                  }}
+                >
+                  Apply Coupon
+                </Button>
+              </div>
+              {appliedCoupon && (
+                <div className={styles.appliedCoupon}>
+                  <strong>Applied Coupon: </strong>
+                  <div className={styles.couponCode}>
+                    {appliedCoupon.code}
+                    <button
+                      onClick={() =>
+                        removeCoupon()
+                          .then(() => toast.success('Coupon removed'))
+                          .catch((err) => toast.error(err.message))
+                      }
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className={styles.checkoutDetails}>
               <div className={styles.header}>Cart Total</div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Subtotal:</div>
-                <div>{`$${total}`}</div>
+                <div>{`${subTotal.toLocaleString('vi-VN')}đ`}</div>
               </div>
               <div className={`${styles.detail} ${styles.underline}`}>
                 <div>Shipping:</div>
-                <div>Free</div>
+                <div>{`${shippingFee.toLocaleString('vi-VN')}đ`}</div>
               </div>
               <div className={styles.detail}>
                 <div>Total:</div>
-                <div>{`$${total}`}</div>
+                <div>{`${total.toLocaleString('vi-VN')}đ`}</div>
               </div>
               <Button
                 onClick={(e) => {

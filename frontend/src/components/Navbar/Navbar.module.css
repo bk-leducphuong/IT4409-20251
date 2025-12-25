@@ -35,12 +35,17 @@
 
 .ul {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: clamp(300px, 35%, 450px);
+  gap: 2rem;
 }
 
 .li {
   list-style-type: none;
+}
+
+.li button {
+  white-space: nowrap;
 }
 
 .underline {

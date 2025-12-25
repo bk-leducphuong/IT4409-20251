@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useOrderStore } from '../../stores/orderStore';
 import styles from './OrderDetail.module.css';
@@ -6,6 +7,7 @@ import styles from './OrderDetail.module.css';
 function Order({ order, done, refresh }) {
   const cancelOrder = useOrderStore((state) => state.cancelOrder);
   const [reason, setReason] = useState(null);
+  const navigate = useNavigate();
 
   async function handleCancelOrder() {
     try {
@@ -64,9 +66,9 @@ function Order({ order, done, refresh }) {
                           </div>
                         </div>
                       </td>
-                      <td>{item.unit_price}</td>
+                      <td>{`${item.unit_price.toLocaleString('vi-VN')}đ`}</td>
                       <td>{item.quantity}</td>
-                      <td>{item.subtotal}</td>
+                      <td>{`${item.subtotal.toLocaleString('vi-VN')}đ`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -77,24 +79,31 @@ function Order({ order, done, refresh }) {
               <h2>Payment</h2>
               <div className={styles.paymentDetail}>
                 <div>
-                  <div>Method: {order.payment_method}</div>
+                  <div>
+                    Method: {order.payment_method === 'cod' ? 'Cash on delevery' : 'Bank transfer'}
+                  </div>
                   <div>Status: {order.status}</div>
                   <div>Customer Note: {order.customer_note}</div>
                 </div>
                 <div>
-                  <div>Subtotal: {`$${order.subtotal}`}</div>
-                  <div>Tax: {`$${order.tax}`}</div>
-                  <div>Shipping: {`$${order.shipping_fee}`}</div>
-                  <div>Discount: {`$${order.discount}`}</div>
-                  <div>Total: {`$${order.total}`}</div>
+                  <div>Subtotal: {`${order.subtotal.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Tax: {`${order.tax.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Shipping: {`${order.shipping_fee.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Discount: {`${order.discount.toLocaleString('vi-VN')}đ`}</div>
+                  <div>Total: {`${order.total.toLocaleString('vi-VN')}đ`}</div>
                 </div>
               </div>
             </div>
 
             <div className={styles.buttons}>
               <button onClick={done}>Done</button>
-              {order.status != 'cancelled' && (
+              {order.status === 'pending' && (
                 <button onClick={() => setReason('')}>Cancel Order</button>
+              )}
+              {order.status === 'delivered' && (
+                <button onClick={() => navigate('/review', { state: { products: order.items } })}>
+                  Give us feedback
+                </button>
               )}
             </div>
           </>
@@ -148,7 +157,7 @@ function OrderDetail() {
             {orders.map((order) => (
               <tr key={order._id}>
                 <td>{order.order_number}</td>
-                <td>{`$${order.total}`}</td>
+                <td>{`${order.total.toLocaleString('vi-VN')}đ`}</td>
                 <td>{order.status}</td>
                 <td>
                   <button onClick={() => setSelectingOrder(order)}>

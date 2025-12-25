@@ -1,12 +1,14 @@
 import About from './sites/About/About';
 import Admin from './sites/Admin/Admin';
-import Login from './sites/Login/Login';
 import Cart from './sites/Cart/Cart';
 import CheckOut from './sites/CheckOut/CheckOut';
 import Contact from './sites/Contact/Contact';
+import ForgotPassword from './sites/ForgotPassword/ForgotPassword';
 import Home from './sites/Home/Home';
+import Login from './sites/Login/Login';
 import NotFoundPage from './sites/NotFound/NotFound';
 import Product from './sites/Product/Product';
+import Review from './sites/Review/Review';
 import Searching from './sites/Searching/Searching';
 import User from './sites/User/User';
 import WistList from './sites/WistList/WistList';
@@ -39,9 +41,13 @@ function App() {
 
   if (dev)
     return (
-      <BrowserRouter>
-        <Dev></Dev>
-      </BrowserRouter>
+      <>
+        <BrowserRouter>
+          <Dev></Dev>
+        </BrowserRouter>
+        <Loading />
+        <Toaster />
+      </>
     );
 
   return (
@@ -51,12 +57,14 @@ function App() {
           <Route path="/" element={<Home />}></Route>
           <Route path="/about" element={<About />}></Route>
           <Route path="/contact" element={<Contact />}></Route>
+          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/product/:slug" element={<Product />}></Route>
           <Route path="/products" element={<Searching />}></Route>
           <Route element={<UserProtectedRoute />}>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/checkout" element={<CheckOut />}></Route>
+            <Route path="/review" element={<Review />}></Route>
             <Route path="/user" element={<User />}></Route>
             <Route path="/wistlist" element={<WistList />}></Route>
           </Route>

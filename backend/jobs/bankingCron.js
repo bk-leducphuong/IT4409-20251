@@ -15,15 +15,15 @@ async function fetchBankTransactions() {
       {
         accountNumber: process.env.BANK_ACCOUNT_NUMBER,
         fromDate: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 phút trước
-        toDate: new Date().toISOString()
+        toDate: new Date().toISOString(),
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.BANKING_API_TOKEN}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${process.env.BANKING_API_TOKEN}`,
+          'Content-Type': 'application/json',
         },
-        timeout: 60000
-      }
+        timeout: 60000,
+      },
     );
 
     return response.data.transactions || [];
@@ -42,7 +42,7 @@ async function processTransaction(transaction) {
     amount,
     description,
     creditDebit, // CREDIT = tiền vào, DEBIT = tiền ra
-    transactionDate
+    transactionDate,
   } = transaction;
 
   // Chỉ xử lý tiền vào
@@ -55,7 +55,7 @@ async function processTransaction(transaction) {
       amount,
       description,
       transactionDate,
-      bankCode: 'MB'
+      bankCode: 'MB',
     });
 
     if (result.success) {

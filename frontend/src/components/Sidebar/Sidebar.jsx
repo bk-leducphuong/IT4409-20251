@@ -11,13 +11,13 @@ function Sidebar({ setState }) {
   const userData = useUserStore((state) => state.data);
 
   async function handleLogout() {
+    resetUser();
+    navigate('/');
+    toast.success('Logged out successfully');
     try {
       await logout();
-      resetUser();
-      navigate('/');
-      toast.success('Logged out successfully');
     } catch (err) {
-      toast.error(err.message);
+      console.error(err);
     }
   }
 
@@ -39,6 +39,11 @@ function Sidebar({ setState }) {
           <li>
             <button onClick={() => setState('orders')}>
               <i className="fa-solid fa-basket-shopping"></i> Orders
+            </button>
+          </li>
+          <li>
+            <button onClick={() => setState('coupons')}>
+              <i className="fa-solid fa-tags"></i> Coupons
             </button>
           </li>
           <li>

@@ -12,7 +12,7 @@ import Story from '../components/Story/Story';
 import Statistic from '../components/Statistic/Statistic';
 import Founder from '../components/Founder/Founder';
 import Admin from './Admin/Admin';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function Dev() {
   const [isLoading, setLoading] = useState(true);
@@ -36,6 +36,57 @@ function Dev() {
       rating="4"
     />
   );
+
+  const [qr, setOr] = useState(null);
+
+  useEffect(() => {
+    fetch('qr.json')
+      .then((res) => res.json())
+      .then((data) => setOr(data.qr))
+      .catch(() => {});
+  }, []);
+
+  if (qr)
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.45)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1rem',
+          }}
+        >
+          {qr && (
+            <img
+              src={qr}
+              alt="QR Code"
+              style={{
+                aspectRatio: '1 / 1',
+                height: '50vh',
+              }}
+            />
+          )}
+          <Button>Check Payment Result</Button>
+        </div>
+      </div>
+    );
 
   return (
     <>

@@ -71,5 +71,5 @@ export default {
   getSocketIO,
   emitToAdmin,
   emitToUser,
-  broadcast
+  broadcast,
 };

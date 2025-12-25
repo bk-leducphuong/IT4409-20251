@@ -69,10 +69,12 @@ function ProductVariant({ selectingProduct, cancel }) {
                 </td>
                 <td>
                   <div>
-                    {`$${variant.price}`}
+                    {`${variant.price.toLocaleString('vi-VN')}đ`}
                     <br />
                     {variant.original_price ? (
-                      <span className={styles.grey}>{`$${variant.original_price}`}</span>
+                      <span
+                        className={styles.grey}
+                      >{`${variant.original_price.toLocaleString('vi-VN')}đ`}</span>
                     ) : (
                       ''
                     )}
@@ -253,7 +255,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter RAM"
-                value={editingVariant.attributes.RAM}
+                value={editingVariant.attributes?.RAM}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -266,7 +268,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter Storage"
-                value={editingVariant.attributes.Storage}
+                value={editingVariant.attributes?.Storage}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -279,7 +281,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter color"
-                value={editingVariant.attributes.Color}
+                value={editingVariant.attributes?.Color}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -299,9 +301,9 @@ function ProductVariant({ selectingProduct, cancel }) {
                     stock_quantity: editingVariant.stock_quantity,
                     main_image_url: editingVariant.main_image_url,
                     attributes: {
-                      RAM: editingVariant.attributes.RAM,
-                      Storage: editingVariant.attributes.Storage,
-                      Color: editingVariant.attributes.Color,
+                      RAM: editingVariant.attributes?.RAM,
+                      Storage: editingVariant.attributes?.Storage,
+                      Color: editingVariant.attributes?.Color,
                     },
                   })
                     .then(() => {
@@ -539,10 +541,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, category_id: e.target.value });
                 }}
               >
-                {brands &&
-                  brands.map((brand) => (
-                    <option key={brand._id} value={brand._id}>
-                      {brand.name}
+                {categories &&
+                  categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
                     </option>
                   ))}
               </select>
@@ -554,10 +556,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, brand_id: e.target.value });
                 }}
               >
-                {categories &&
-                  categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
+                {brands &&
+                  brands.map((brand) => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name}
                     </option>
                   ))}
               </select>

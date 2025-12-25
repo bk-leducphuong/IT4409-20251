@@ -8,19 +8,33 @@ function OrderReport() {
   const getOrders = useAdminStore((state) => state.getOrders);
   const updateOrderStatus = useAdminStore((state) => state.updateOrderStatus);
 
-  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [limit, setLimit] = useState(20);
 
+  /* For searching */
+  const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
+
   async function fetchOrders() {
     try {
-      const res = await getOrders({ limit, page });
+      const queryObject = {
+        page,
+        limit,
+        search,
+      };
+      if (status !== '') queryObject.status = status;
+      const res = await getOrders(queryObject);
       setTotalPage(res.data.pagination.pages);
       setOrders(res.data.orders);
     } catch (err) {
       toast.error(err.message);
     }
+  }
+
+  async function handleSearch() {
+    if (page !== 1) return setPage(1);
+    else await fetchOrders();
   }
 
   useEffect(() => {
@@ -31,7 +45,7 @@ function OrderReport() {
     <div className={styles.orderReport}>
       <header>
         <h1>Order Management</h1>
-        <p>Manage stores order</p>
+        <p>Manage store&apos;s order</p>
       </header>
 
       <main>
@@ -42,11 +56,23 @@ function OrderReport() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <span>
+            Status:{' '}
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </span>
           <div className={styles.buttonsContainer}>
-            <button>
+            <button onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass"></i>Find
             </button>
-            <button>
+            <button onClick={fetchOrders}>
               <i className="fa-solid fa-arrows-rotate"></i>Refresh
             </button>
           </div>
@@ -58,6 +84,7 @@ function OrderReport() {
               <th>ID</th>
               <th>Customer</th>
               <th>Total</th>
+              <th>Payment method</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -67,7 +94,8 @@ function OrderReport() {
                 <tr key={order._id}>
                   <td>{order.order_number}</td>
                   <td>{order.shipping_address.full_name}</td>
-                  <td>{`$${order.total}`}</td>
+                  <td>{`${order.total.toLocaleString('vi-VN')}đ`}</td>
+                  <td>{order.payment_method === 'cod' ? 'Cash on delivery' : 'Bank transfer'}</td>
                   <td>
                     <select
                       value={order.status}

@@ -55,6 +55,28 @@ services:
         max-size: '10m'
         max-file: '3'
 
+  # Redis - Caching / Sessions
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis-prod
+    restart: always
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
   # Express Backend API - Production Configuration
   backend:
     build:
@@ -70,6 +92,9 @@ services:
       JWT_EXPIRE: ${JWT_EXPIRE:-7d}
       MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_PORT: ${EMAIL_PORT:-587}
       EMAIL_USER: ${EMAIL_USER}
@@ -78,6 +103,9 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-5242880}
       ALLOWED_FILE_TYPES: ${ALLOWED_FILE_TYPES:-image/jpeg,image/png,image/webp}
+      ENABLE_TRENDING_CRON: ${ENABLE_TRENDING_CRON:-true}
+      TRENDING_CRON_EXPRESSION: ${TRENDING_CRON_EXPRESSION:-*/15 * * * *}
+      ENABLE_BANKING_CRON: ${ENABLE_BANKING_CRON:-true}
     volumes:
       - ./uploads:/app/uploads
     networks:
@@ -87,6 +115,8 @@ services:
         condition: service_healthy
       meilisearch:
         condition: service_healthy
+      redis:
+        condition: service_started
     healthcheck:
       test:
         [
@@ -142,4 +172,6 @@ volumes:
   mongodb_config:
     driver: local
   meilisearch_data:
+    driver: local
+  redis_data:
     driver: local

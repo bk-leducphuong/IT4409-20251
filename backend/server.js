@@ -65,6 +65,7 @@ import webHookRoutes from './routes/webhook.route.js';
 
 // 🆕 Import Cron Job
 import startBankingCronJobs from './jobs/bankingCron.js';
+import startTrendingProductsCron from './jobs/trendingProductsCron.js';
 import uploadRoutes from './routes/upload.route.js';
 import addressRoutes from './routes/address.route.js';
 
@@ -167,31 +168,28 @@ if (process.env.ENABLE_BANKING_CRON === 'true') {
   console.log('⏰ Banking cron jobs enabled');
 }
 
+if (process.env.ENABLE_TRENDING_CRON === 'true') {
+  startTrendingProductsCron();
+  console.log('⏰ Trending products cron enabled');
+}
+
 // ============================================
 // START SERVER
 // ============================================
 const PORT = process.env.PORT || 5001;
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
   console.log('='.repeat(50));
-  console.log(`✅ Server listening at http://localhost:${PORT}`);
+  console.log(`✅ Server listening on 0.0.0.0:${PORT}`);
   console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
   console.log(`📡 Webhook: http://localhost:${PORT}/api/webhooks/banking/mb`);
 
-  if (io) {
-    console.log(`🔌 Socket.IO: Enabled`);
-  }
-
+  if (io) console.log(`🔌 Socket.IO: Enabled`);
   if (process.env.ENABLE_BANKING_CRON === 'true') {
-    console.log(`⏰ Cron Jobs: Enabled (check every 5 mins)`);
+    console.log(`⏰ Cron Jobs: Enabled`);
   }
 
   console.log('='.repeat(50));
 });
 
 export default app;
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
-  console.log(`API Docs available at http://localhost:${PORT}/api-docs`);
-});
