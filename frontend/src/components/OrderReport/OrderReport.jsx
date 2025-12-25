@@ -56,16 +56,18 @@ function OrderReport() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          Status:
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="">All</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="refunded">Refunded</option>
-          </select>
+          <span>
+            Status:{' '}
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </span>
           <div className={styles.buttonsContainer}>
             <button onClick={handleSearch}>
               <i className="fa-solid fa-magnifying-glass"></i>Find
@@ -92,7 +94,7 @@ function OrderReport() {
                 <tr key={order._id}>
                   <td>{order.order_number}</td>
                   <td>{order.shipping_address.full_name}</td>
-                  <td>{`$${order.total}`}</td>
+                  <td>{`${order.total.toLocaleString('vi-VN')}đ`}</td>
                   <td>{order.payment_method === 'cod' ? 'Cash on delivery' : 'Bank transfer'}</td>
                   <td>
                     <select

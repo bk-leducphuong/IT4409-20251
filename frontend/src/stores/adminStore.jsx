@@ -8,6 +8,7 @@ import {
   updateUser,
   createProduct,
   createProductVariant,
+  uploadImage,
   deleteProduct,
   deleteVariant,
   updateProduct,
@@ -124,6 +125,14 @@ export const useAdminStore = create((set) => ({
     set({ isLoading: true });
     try {
       return await createProductVariant(productID, variantObject);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  uploadImage: async (id, file) => {
+    set({ isLoading: true });
+    try {
+      return await uploadImage(id, file);
     } finally {
       set({ isLoading: false });
     }

@@ -11,13 +11,13 @@ function Sidebar({ setState }) {
   const userData = useUserStore((state) => state.data);
 
   async function handleLogout() {
+    resetUser();
+    navigate('/');
+    toast.success('Logged out successfully');
     try {
       await logout();
-      resetUser();
-      navigate('/');
-      toast.success('Logged out successfully');
     } catch (err) {
-      toast.error(err.message);
+      console.error(err);
     }
   }
 

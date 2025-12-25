@@ -118,7 +118,7 @@ function Product() {
               ))}
             </div>
           )}
-          <div className={styles.price}>{`$${selectedVariant?.price}`}</div>
+          <div className={styles.price}>{`${selectedVariant?.price.toLocaleString('vi-VN')}đ`}</div>
           <p>{product?.description}</p>
           <hr />
 

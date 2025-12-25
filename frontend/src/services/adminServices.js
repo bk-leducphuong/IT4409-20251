@@ -1,4 +1,5 @@
 import apiFetch from '../libs/apiFetch';
+import fileUpload from '../libs/fileUpload';
 
 /* USER MANAGEMENT */
 
@@ -83,6 +84,12 @@ export const createProductVariant = async (productID, variantObject) => {
     method: 'POST',
     body: JSON.stringify(variantObject),
   });
+};
+
+export const uploadImage = async (id, file) => {
+  if (!id || !file) throw new Error('All feilds are required!');
+
+  return await fileUpload(`/upload/product/${id}`, file);
 };
 
 export const updateVariant = async (variantID, variantObject) => {

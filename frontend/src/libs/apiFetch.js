@@ -1,11 +1,9 @@
 import { getToken } from './storage';
 
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
   /* REQUEST INTERCEPTOR */
-  url = BASE_URL + url;
-
   options.headers = {
     ...options.headers,
     'Content-Type': 'application/json',
@@ -20,7 +18,7 @@ async function apiFetch(url, options = {}, retries = 3, timeout = 3000) {
   async function trueFetch(tried) {
     try {
       const response = await Promise.race([
-        fetch(url, options),
+        fetch(BASE_URL + '/api' + url, options),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error(`Timeout ${options.method} ${url}`)), timeout),
         ),

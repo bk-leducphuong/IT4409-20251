@@ -19,9 +19,11 @@ const router = express.Router();
  *   "status": "SUCCESS"
  * }
  */
-router.post('/banking/mb', async (req, res) => {
+async function handleBankWebhook(req, res, bankParam = 'MB') {
+  const bankCode = (bankParam || 'MB').toUpperCase();
+
   try {
-    // 1. Verify webhook signature
+    // 1. Verify webhook signature — supports per-bank secret: BANKING_WEBHOOK_SECRET_<BANK>
     const signature = req.headers['x-signature'];
     const webhookSecret = process.env.BANKING_WEBHOOK_SECRET;
 
@@ -32,7 +34,7 @@ router.post('/banking/mb', async (req, res) => {
         .digest('hex');
 
       if (signature !== computedSignature) {
-        console.error('⚠️ Invalid webhook signature');
+        console.error(`[${bankCode}] ⚠️ Invalid webhook signature`);
         return res.status(401).json({ error: 'Invalid signature' });
       }
     }
@@ -42,14 +44,14 @@ router.post('/banking/mb', async (req, res) => {
       transactionId,
       accountNumber,
       amount,
-      description,
+      description = '',
       transactionDate,
       creditDebit,
       status,
     } = req.body;
 
     // Log webhook nhận được
-    console.log('📨 Webhook received:', {
+    console.log(`[${bankCode}] 📨 Webhook received:`, {
       transactionId,
       amount,
       description,
@@ -58,13 +60,13 @@ router.post('/banking/mb', async (req, res) => {
 
     // 3. Chỉ xử lý tiền vào
     if (creditDebit !== 'CREDIT') {
-      console.log('ℹ️ Not a credit transaction, skipping');
+      console.log(`[${bankCode}] ℹ️ Not a credit transaction, skipping`);
       return res.status(200).json({ message: 'Not a credit transaction' });
     }
 
     // 4. Chỉ xử lý giao dịch thành công
     if (status !== 'SUCCESS') {
-      console.log('ℹ️ Transaction not successful, skipping');
+      console.log(`[${bankCode}] ℹ️ Transaction not successful, skipping`);
       return res.status(200).json({ message: 'Transaction not successful' });
     }
 
@@ -72,7 +74,7 @@ router.post('/banking/mb', async (req, res) => {
     const referenceMatch = description.match(/DH([A-Z0-9]{8})/i);
 
     if (!referenceMatch) {
-      console.log('⚠️ No order reference found in description:', description);
+      console.log(`[${bankCode}] ⚠️ No order reference found in description:`, description);
       return res.status(200).json({ message: 'No order reference found' });
     }
 
@@ -110,7 +112,12 @@ router.post('/banking/mb', async (req, res) => {
       error: 'Internal server error',
     });
   }
-});
+}
+
+// Backwards-compatible MB route
+router.post('/banking/mb', async (req, res) => handleBankWebhook(req, res, 'MB'));
+// Generic bank route
+router.post('/banking/:bank', async (req, res) => handleBankWebhook(req, res, req.params.bank));
 
 /**
  * Test webhook endpoint

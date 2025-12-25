@@ -114,7 +114,16 @@ function CategoryReport() {
                 <td>{category.parent_category_id?.name || 'None'}</td>
                 <td>
                   <div className={styles.buttonContainer}>
-                    <button onClick={() => setEditingCategory({ ...category })}>Edit</button>
+                    <button
+                      onClick={() =>
+                        setEditingCategory({
+                          ...category,
+                          parent_category_id: category.parent_category_id?._id,
+                        })
+                      }
+                    >
+                      Edit
+                    </button>
                     <button className={styles.redBtn} onClick={() => setDeletingCategory(category)}>
                       Delete
                     </button>
