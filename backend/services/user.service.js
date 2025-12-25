@@ -126,7 +126,7 @@ export const createUser = async (userData) => {
     phone,
     role: role || 'customer',
   });
-  user.password = undefined; 
+  user.password = undefined;
   return user;
 };
 
