@@ -1,0 +1,61 @@
+# GitHub Actions CI/CD Pipeline for Google Cloud VM Deployment
+# This workflow builds and deploys the application on push to master
+
+name: Deploy to Google Cloud VM
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_VM_NAME: ${{ secrets.GCP_VM_NAME }}
+  GCP_VM_ZONE: ${{ secrets.GCP_VM_ZONE }}
+  SERVER_URL: ${{ vars.SERVER_URL }}
+  REPO_PATH: ${{ vars.REPO_PATH }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Authenticate to GCP (modern + secure)
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy to VM
+        run: |
+          gcloud compute ssh $GCP_VM_NAME --zone=$GCP_VM_ZONE --command "
+            cd $REPO_PATH/backend &&
+            git fetch origin &&
+            git reset --hard origin/master &&
+            docker compose -f docker-compose.prod.yml build &&
+            docker compose -f docker-compose.prod.yml up -d &&
+            docker compose -f docker-compose.prod.yml ps
+          "
+
+      - name: Verify deployment
+        run: |
+          echo "Testing deployment at: https://$SERVER_URL/api/home"
+          sleep 10
+          curl -f https://$SERVER_URL/api/home || exit 1
+
+      - name: Notify on success
+        if: success()
+        run: echo "Deployment successful!"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Deployment failed!"

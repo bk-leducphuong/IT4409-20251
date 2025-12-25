@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useProductStore } from '../../stores/productStore';
 import { useBrandStore } from '../../stores/brandStore';
@@ -15,6 +15,31 @@ function ProductVariant({ selectingProduct, cancel }) {
 
   const [deletingVariant, setDeletingVariant] = useState(null);
   const deleteVariant = useAdminStore((state) => state.deleteVariant);
+
+  const newImage = useRef(null);
+  const editingImage = useRef(null);
+  const uploadImage = useAdminStore((state) => state.uploadImage);
+  async function handleFileChange(type) {
+    const image = type === 'new' ? newImage : editingImage;
+    if (!image.current || !image.current.files[0]) return;
+    try {
+      const res = await uploadImage(selectingProduct._id, image.current.files[0]);
+      if (newVariant)
+        setNewVariant({
+          ...newVariant,
+          main_image_url: import.meta.env.VITE_API_URL + res.data.url,
+        });
+      else
+        setEditingVariant({
+          ...editingVariant,
+          main_image_url: import.meta.env.VITE_API_URL + res.data.url,
+        });
+      toast.success('Image uploaded');
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  }
 
   return (
     <div className={styles.productVariant}>
@@ -69,10 +94,12 @@ function ProductVariant({ selectingProduct, cancel }) {
                 </td>
                 <td>
                   <div>
-                    {`$${variant.price}`}
+                    {`${variant.price.toLocaleString('vi-VN')}đ`}
                     <br />
                     {variant.original_price ? (
-                      <span className={styles.grey}>{`$${variant.original_price}`}</span>
+                      <span
+                        className={styles.grey}
+                      >{`${variant.original_price.toLocaleString('vi-VN')}đ`}</span>
                     ) : (
                       ''
                     )}
@@ -98,10 +125,10 @@ function ProductVariant({ selectingProduct, cancel }) {
 
       {newVariant && (
         <div className={styles.overlay}>
-          <div className={styles.form}>
+          <div>
             <h2>Create new variant</h2>
 
-            <div>
+            <div className={styles.form}>
               <div>SKU:</div>
               <input
                 type="text"
@@ -135,12 +162,21 @@ function ProductVariant({ selectingProduct, cancel }) {
               />
 
               <div>Main image:</div>
-              <input
-                type="text"
-                placeholder="Enter image's url"
-                value={newVariant.main_image_url}
-                onChange={(e) => setNewVariant({ ...newVariant, main_image_url: e.target.value })}
-              />
+              <div className={styles.imageInputGroup}>
+                <input
+                  type="text"
+                  placeholder="Enter image's url"
+                  value={newVariant.main_image_url}
+                  onChange={(e) => setNewVariant({ ...newVariant, main_image_url: e.target.value })}
+                />
+                <input
+                  type="file"
+                  ref={newImage}
+                  onChange={() => handleFileChange('new')}
+                  accept="image/*"
+                  disabled={newVariant.main_image_url}
+                />
+              </div>
 
               <div>RAM:</div>
               <input
@@ -199,10 +235,10 @@ function ProductVariant({ selectingProduct, cancel }) {
 
       {editingVariant && (
         <div className={styles.overlay}>
-          <div className={styles.form}>
+          <div>
             <h2>Update variant</h2>
 
-            <div>
+            <div className={styles.form}>
               <div>SKU:</div>
               <input
                 type="text"
@@ -240,20 +276,29 @@ function ProductVariant({ selectingProduct, cancel }) {
               />
 
               <div>Main image:</div>
-              <input
-                type="text"
-                placeholder="Enter image's url"
-                value={editingVariant.main_image_url}
-                onChange={(e) =>
-                  setEditingVariant({ ...editingVariant, main_image_url: e.target.value })
-                }
-              />
+              <div className={styles.imageInputGroup}>
+                <input
+                  type="text"
+                  placeholder="Enter image's url"
+                  value={editingVariant.main_image_url}
+                  onChange={(e) =>
+                    setEditingVariant({ ...editingVariant, main_image_url: e.target.value })
+                  }
+                />
+                <input
+                  type="file"
+                  ref={editingImage}
+                  onChange={() => handleFileChange('editing')}
+                  accept="image/*"
+                  disabled={editingVariant.main_image_url}
+                />
+              </div>
 
               <div>RAM:</div>
               <input
                 type="text"
                 placeholder="Enter RAM"
-                value={editingVariant.attributes.RAM}
+                value={editingVariant.attributes?.RAM}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -266,7 +311,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter Storage"
-                value={editingVariant.attributes.Storage}
+                value={editingVariant.attributes?.Storage}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -279,7 +324,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter color"
-                value={editingVariant.attributes.Color}
+                value={editingVariant.attributes?.Color}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -299,9 +344,9 @@ function ProductVariant({ selectingProduct, cancel }) {
                     stock_quantity: editingVariant.stock_quantity,
                     main_image_url: editingVariant.main_image_url,
                     attributes: {
-                      RAM: editingVariant.attributes.RAM,
-                      Storage: editingVariant.attributes.Storage,
-                      Color: editingVariant.attributes.Color,
+                      RAM: editingVariant.attributes?.RAM,
+                      Storage: editingVariant.attributes?.Storage,
+                      Color: editingVariant.attributes?.Color,
                     },
                   })
                     .then(() => {
@@ -506,10 +551,10 @@ function ProductReport() {
 
       {newProduct && (
         <div className={styles.overlay}>
-          <div className={styles.form}>
+          <div>
             <h2>Create new product</h2>
 
-            <div>
+            <div className={styles.form}>
               <div>Name:</div>
               <input
                 type="text"
@@ -539,10 +584,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, category_id: e.target.value });
                 }}
               >
-                {brands &&
-                  brands.map((brand) => (
-                    <option key={brand._id} value={brand._id}>
-                      {brand.name}
+                {categories &&
+                  categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
                     </option>
                   ))}
               </select>
@@ -554,10 +599,10 @@ function ProductReport() {
                   setNewProduct({ ...newProduct, brand_id: e.target.value });
                 }}
               >
-                {categories &&
-                  categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.name}
+                {brands &&
+                  brands.map((brand) => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name}
                     </option>
                   ))}
               </select>
@@ -590,10 +635,10 @@ function ProductReport() {
 
       {editingProduct && (
         <div className={styles.overlay}>
-          <div className={styles.form}>
+          <div>
             <h2>Update product</h2>
 
-            <div>
+            <div className={styles.form}>
               <div>Name:</div>
               <input
                 type="text"

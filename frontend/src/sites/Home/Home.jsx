@@ -4,7 +4,6 @@ import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Services from '../../components/Services/Services';
 import Footer from '../../components/Footer/Footer';
-import { useBrandStore } from '../../stores/brandStore';
 import { useCategoryStore } from '../../stores/categoryStore';
 import { useProductStore } from '../../stores/productStore';
 import { useWishlistStore } from '../../stores/wishlistStore';
@@ -26,14 +25,15 @@ function CategoryCard({ icon, image, name, onClick = () => console.log('button c
 }
 
 function Home() {
-  const brands = useBrandStore((state) => state.data);
-
   const categories = useCategoryStore((state) => state.data);
 
   const getProducts = useProductStore((state) => state.getProducts);
-  const [firstBrandItems, setFirstBrandItem] = useState(null);
-  const [secondBrandItems, setSecondBrandItem] = useState(null);
-  const [thirdBrandItems, setThirdBrandItem] = useState(null);
+  const getTrendingProducts = useProductStore((state) => state.getTrendingProducts);
+  const [trendingProducts, setTrendingProducts] = useState(null);
+
+  const [firstCategoryItems, setFirstBrandItem] = useState(null);
+  const [secondCategoryItems, setSecondBrandItem] = useState(null);
+  const [thirdCategoryItems, setThirdBrandItem] = useState(null);
 
   const addItemToWishlist = useWishlistStore((state) => state.addItemToWishlist);
 
@@ -41,23 +41,24 @@ function Home() {
 
   useEffect(() => {
     if (
-      brands &&
-      brands.length > 0 &&
-      (firstBrandItems == null || secondBrandItems == null || thirdBrandItems == null)
+      categories &&
+      categories.length > 0 &&
+      (firstCategoryItems == null || secondCategoryItems == null || thirdCategoryItems == null)
     ) {
       (async () => {
-        const [firstItems, secondItems, thirdItems] = await Promise.all([
-          getProducts({ brand: brands[0].name }),
-          getProducts({ brand: brands[1].name }),
-          getProducts({ brand: brands[2].name }),
+        const [firstItems, secondItems, thirdItems, trendingProducts] = await Promise.all([
+          getProducts({ category: categories[0].slug }),
+          getProducts({ category: categories[1].slug }),
+          getProducts({ category: categories[2].slug }),
+          getTrendingProducts(),
         ]);
-
+        setTrendingProducts(trendingProducts.data.products);
         setFirstBrandItem(firstItems.data.products);
         setSecondBrandItem(secondItems.data.products);
         setThirdBrandItem(thirdItems.data.products);
       })();
     }
-  }, [brands]);
+  }, [categories]);
 
   return (
     <>
@@ -83,16 +84,40 @@ function Home() {
         </nav>
 
         <div>
-          <img
-            src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
-            alt="decoration"
-          />
+          <button
+            onClick={() => navigate('/product/iphone-17-pro-max-1tb-chinh-hang-mobile-apple')}
+          >
+            <img
+              src="https://9to5mac.com/wp-content/uploads/sites/6/2024/05/iphone-17.jpg"
+              alt="decoration"
+            />
+          </button>
         </div>
       </header>
 
-      {firstBrandItems && (
-        <Shelf topic={brands?.[0]?.name || "Today's"} strong={brands?.[0]?.name || 'Flash Sales'}>
-          {firstBrandItems.map((item) => (
+      {trendingProducts && (
+        <Shelf topic={'Trending Products'} strong={'In one place'}>
+          {trendingProducts.map((item) => (
+            <Card
+              key={item.product_id}
+              productName={item.product_name}
+              image={item.main_image_url}
+              iconButtons={
+                <button onClick={() => navigate(`/product/${item.product_slug}`)}>
+                  <i className={`fa-regular fa-eye`}></i>
+                </button>
+              }
+            />
+          ))}
+        </Shelf>
+      )}
+
+      {firstCategoryItems && firstCategoryItems.length > 0 && (
+        <Shelf
+          topic={categories?.[0]?.name || "Today's"}
+          strong={categories?.[0]?.name || 'Flash Sales'}
+        >
+          {firstCategoryItems.map((item) => (
             <Card
               key={item._id}
               productName={item.name}
@@ -140,12 +165,12 @@ function Home() {
           ))}
       </Shelf>
 
-      {secondBrandItems && (
+      {secondCategoryItems && secondCategoryItems.length > 0 && (
         <Shelf
-          topic={brands?.[1]?.name || 'This Month'}
-          strong={brands?.[1]?.name || 'Best Selling Products'}
+          topic={categories?.[1]?.name || 'This Month'}
+          strong={categories?.[1]?.name || 'Best Selling Products'}
         >
-          {secondBrandItems.map((item) => (
+          {secondCategoryItems.map((item) => (
             <Card
               key={item._id}
               productName={item.name}
@@ -178,12 +203,12 @@ function Home() {
         </Shelf>
       )}
 
-      {thirdBrandItems && (
+      {thirdCategoryItems && thirdCategoryItems.length > 0 && (
         <Shelf
-          topic={brands?.[2]?.name || 'Our Products'}
-          strong={brands?.[2]?.name || 'Explore Our Products'}
+          topic={categories?.[2]?.name || 'Our Products'}
+          strong={categories?.[2]?.name || 'Explore Our Products'}
         >
-          {thirdBrandItems.map((item) => (
+          {thirdCategoryItems.map((item) => (
             <Card
               key={item._id}
               productName={item.name}

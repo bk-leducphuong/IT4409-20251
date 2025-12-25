@@ -51,7 +51,7 @@ function UsersReport() {
         newUser.email,
         newUser.password,
         newUser.phone,
-        newUser.address,
+        // newUser.address,
         newUser.status,
       );
       await fetchUsers();
@@ -150,7 +150,10 @@ function UsersReport() {
                       </div>
                     </td>
                     <td>{user.phone}</td>
-                    <td>{user.status}</td>
+                    <td>
+                      {user.status === 'active' && <span className={styles.green}>Active</span>}
+                      {user.status === 'inactive' && <span className={styles.red}>Inactive</span>}
+                    </td>
                     <td>User</td>
                     <td>
                       <div className={styles.buttonsContainer}>
@@ -239,7 +242,7 @@ function UsersReport() {
                   <tr key={user._id}>
                     <td>
                       <div className={styles.avatar}>
-                        <div>{user.fullName.slice(0, 2)}</div>
+                        <div>{user.fullName?.slice(0, 2)}</div>
                         <span>
                           <div className={styles.name}>{user.fullName}</div>
                           <div className={styles.email}>{user.email}</div>
@@ -247,7 +250,10 @@ function UsersReport() {
                       </div>
                     </td>
                     <td>{user.phone}</td>
-                    <td>{user.status}</td>
+                    <td>
+                      {user.status === 'active' && <span className={styles.green}>Active</span>}
+                      {user.status === 'inactive' && <span className={styles.red}>Inactive</span>}
+                    </td>
                     <td>Admin</td>
                     <td>
                       <div className={styles.buttonsContainer}>
@@ -309,7 +315,7 @@ function UsersReport() {
               />
             </div>
 
-            <div>
+            {/* <div>
               <div>Address:</div>
               <input
                 type="text"
@@ -317,7 +323,7 @@ function UsersReport() {
                 value={newUser.address}
                 onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
               />
-            </div>
+            </div> */}
 
             <div>
               <div>State:</div>
@@ -387,7 +393,7 @@ function UsersReport() {
               />
             </div>
 
-            <div>
+            {/* <div>
               <div>Address:</div>
               <input
                 type="text"
@@ -395,7 +401,7 @@ function UsersReport() {
                 value={editingUser.address}
                 onChange={(e) => setEditingUser({ ...editingUser, address: e.target.value })}
               />
-            </div>
+            </div> */}
 
             <div>
               <div>State:</div>
