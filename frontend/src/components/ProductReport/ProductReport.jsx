@@ -255,7 +255,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter RAM"
-                value={editingVariant.attributes.RAM}
+                value={editingVariant.attributes?.RAM}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -268,7 +268,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter Storage"
-                value={editingVariant.attributes.Storage}
+                value={editingVariant.attributes?.Storage}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -281,7 +281,7 @@ function ProductVariant({ selectingProduct, cancel }) {
               <input
                 type="text"
                 placeholder="Enter color"
-                value={editingVariant.attributes.Color}
+                value={editingVariant.attributes?.Color}
                 onChange={(e) =>
                   setEditingVariant({
                     ...editingVariant,
@@ -301,9 +301,9 @@ function ProductVariant({ selectingProduct, cancel }) {
                     stock_quantity: editingVariant.stock_quantity,
                     main_image_url: editingVariant.main_image_url,
                     attributes: {
-                      RAM: editingVariant.attributes.RAM,
-                      Storage: editingVariant.attributes.Storage,
-                      Color: editingVariant.attributes.Color,
+                      RAM: editingVariant.attributes?.RAM,
+                      Storage: editingVariant.attributes?.Storage,
+                      Color: editingVariant.attributes?.Color,
                     },
                   })
                     .then(() => {
